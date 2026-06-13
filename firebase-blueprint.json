@@ -1,0 +1,37 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "A user of the application",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "name": { "type": "string" },
+        "email": { "type": "string" },
+        "phone": { "type": "string" },
+        "avatar": { "type": ["string", "null"] },
+        "gender": { "type": "string" },
+        "age": { "type": "string" },
+        "address": { "type": "string" },
+        "experienceMonths": { "type": "string" },
+        "experienceYears": { "type": "string" },
+        "timezone": { "type": "string" },
+        "startingBalance": { "type": "number" },
+        "dailyProfitTarget": { "type": "number" },
+        "targetDays": { "type": "number" },
+        "preferredStrategy": { "type": "string" },
+        "isSetupComplete": { "type": "boolean" },
+        "balance": { "type": "number" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["uid", "name", "email", "createdAt", "updatedAt"]
+    }
+  },
+  "firestore": {
+    "users/{userId}": {
+      "schema": { "$ref": "#/entities/User" },
+      "description": "Stores user profiles"
+    }
+  }
+}

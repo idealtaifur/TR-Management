@@ -1,0 +1,6 @@
+{
+  "name": "Trading Dashboard",
+  "description": "A dark-themed, mobile-first trading dashboard UI.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
