@@ -265,7 +265,7 @@ export function MasanielloTab() {
               
               <div className="flex flex-col items-center mt-2">
                 <span className="text-secondary text-[10px] uppercase font-black tracking-[0.2em] mb-1.5">পরবর্তী ট্রেড</span>
-                <span className="text-transparent bg-clip-text bg-gradient-to-b from-[#00e676] to-[#047857] text-[2.75rem] leading-none font-black mb-1.5 drop-shadow-md tracking-tighter">${enToBn(currentStake.toFixed(2))}</span>
+                <span className="text-[#00e676] dark:text-[#4ade80] text-[2.75rem] leading-none font-bold mb-1.5 drop-shadow-md tracking-tighter">${enToBn(currentStake.toFixed(2))}</span>
                 <span className="text-[#00e676]/80 text-[11px] font-bold tracking-wide">উইনে: +${enToBn(potentialWin.toFixed(2))}</span>
               </div>
 

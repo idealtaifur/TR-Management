@@ -4,26 +4,24 @@
 
 @layer components {
   .glass-panel-3d {
-    @apply relative overflow-hidden bg-gradient-to-br from-white/90 via-white/70 to-white/50 backdrop-blur-3xl border border-white/80 border-t-white border-b-[6px] border-b-slate-300 shadow-[0_20px_40px_rgba(0,0,0,0.12),inset_0_2px_4px_rgba(255,255,255,0.8)];
+    @apply relative overflow-hidden bg-white/70 backdrop-blur-2xl border border-white/80 shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all;
   }
   .dark .glass-panel-3d {
-    @apply bg-gradient-to-br from-white/[0.12] via-white/[0.05] to-transparent backdrop-blur-[32px] border-x border-t border-white/[0.2] border-t-white/[0.35] border-l-white/[0.25] border-b-[6px] border-b-[#0b1220]/60 shadow-[inset_0_1px_4px_rgba(255,255,255,0.3),inset_0_-2px_6px_rgba(0,0,0,0.4),0_25px_50px_rgba(0,0,0,0.6)];
+    @apply bg-slate-800/60 backdrop-blur-2xl border border-white/20 shadow-[0_8px_30px_rgb(0,0,0,0.5)] transition-all;
   }
 
   .glass-panel-3d::before {
-    content: '';
-    @apply absolute inset-0 rounded-[inherit] bg-gradient-to-br from-white/70 via-white/30 to-transparent pointer-events-none z-0 mix-blend-overlay;
+    display: none;
   }
   .dark .glass-panel-3d::before {
-    @apply from-white/[0.2] via-transparent to-black/30 mix-blend-overlay;
+    display: none;
   }
 
   .glass-panel-3d::after {
-    content: '';
-    @apply absolute top-0 left-[10%] right-[10%] h-[2px] bg-gradient-to-r from-transparent via-white w-[80%] mx-auto to-transparent pointer-events-none z-0 opacity-100;
+    display: none;
   }
   .dark .glass-panel-3d::after {
-    @apply via-white/30 opacity-100 h-[1.5px];
+    display: none;
   }
 
   .glass-panel-3d > * {
@@ -31,26 +29,24 @@
   }
 
   .glass-panel {
-    @apply relative overflow-hidden bg-gradient-to-br from-white/80 via-white/50 to-white/30 backdrop-blur-3xl border border-white/60 border-t-white border-b-[4px] border-b-slate-200/60 shadow-[0_12px_32px_rgba(0,0,0,0.08)];
+    @apply relative overflow-hidden bg-white/70 backdrop-blur-2xl border border-white/80 shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all;
   }
   .dark .glass-panel {
-    @apply bg-gradient-to-br from-[#162235]/60 via-[#0b121e]/70 to-[#040810]/80 backdrop-blur-[20px] border border-white/[0.1] border-t-white/[0.18] border-l-white/[0.12] border-b-[4px] border-b-black/80 shadow-[inset_0_1px_2px_rgba(255,255,255,0.15),0_20px_40px_rgba(0,0,0,0.7)];
+    @apply bg-slate-800/60 backdrop-blur-2xl border border-white/20 shadow-[0_8px_30px_rgb(0,0,0,0.5)] transition-all;
   }
 
   .glass-panel::before {
-    content: '';
-    @apply absolute inset-0 rounded-[inherit] bg-gradient-to-br from-white/60 via-white/20 to-transparent pointer-events-none z-0 mix-blend-overlay;
+    display: none;
   }
   .dark .glass-panel::before {
-    @apply from-white/[0.08] via-transparent to-black/60 mix-blend-normal;
+    display: none;
   }
 
   .glass-panel::after {
-    content: '';
-    @apply absolute top-0 left-[15%] right-[15%] h-[1.5px] bg-gradient-to-r from-transparent via-white w-[70%] mx-auto to-transparent pointer-events-none z-0 opacity-100;
+    display: none;
   }
   .dark .glass-panel::after {
-    @apply via-white/20 opacity-100 h-[1px];
+    display: none;
   }
 
   .glass-panel > * {
@@ -58,10 +54,10 @@
   }
 
   .inner-glass {
-    @apply relative overflow-hidden bg-gradient-to-br from-black/5 to-transparent backdrop-blur-xl border border-white/80 border-t-white shadow-[inset_0_1px_2px_rgba(255,255,255,1),0_2px_8px_rgba(0,0,0,0.03)];
+    @apply relative overflow-hidden bg-white/60 backdrop-blur-md border border-white shadow-sm transition-all;
   }
   .dark .inner-glass {
-    @apply bg-gradient-to-br from-white/[0.05] via-[#0b121e]/60 to-black/40 backdrop-blur-xl border border-white/[0.08] border-t-white/[0.15] border-l-white/[0.1] shadow-[inset_0_1px_1px_rgba(255,255,255,0.15),inset_0_0_10px_rgba(255,255,255,0.02),0_4px_12px_rgba(0,0,0,0.3)];
+    @apply bg-slate-800/60 backdrop-blur-md border border-white/10 shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] transition-all;
   }
 
   .text-primary {

@@ -177,9 +177,8 @@ export function Login() {
           <button 
             type="submit" 
             disabled={loading}
-            className={`w-full relative overflow-hidden py-3 px-4 rounded-xl shadow-[0_6px_20px_rgba(0,230,118,0.3),inset_0_1px_3px_rgba(255,255,255,0.4)] hover:shadow-[0_10px_25px_rgba(0,230,118,0.4),inset_0_1px_3px_rgba(255,255,255,0.5)] active:translate-y-0.5 transition-all mt-6 flex justify-center items-center gap-2 group ${isDark ? 'bg-gradient-to-b from-[#00e676] to-[#047857] border-t border-[#00e676] border-b border-[#022c22]' : 'bg-gradient-to-b from-[#22c55e] to-[#16a34a] border-t border-[#4ade80] border-b border-[#14532d]'}`}
+            className={`w-full relative overflow-hidden py-3 px-4 rounded-xl shadow-xl hover:shadow-2xl active:scale-[0.98] transition-all mt-6 flex justify-center items-center gap-2 group ${isDark ? 'bg-white text-slate-900' : 'bg-[#18181b] text-white'}`}
           >
-            <div className="absolute inset-0 bg-white/20 translate-y-[-100%] group-hover:translate-y-[100%] transition-transform duration-700 ease-in-out"></div>
             {loading ? (
               <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
             ) : (

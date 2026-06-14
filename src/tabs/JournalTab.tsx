@@ -44,7 +44,7 @@ export function JournalTab() {
            />
         </div>
 
-        <button onClick={handleSave} className="w-full bg-gradient-to-r from-blue-500/80 to-indigo-500/80 text-white shadow-[0_4px_12px_rgba(59,130,246,0.3)] py-3 rounded-xl font-bold text-sm tracking-wide hover:shadow-[0_6px_16px_rgba(59,130,246,0.4)] transition-all">
+        <button onClick={handleSave} className="w-full bg-[#18181b] dark:bg-white text-white dark:text-slate-900 shadow-xl py-3.5 rounded-xl font-bold text-sm tracking-wide hover:opacity-90 transition-all">
           সেভ করুন
         </button>
       </div>

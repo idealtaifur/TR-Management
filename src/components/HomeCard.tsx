@@ -32,7 +32,7 @@ export function HomeCard({ onStart }: { onStart: () => void }) {
     <div className="glass-panel rounded-[1.25rem] p-4 relative overflow-hidden w-full max-w-[340px] mx-auto">
         <div className="flex flex-col items-center mb-3">
             <span className="text-3xl mb-1 drop-shadow-md">🤝</span>
-            <h2 className="text-[17px] font-black text-slate-900 dark:text-transparent dark:bg-clip-text dark:bg-gradient-to-b dark:from-white dark:to-white/80 tracking-wide">
+            <h2 className="text-[17px] font-bold text-slate-900 dark:text-slate-50 tracking-wide">
                 {profile.name}, {honorific} কি অবস্থা?
             </h2>
             <p className="text-[11px] text-slate-600 dark:text-slate-400 mt-1">{dateString}</p>

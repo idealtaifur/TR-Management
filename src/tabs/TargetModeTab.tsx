@@ -77,7 +77,7 @@ export function TargetModeTab() {
         <div className="grid grid-cols-2 gap-1.5 mb-3">
            <div className="inner-glass rounded-xl flex flex-col items-center justify-center py-2.5">
              <span className="text-secondary text-[10px] mb-0.5 tracking-wide">বর্তমান ব্যালেন্স</span>
-             <span className="text-slate-900 dark:text-transparent dark:bg-clip-text dark:bg-gradient-to-b dark:from-white dark:to-white/70 font-black text-base drop-shadow-sm">${enToBn((balance || 0).toFixed(2))}</span>
+             <span className="text-slate-900 dark:text-slate-50 font-bold text-base drop-shadow-sm">${enToBn((balance || 0).toFixed(2))}</span>
            </div>
            <div className="inner-glass rounded-xl flex flex-col items-center justify-center py-2.5">
              <span className="text-secondary text-[10px] mb-0.5 tracking-wide">টার্গেট ব্যালেন্স</span>
@@ -99,7 +99,7 @@ export function TargetModeTab() {
                <span className="text-[9px] bg-blue-500/10 text-blue-400 px-1.5 py-0.5 rounded text-center border border-blue-500/20">কভার: ${enToBn((dailyTarget.coverAmountTracker || 0).toFixed(2))}</span>
             </div>
             <span className="text-secondary text-[10px] uppercase font-black tracking-[0.2em] mb-1.5 mt-1">পরবর্তী স্টেক</span>
-            <span className="text-transparent bg-clip-text bg-gradient-to-b from-[#a855f7] to-[#7e22ce] text-[2.75rem] leading-none font-black mb-1.5 drop-shadow-md tracking-tighter">${enToBn((dailyTarget.currentStake || 1).toFixed(2))}</span>
+            <span className="text-[#a855f7] dark:text-[#c084fc] text-[2.75rem] leading-none font-bold mb-1.5 drop-shadow-md tracking-tighter">${enToBn((dailyTarget.currentStake || 1).toFixed(2))}</span>
             <span className="text-[#00e676]/90 text-[11px] font-bold tracking-wide">উইনে: +${enToBn(((dailyTarget.currentStake || 1) * ((dailyTarget.payout || 85) / 100)).toFixed(2))}</span>
         </div>
 

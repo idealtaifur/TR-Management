@@ -67,7 +67,7 @@ export function CalculatorTab() {
                <span className="text-2xl font-black text-primary">${enToBn(totalProfit.toFixed(2))}</span>
             </div>
          </div>
-         <button onClick={handleDownload} className="w-full mt-5 bg-gradient-to-r from-purple-500/80 to-pink-500/80 text-white shadow-[0_4px_12px_rgba(168,85,247,0.3)] py-3 rounded-xl font-bold text-sm tracking-wide hover:shadow-[0_6px_16px_rgba(168,85,247,0.4)] transition-all flex justify-center items-center gap-2">
+         <button onClick={handleDownload} className="w-full mt-5 bg-[#18181b] dark:bg-white text-white dark:text-slate-900 shadow-xl py-3.5 rounded-xl font-bold text-sm tracking-wide hover:opacity-90 transition-all flex justify-center items-center gap-2">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
             ডাউনলোড রুটিন (HTML)
          </button>

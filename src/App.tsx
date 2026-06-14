@@ -170,33 +170,26 @@ export default function App() {
   }
 
   return (
-    <div className={`w-full h-[100dvh] flex justify-center selection:bg-[#00e676]/30 ${isDark ? 'bg-[#050b14] dark' : 'bg-slate-50'}`}>
-      <div className={`w-full min-h-[100dvh] h-full max-w-[420px] relative overflow-y-auto overflow-x-hidden scrollbar-hide font-sans shadow-2xl ${isDark ? 'bg-[#0a101d] text-white' : 'bg-slate-50 text-slate-900'}`}>
-        
-        {/* Background Gradients for Glassmorphism */}
-        <div className="fixed top-0 h-[100dvh] w-full max-w-[420px] overflow-hidden z-0 pointer-events-none">
-          {isDark ? (
-            <>
-              {/* Visible Floating Circles - Bright & Various Sizes */}
-              <div className="absolute top-[2%] left-[-5%] w-[220px] h-[220px] rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600/80 blur-[10px] shadow-[0_0_40px_rgba(52,211,153,0.6)] opacity-90"></div>
-              <div className="absolute top-[20%] right-[-10%] w-[150px] h-[150px] rounded-full bg-gradient-to-bl from-blue-400 to-indigo-600/80 blur-[12px] shadow-[0_0_45px_rgba(96,165,250,0.6)] opacity-90"></div>
-              <div className="absolute top-[45%] left-[-15%] w-[300px] h-[300px] rounded-full bg-gradient-to-tr from-purple-400 to-purple-600/80 blur-[18px] shadow-[0_0_50px_rgba(192,132,252,0.6)] opacity-90"></div>
-              <div className="absolute top-[75%] right-[-5%] w-[180px] h-[180px] rounded-full bg-gradient-to-bl from-pink-400 to-rose-600/80 blur-[10px] shadow-[0_0_40px_rgba(244,114,182,0.6)] opacity-90"></div>
-              <div className="absolute top-[35%] left-[20%] w-[120px] h-[120px] rounded-full bg-gradient-to-tr from-cyan-400 to-blue-600/80 blur-[8px] shadow-[0_0_35px_rgba(34,211,238,0.6)] opacity-90"></div>
-              <div className="absolute bottom-[5%] left-[10%] w-[200px] h-[200px] rounded-full bg-gradient-to-br from-amber-400 to-orange-600/80 blur-[12px] shadow-[0_0_45px_rgba(251,191,36,0.6)] opacity-90"></div>
-            </>
-          ) : (
-            <>
-              {/* Visible Floating Circles - Light Mode - Brighter */}
-              <div className="absolute top-[2%] left-[-5%] w-[200px] h-[200px] rounded-full bg-gradient-to-br from-emerald-400 to-emerald-300/80 blur-[12px] shadow-[0_0_30px_rgba(52,211,153,0.4)] opacity-95"></div>
-              <div className="absolute top-[20%] right-[-10%] w-[180px] h-[180px] rounded-full bg-gradient-to-bl from-blue-400 to-blue-300/80 blur-[15px] shadow-[0_0_35px_rgba(96,165,250,0.4)] opacity-95"></div>
-              <div className="absolute top-[45%] left-[-15%] w-[280px] h-[280px] rounded-full bg-gradient-to-tr from-purple-400 to-purple-300/80 blur-[20px] shadow-[0_0_40px_rgba(192,132,252,0.4)] opacity-95"></div>
-              <div className="absolute top-[75%] right-[-5%] w-[160px] h-[160px] rounded-full bg-gradient-to-bl from-rose-400 to-rose-300/80 blur-[12px] shadow-[0_0_30px_rgba(251,113,133,0.4)] opacity-95"></div>
-              <div className="absolute top-[35%] left-[20%] w-[110px] h-[110px] rounded-full bg-gradient-to-tr from-cyan-400 to-cyan-300/80 blur-[8px] shadow-[0_0_25px_rgba(34,211,238,0.4)] opacity-95"></div>
-              <div className="absolute bottom-[5%] left-[10%] w-[150px] h-[150px] rounded-full bg-gradient-to-br from-amber-400 to-yellow-300/80 blur-[10px] shadow-[0_0_30px_rgba(251,191,36,0.4)] opacity-95"></div>
-            </>
-          )}
-        </div>
+    <div className={`w-full h-[100dvh] flex items-center justify-center selection:bg-[#00e676]/30 ${isDark ? 'bg-[#050b14] dark' : 'bg-slate-100'}`}>
+      
+      {/* Global Colorful Modern Background */}
+      <div className="fixed inset-0 w-full h-[100dvh] overflow-hidden z-0 pointer-events-none flex justify-center">
+        {isDark ? (
+          <>
+            <div className="absolute top-[0%] left-[10%] w-[400px] h-[400px] bg-emerald-600/10 rounded-full blur-[120px]" />
+            <div className="absolute top-[30%] right-[10%] w-[350px] h-[350px] bg-blue-600/10 rounded-full blur-[120px]" />
+            <div className="absolute bottom-[0%] left-[20%] w-[450px] h-[450px] bg-purple-600/10 rounded-full blur-[140px]" />
+          </>
+        ) : (
+          <>
+            <div className="absolute top-[0%] left-[10%] w-[400px] h-[400px] bg-emerald-300/40 rounded-full blur-[120px]" />
+            <div className="absolute top-[30%] right-[10%] w-[350px] h-[350px] bg-blue-300/40 rounded-full blur-[120px]" />
+            <div className="absolute bottom-[0%] left-[20%] w-[450px] h-[450px] bg-purple-300/40 rounded-full blur-[140px]" />
+          </>
+        )}
+      </div>
+
+      <div className={`w-full h-[100dvh] max-w-[420px] relative overflow-y-auto overflow-x-hidden scrollbar-hide font-sans ${isDark ? 'bg-[#0b1120]/40 backdrop-blur-3xl text-slate-100' : 'bg-white/40 backdrop-blur-3xl text-slate-900'}`}>
         
         <div className="relative z-10 flex flex-col px-3 pt-1 pb-3 space-y-4 min-h-full">
            <div className="pt-1">

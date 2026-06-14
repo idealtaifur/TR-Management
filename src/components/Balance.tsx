@@ -46,8 +46,8 @@ export function Balance() {
   const dataMax = Math.max(...data.map((d) => d.value));
 
   return (
-    <div className="glass-panel-3d rounded-[2rem] flex flex-col relative z-10 w-full mb-3 overflow-hidden min-h-[220px] transform transition-transform hover:-translate-y-1 hover:shadow-2xl">
-      <div className="flex justify-between items-start p-5 pb-8 relative z-10">
+    <div className="glass-panel-3d rounded-[2rem] flex flex-col relative z-10 w-full mb-3 overflow-hidden min-h-[200px] transform transition-transform hover:-translate-y-1 hover:shadow-2xl">
+      <div className="flex justify-between items-start p-4 pb-2 relative z-10">
         <div className="flex flex-col">
           <div 
             className="flex items-center gap-1.5 text-secondary font-semibold tracking-wider text-[10px] uppercase mb-1 flex-shrink-0 cursor-pointer transition-colors hover:text-slate-700 dark:hover:text-slate-300"
@@ -79,7 +79,7 @@ export function Balance() {
         </button>
       </div>
 
-      <div className="absolute left-0 right-0 bottom-0 top-[80px] z-0 overflow-hidden pointer-events-none">
+      <div className="absolute left-0 right-0 bottom-0 top-[75px] z-0 overflow-hidden pointer-events-none">
         <ResponsiveContainer width="100%" height="100%" className="focus:outline-none" style={{ outline: 'none' }}>
           <AreaChart data={data} margin={{ top: 10, right: 0, left: 0, bottom: 0 }} style={{ outline: 'none' }}>
             <defs>
