@@ -152,32 +152,32 @@ export function Category() {
         </div>
 
         {/* Right: Trade List */}
-        <div className="flex flex-col gap-[1px] flex-1 pl-4 h-[92px] overflow-y-auto pr-1">
+        <div className="flex flex-col flex-1 pl-4 h-[120px] overflow-y-auto pr-1 justify-between py-1">
           {filteredTrades.length === 0 && <div className="text-xs text-slate-500 text-center mt-8">No records yet</div>}
-          {filteredTrades.slice(0, 50).map((trade, idx) => (
+          {filteredTrades.slice(0, 4).map((trade, idx) => (
             <div key={trade.id} className="flex flex-col">
-              <div className="flex justify-between items-center bg-transparent py-[2px]">
-                <div className="flex items-center gap-1.5">
-                  <div className={`w-4 h-4 rounded-full flex items-center justify-center border shadow-sm ${trade.type === 'WIN' ? 'bg-[#00e676]/10 text-[#00e676] border-[#00e676]/30' : 'bg-[#ff4d4d]/10 text-[#ff4d4d] border-[#ff4d4d]/30'}`}>
+              <div className="flex justify-between items-center bg-transparent py-1">
+                <div className="flex items-center gap-2">
+                  <div className={`w-5 h-5 rounded-full flex items-center justify-center border shadow-sm ${trade.type === 'WIN' ? 'bg-[#00e676]/10 text-[#00e676] border-[#00e676]/30' : 'bg-[#ff4d4d]/10 text-[#ff4d4d] border-[#ff4d4d]/30'}`}>
                     {trade.type === 'WIN' ? (
-                       <svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="m7 17 9.2-9.2M17 17V7H7"/></svg>
+                       <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="m7 17 9.2-9.2M17 17V7H7"/></svg>
                     ) : (
-                       <svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M17 7 7.8 16.2M17 17H7V7"/></svg>
+                       <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M17 7 7.8 16.2M17 17H7V7"/></svg>
                     )}
                   </div>
-                  <div className="flex items-center gap-1">
-                    <span className="tracking-wide uppercase text-[10px] font-bold text-slate-800 dark:text-slate-200">{trade.type}</span>
-                    <span className="text-[8px] font-medium text-slate-500 dark:text-slate-400">
+                  <div className="flex items-center gap-1.5">
+                    <span className="tracking-wide uppercase text-xs font-bold text-slate-800 dark:text-slate-200">{trade.type}</span>
+                    <span className="text-[10px] font-medium text-slate-500 dark:text-slate-400">
                       {new Date(trade.date).toLocaleTimeString('bn-BD', { hour: '2-digit', minute: '2-digit' })}
                     </span>
                   </div>
                 </div>
-                <div className={`text-[11px] font-black drop-shadow-sm ${trade.type === 'WIN' ? 'text-[#00e676]' : 'text-[#ff4d4d]'}`}>
+                <div className={`text-[13px] font-bold drop-shadow-sm ${trade.type === 'WIN' ? 'text-[#00e676]' : 'text-[#ff4d4d]'}`}>
                   {trade.type === 'WIN' ? '+' : '-'}${trade.amount.toFixed(2)}
                 </div>
               </div>
-              {idx !== Math.min(filteredTrades.length, 50) - 1 && (
-                <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-slate-400 dark:via-white/40 to-transparent my-0 opacity-80"></div>
+              {idx !== Math.min(filteredTrades.length, 4) - 1 && (
+                <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-slate-400 dark:via-white/20 to-transparent my-0 opacity-80"></div>
               )}
             </div>
           ))}

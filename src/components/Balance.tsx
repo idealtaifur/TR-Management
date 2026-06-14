@@ -46,7 +46,7 @@ export function Balance() {
   const dataMax = Math.max(...data.map((d) => d.value));
 
   return (
-    <div className="glass-panel rounded-[2rem] flex flex-col relative z-10 w-full mb-3 overflow-hidden min-h-[175px]">
+    <div className="glass-panel-3d rounded-[2rem] flex flex-col relative z-10 w-full mb-3 overflow-hidden min-h-[220px] transform transition-transform hover:-translate-y-1 hover:shadow-2xl">
       <div className="flex justify-between items-start p-5 pb-8 relative z-10">
         <div className="flex flex-col">
           <div 

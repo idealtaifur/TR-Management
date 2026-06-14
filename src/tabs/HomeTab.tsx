@@ -9,7 +9,7 @@ export function HomeTab({ setTab, currentTab }: { setTab: (t: string) => void, c
   const { profile } = useStore();
 
   return (
-    <div className="space-y-2 pb-0 flex flex-col pt-1">
+    <div className="space-y-5 pb-0 flex flex-col pt-1">
       <Balance />
       <StatsGrid />
       <Category />
