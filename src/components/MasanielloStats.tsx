@@ -12,12 +12,12 @@ export function MasanielloStats() {
       {/* Profit */}
       <div className="glass-panel py-1.5 px-2 rounded-[1.7rem] flex flex-col items-center justify-center h-[80px]">
          <div className="flex items-center gap-1 text-secondary text-[7px] font-bold tracking-wider mb-0.5">
-           <div className={`w-3 h-3 rounded-full border border-gray-500/30 flex items-center justify-center ${sessionProfit >= 0 ? 'text-[#00e676]' : 'text-[#ff4d4d]'}`}>
+           <div className={`w-3 h-3 rounded-full border border-gray-500/30 flex items-center justify-center ${sessionProfit >= 0 ? 'text-[#059669]' : 'text-[#ff4d4d]'}`}>
              <svg xmlns="http://www.w3.org/2000/svg" width="6" height="6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></svg>
            </div>
            SESSION PNL
          </div>
-         <div className={`text-sm font-bold mb-0.5 ${sessionProfit >= 0 ? 'text-[#00e676]' : 'text-[#ff4d4d]'}`}>
+         <div className={`text-sm font-bold mb-0.5 ${sessionProfit >= 0 ? 'text-[#059669]' : 'text-[#ff4d4d]'}`}>
             {sessionProfit >= 0 ? '+' : '-'}${Math.abs(sessionProfit).toFixed(2)}
          </div>
          <div className="text-secondary text-[7px] font-semibold flex items-center">

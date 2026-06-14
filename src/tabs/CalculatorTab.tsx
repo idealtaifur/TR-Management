@@ -60,7 +60,7 @@ export function CalculatorTab() {
          <div className="grid grid-cols-2 gap-4 text-center">
             <div>
                <span className="text-[10px] text-secondary uppercase font-bold block mb-1">সর্বমোট ব্যালেন্স</span>
-               <span className="text-2xl font-black text-[#00e676]">${enToBn(finalBalance.toFixed(2))}</span>
+               <span className="text-2xl font-black text-[#059669]">${enToBn(finalBalance.toFixed(2))}</span>
             </div>
             <div>
                <span className="text-[10px] text-secondary uppercase font-bold block mb-1">মোট লাভ</span>
@@ -88,7 +88,7 @@ export function CalculatorTab() {
                  <tr key={row.day}>
                     <td className="py-2 text-secondary">{enToBn(row.day)}</td>
                     <td className="py-2">${enToBn(row.open.toFixed(2))}</td>
-                    <td className="py-2 text-[#00e676]">+${enToBn(row.profit.toFixed(2))}</td>
+                    <td className="py-2 text-[#059669]">+${enToBn(row.profit.toFixed(2))}</td>
                     <td className="py-2">${enToBn(row.close.toFixed(2))}</td>
                  </tr>
                ))}

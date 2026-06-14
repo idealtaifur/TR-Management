@@ -4,7 +4,7 @@ import { useStore } from "../store/useStore";
 import { enToBn } from "../utils";
 
 const COLORS = {
-  'WIN': '#00e676',
+  'WIN': '#059669',
   'তাড়াহুড়া করে ট্রেড': '#ff9800',
   'ট্রেন্ডের বিপরীতে ট্রেড': '#ff9800',
   'ইমোশনাল ট্রেড': '#9c27b0',
@@ -81,7 +81,7 @@ export function Category() {
       {/* Header */}
       <div className="flex justify-between items-center mb-1.5">
         <div className="flex items-center gap-1.5 font-bold text-slate-800 dark:text-white/90 text-[11px] tracking-wide">
-          <div className="w-5 h-5 rounded-full bg-gradient-to-br from-[#00e676]/20 to-transparent flex items-center justify-center text-[#00e676] border border-[#00e676]/20">
+          <div className="w-5 h-5 rounded-full bg-gradient-to-br from-[#059669]/20 to-transparent flex items-center justify-center text-[#059669] border border-[#059669]/20">
             <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
           </div>
           ট্রেডিং হিস্টোরি
@@ -158,7 +158,7 @@ export function Category() {
             <div key={trade.id} className="flex flex-col">
               <div className="flex justify-between items-center bg-transparent py-1">
                 <div className="flex items-center gap-2">
-                  <div className={`w-5 h-5 rounded-full flex items-center justify-center border shadow-sm ${trade.type === 'WIN' ? 'bg-[#00e676]/10 text-[#00e676] border-[#00e676]/30' : 'bg-[#ff4d4d]/10 text-[#ff4d4d] border-[#ff4d4d]/30'}`}>
+                  <div className={`w-5 h-5 rounded-full flex items-center justify-center border shadow-sm ${trade.type === 'WIN' ? 'bg-[#059669]/10 text-[#059669] border-[#059669]/30' : 'bg-[#ff4d4d]/10 text-[#ff4d4d] border-[#ff4d4d]/30'}`}>
                     {trade.type === 'WIN' ? (
                        <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="m7 17 9.2-9.2M17 17V7H7"/></svg>
                     ) : (
@@ -172,7 +172,7 @@ export function Category() {
                     </span>
                   </div>
                 </div>
-                <div className={`text-[13px] font-bold drop-shadow-sm ${trade.type === 'WIN' ? 'text-[#00e676]' : 'text-[#ff4d4d]'}`}>
+                <div className={`text-[13px] font-bold drop-shadow-sm ${trade.type === 'WIN' ? 'text-[#059669]' : 'text-[#ff4d4d]'}`}>
                   {trade.type === 'WIN' ? '+' : '-'}${trade.amount.toFixed(2)}
                 </div>
               </div>

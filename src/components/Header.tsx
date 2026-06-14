@@ -33,14 +33,14 @@ export function Header({ setTab }: { setTab?: (t: string) => void }) {
               <img
                 src={profile.avatar}
                 alt="Profile"
-                className="w-12 h-12 rounded-full ring-2 ring-[#00e676]/50 hover:ring-[#00e676] object-cover transition-all"
+                className="w-12 h-12 rounded-full ring-2 ring-[#059669]/50 hover:ring-[#059669] object-cover transition-all"
               />
             ) : (
-              <div className={`w-12 h-12 rounded-full flex items-center justify-center ring-2 ring-[#00e676]/50 overflow-hidden relative ${theme === 'dark' ? 'bg-white/10 text-white' : 'bg-slate-200 text-slate-800'}`}>
+              <div className={`w-12 h-12 rounded-full flex items-center justify-center ring-2 ring-[#059669]/50 overflow-hidden relative ${theme === 'dark' ? 'bg-white/10 text-white' : 'bg-slate-200 text-slate-800'}`}>
                  <span className="text-xl font-bold">{profile.name ? profile.name.charAt(0).toUpperCase() : 'U'}</span>
               </div>
             )}
-            <div className={`absolute bottom-0 right-0 w-3.5 h-3.5 ${isSyncing ? 'bg-[#facc15] animate-pulse' : 'bg-[#00e676]'} border-2 border-[#071318] rounded-full transition-colors`}></div>
+            <div className={`absolute bottom-0 right-0 w-3.5 h-3.5 ${isSyncing ? 'bg-[#facc15] animate-pulse' : 'bg-[#059669]'} border-2 border-[#071318] rounded-full transition-colors`}></div>
           </div>
           <div onClick={() => setTab?.('profile')}>
             <h1 className="text-lg font-bold text-primary flex items-center gap-1.5 leading-tight">

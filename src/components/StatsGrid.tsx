@@ -29,16 +29,16 @@ export function StatsGrid() {
 
       {/* Progress */}
       <div className="glass-panel rounded-[1.2rem] py-2 flex flex-col items-center justify-center relative min-h-[64px]">
-        <div className="absolute top-2 left-2 w-4 h-4 rounded-full bg-gradient-to-br from-[#00e676]/20 to-transparent flex items-center justify-center text-[#00e676] border border-[#00e676]/20">
+        <div className="absolute top-2 left-2 w-4 h-4 rounded-full bg-gradient-to-br from-[#059669]/20 to-transparent flex items-center justify-center text-[#059669] border border-[#059669]/20">
           <svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></svg>
         </div>
         <div className="text-slate-500 dark:text-white/60 text-[8px] font-black tracking-[0.1em] mb-0.5 ml-4 uppercase">Progress</div>
         {isComplete ? (
-          <div className="text-[#00e676] text-[11px] font-black mb-0 tracking-tight uppercase">Complete</div>
+          <div className="text-[#059669] text-[11px] font-black mb-0 tracking-tight uppercase">Complete</div>
         ) : (
           <div className="text-slate-800 dark:text-slate-50 text-[13px] font-bold mb-0 tracking-tight">${displayEarned.toFixed(2)}</div>
         )}
-        <div className="text-[#00e676] text-[7.5px] font-bold flex items-center gap-1 mt-0.5">
+        <div className="text-[#059669] text-[7.5px] font-bold flex items-center gap-1 mt-0.5">
           {isComplete ? 'Goal Met ✓' : `${progressPct.toFixed(0)}% Done`}
         </div>
       </div>

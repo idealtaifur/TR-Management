@@ -113,7 +113,7 @@ export function ProfileTab() {
          <div className="flex flex-col items-center">
             <div className="relative group">
                <div 
-                 className="cursor-pointer w-24 h-24 rounded-full bg-slate-200 dark:bg-black/40 ring-2 ring-[#00e676]/50 hover:ring-[#00e676] shadow-[0_0_20px_rgba(0,230,118,0.2)] transition-all overflow-hidden flex items-center justify-center p-1"
+                 className="cursor-pointer w-24 h-24 rounded-full bg-slate-200 dark:bg-black/40 ring-2 ring-[#059669]/50 hover:ring-[#059669] shadow-[0_0_20px_rgba(16,185,129,0.2)] transition-all overflow-hidden flex items-center justify-center p-1"
                  onClick={() => setShowFullImage(true)}
                >
                   <div className="w-full h-full rounded-full overflow-hidden bg-black/40 flex items-center justify-center">
@@ -128,12 +128,12 @@ export function ProfileTab() {
                </div>
                <label className="absolute bottom-0 right-0 cursor-pointer">
                  <input type="file" accept="image/*" className="hidden" onChange={handleAvatarChange} />
-                 <div className="bg-[#00e676] text-slate-900 p-1.5 rounded-full shadow-lg border-2 border-[#0b1621] hover:scale-110 transition-transform">
+                 <div className="bg-[#059669] text-slate-900 p-1.5 rounded-full shadow-lg border-2 border-[#0b1621] hover:scale-110 transition-transform">
                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></svg>
                  </div>
                </label>
             </div>
-            <span className="text-[10px] text-[#00e676] mt-4 font-bold uppercase tracking-wider">Change Photo</span>
+            <span className="text-[10px] text-[#059669] mt-4 font-bold uppercase tracking-wider">Change Photo</span>
             <button onClick={handleLogout} className="mt-4 bg-red-500/10 text-red-500 font-bold py-2.5 px-6 rounded-full text-xs shadow hover:bg-red-500/20 transition-colors">
               Log Out
             </button>
@@ -142,20 +142,20 @@ export function ProfileTab() {
          <div className="grid grid-cols-2 gap-3">
             <div className="col-span-2">
                <label className="text-[10px] text-secondary font-semibold mb-1 block uppercase">নাম (Name)</label>
-               <input type="text" onFocus={handleFocus} value={profile.name} onChange={e => updateProfile({ name: e.target.value })} className="w-full inner-glass text-slate-900 dark:text-white rounded-xl px-3 py-2.5 text-sm font-medium focus:border-[#00e676] focus:outline-none transition-colors" />
+               <input type="text" onFocus={handleFocus} value={profile.name} onChange={e => updateProfile({ name: e.target.value })} className="w-full inner-glass text-slate-900 dark:text-white rounded-xl px-3 py-2.5 text-sm font-medium focus:border-[#059669] focus:outline-none transition-colors" />
             </div>
             <div className="col-span-2">
                <label className="text-[10px] text-secondary font-semibold mb-1 block uppercase">ঠিকানা (Address)</label>
-               <input type="text" onFocus={handleFocus} value={profile.address} onChange={e => updateProfile({ address: e.target.value })} className="w-full inner-glass text-slate-900 dark:text-white rounded-xl px-3 py-2.5 text-sm font-medium focus:border-[#00e676] focus:outline-none transition-colors" />
+               <input type="text" onFocus={handleFocus} value={profile.address} onChange={e => updateProfile({ address: e.target.value })} className="w-full inner-glass text-slate-900 dark:text-white rounded-xl px-3 py-2.5 text-sm font-medium focus:border-[#059669] focus:outline-none transition-colors" />
             </div>
             
             <div>
                <label className="text-[10px] text-secondary font-semibold mb-1 block uppercase">বয়স (Age)</label>
-               <input type="number" onFocus={handleFocus} value={profile.age} onChange={e => updateProfile({ age: e.target.value })} className="w-full inner-glass text-slate-900 dark:text-white rounded-xl px-3 py-2.5 text-sm font-medium focus:border-[#00e676] focus:outline-none transition-colors" />
+               <input type="number" onFocus={handleFocus} value={profile.age} onChange={e => updateProfile({ age: e.target.value })} className="w-full inner-glass text-slate-900 dark:text-white rounded-xl px-3 py-2.5 text-sm font-medium focus:border-[#059669] focus:outline-none transition-colors" />
             </div>
             <div>
                <label className="text-[10px] text-secondary font-semibold mb-1 block uppercase">জেন্ডার (Gender)</label>
-               <select value={profile.gender?.charAt(0).toUpperCase() + profile.gender?.slice(1)} onChange={e => updateProfile({ gender: e.target.value })} className="w-full inner-glass text-slate-900 dark:text-white rounded-xl px-3 py-2.5 text-sm font-medium focus:border-[#00e676] focus:outline-none transition-colors">
+               <select value={profile.gender?.charAt(0).toUpperCase() + profile.gender?.slice(1)} onChange={e => updateProfile({ gender: e.target.value })} className="w-full inner-glass text-slate-900 dark:text-white rounded-xl px-3 py-2.5 text-sm font-medium focus:border-[#059669] focus:outline-none transition-colors">
                  <option value="">Select...</option>
                  <option value="Male">Male</option>
                  <option value="Female">Female</option>
@@ -175,14 +175,14 @@ export function ProfileTab() {
                </div>
                
                {expType === 'years' ? (
-                  <select value={profile.experienceYears} onChange={e => updateProfile({ experienceYears: e.target.value, experienceMonths: '0' })} className="w-full inner-glass text-slate-900 dark:text-white rounded-xl px-3 py-2.5 text-sm font-medium focus:border-[#00e676] focus:outline-none transition-colors">
+                  <select value={profile.experienceYears} onChange={e => updateProfile({ experienceYears: e.target.value, experienceMonths: '0' })} className="w-full inner-glass text-slate-900 dark:text-white rounded-xl px-3 py-2.5 text-sm font-medium focus:border-[#059669] focus:outline-none transition-colors">
                     <option value="0">0 Years</option>
                     <option value="1">1 Year</option>
                     {[2,3,4,5,6,7,8,9,10].map(y => <option key={y} value={y}>{y} Years</option>)}
                     <option value="10+">10+ Years</option>
                   </select>
                ) : (
-                  <select value={profile.experienceMonths} onChange={e => updateProfile({ experienceMonths: e.target.value, experienceYears: '0' })} className="w-full inner-glass text-slate-900 dark:text-white rounded-xl px-3 py-2.5 text-sm font-medium focus:border-[#00e676] focus:outline-none transition-colors">
+                  <select value={profile.experienceMonths} onChange={e => updateProfile({ experienceMonths: e.target.value, experienceYears: '0' })} className="w-full inner-glass text-slate-900 dark:text-white rounded-xl px-3 py-2.5 text-sm font-medium focus:border-[#059669] focus:outline-none transition-colors">
                     {[0,1,2,3,4,5,6,7,8,9,10,11].map(m => <option key={m} value={m}>{m} Months</option>)}
                   </select>
                )}
@@ -190,7 +190,7 @@ export function ProfileTab() {
 
             <div className="col-span-2">
                <label className="text-[10px] text-secondary font-semibold mb-1 block uppercase">টাইম জোন (Time Zone)</label>
-               <select value={profile.timezone} onChange={e => updateProfile({ timezone: e.target.value })} className="w-full inner-glass text-slate-900 dark:text-white rounded-xl px-3 py-2.5 text-sm font-medium focus:border-[#00e676] focus:outline-none transition-colors">
+               <select value={profile.timezone} onChange={e => updateProfile({ timezone: e.target.value })} className="w-full inner-glass text-slate-900 dark:text-white rounded-xl px-3 py-2.5 text-sm font-medium focus:border-[#059669] focus:outline-none transition-colors">
                  {timezones.map(tz => <option key={tz.value} value={tz.value}>{tz.label}</option>)}
                </select>
             </div>
@@ -206,7 +206,7 @@ export function ProfileTab() {
                        if (newStartBal > 0 && newStartBal === balance) {
                            store.resetToFreshStart(newStartBal);
                        }
-                    }} className="w-full inner-glass text-slate-900 dark:text-white rounded-xl px-3 py-2.5 text-sm font-medium focus:border-[#00e676] focus:outline-none transition-colors" />
+                    }} className="w-full inner-glass text-slate-900 dark:text-white rounded-xl px-3 py-2.5 text-sm font-medium focus:border-[#059669] focus:outline-none transition-colors" />
                  </div>
                  <div>
                     <label className="text-[10px] text-secondary font-semibold mb-1 block uppercase truncate">Curr Bal / বর্তমান</label>
@@ -224,24 +224,24 @@ export function ProfileTab() {
                               store.updateDailyTarget({ dayNum: potentialDay });
                            }
                        }
-                    }} className="w-full inner-glass text-[#00e676] font-bold rounded-xl px-3 py-2.5 text-sm focus:border-[#00e676] focus:outline-none transition-colors" />
+                    }} className="w-full inner-glass text-[#059669] font-bold rounded-xl px-3 py-2.5 text-sm focus:border-[#059669] focus:outline-none transition-colors" />
                  </div>
                  
                  <div>
                     <label className="text-[10px] text-secondary font-semibold mb-1 block uppercase truncate">Daily Prf / টার্গেট</label>
-                    <input type="number" step="0.01" onFocus={handleFocus} value={profile.dailyProfitTarget ? Number(Number(profile.dailyProfitTarget).toFixed(2)) : ''} onChange={e => { updateProfile({ dailyProfitTarget: Number(e.target.value) }); store.updateDailyTarget({ dailyPct: Number(e.target.value) }); }} className="w-full inner-glass text-slate-900 dark:text-white rounded-xl px-3 py-2.5 text-sm font-medium focus:border-[#00e676] focus:outline-none transition-colors" />
+                    <input type="number" step="0.01" onFocus={handleFocus} value={profile.dailyProfitTarget ? Number(Number(profile.dailyProfitTarget).toFixed(2)) : ''} onChange={e => { updateProfile({ dailyProfitTarget: Number(e.target.value) }); store.updateDailyTarget({ dailyPct: Number(e.target.value) }); }} className="w-full inner-glass text-slate-900 dark:text-white rounded-xl px-3 py-2.5 text-sm font-medium focus:border-[#059669] focus:outline-none transition-colors" />
                  </div>
                  <div>
                     <label className="text-[10px] text-secondary font-semibold mb-1 block uppercase truncate">Tgt Days / দিন</label>
-                    <input type="number" onFocus={handleFocus} value={profile.targetDays || ''} onChange={e => { updateProfile({ targetDays: Number(e.target.value) }); store.updateDailyTarget({ totalDays: Number(e.target.value) }); }} className="w-full inner-glass text-slate-900 dark:text-white rounded-xl px-3 py-2.5 text-sm font-medium focus:border-[#00e676] focus:outline-none transition-colors" />
+                    <input type="number" onFocus={handleFocus} value={profile.targetDays || ''} onChange={e => { updateProfile({ targetDays: Number(e.target.value) }); store.updateDailyTarget({ totalDays: Number(e.target.value) }); }} className="w-full inner-glass text-slate-900 dark:text-white rounded-xl px-3 py-2.5 text-sm font-medium focus:border-[#059669] focus:outline-none transition-colors" />
                  </div>
                  <div>
                     <label className="text-[10px] text-secondary font-semibold mb-1 block uppercase truncate">Curr Day / বর্তমান দিন</label>
-                    <input type="number" onFocus={handleFocus} value={dailyTarget.dayNum || ''} onChange={e => store.updateDailyTarget({ dayNum: Number(e.target.value) })} className="w-full inner-glass text-slate-900 dark:text-white rounded-xl px-3 py-2.5 text-sm font-medium focus:border-[#00e676] focus:outline-none transition-colors" />
+                    <input type="number" onFocus={handleFocus} value={dailyTarget.dayNum || ''} onChange={e => store.updateDailyTarget({ dayNum: Number(e.target.value) })} className="w-full inner-glass text-slate-900 dark:text-white rounded-xl px-3 py-2.5 text-sm font-medium focus:border-[#059669] focus:outline-none transition-colors" />
                  </div>
                  <div>
                     <label className="text-[10px] text-secondary font-semibold mb-1 block uppercase truncate">Payout / পেআউট (%)</label>
-                    <input type="number" onFocus={handleFocus} value={dailyTarget.payout || ''} onChange={e => store.updateDailyTarget({ payout: Number(e.target.value) })} className="w-full inner-glass text-slate-900 dark:text-white rounded-xl px-3 py-2.5 text-sm font-medium focus:border-[#00e676] focus:outline-none transition-colors" />
+                    <input type="number" onFocus={handleFocus} value={dailyTarget.payout || ''} onChange={e => store.updateDailyTarget({ payout: Number(e.target.value) })} className="w-full inner-glass text-slate-900 dark:text-white rounded-xl px-3 py-2.5 text-sm font-medium focus:border-[#059669] focus:outline-none transition-colors" />
                  </div>
                </div>
             </div>
@@ -249,10 +249,10 @@ export function ProfileTab() {
             <div className="col-span-2 mt-2">
                <label className="text-[10px] text-secondary font-semibold mb-2 block uppercase">হোম পেজ ডিসপ্লে (Home Page Display Strategy)</label>
                <div className="flex bg-slate-200/50 dark:bg-black/30 rounded-xl p-1 border border-slate-300 dark:border-white/10">
-                 <button onClick={() => updateProfile({ preferredStrategy: 'masaniello' })} className={`flex-1 py-2 text-xs font-bold rounded-lg transition-colors ${profile.preferredStrategy === 'masaniello' ? 'bg-[#00e676] text-black shadow' : 'text-secondary hover:text-slate-800 dark:hover:text-white'}`}>
+                 <button onClick={() => updateProfile({ preferredStrategy: 'masaniello' })} className={`flex-1 py-2 text-xs font-bold rounded-lg transition-colors ${profile.preferredStrategy === 'masaniello' ? 'bg-[#059669] text-black shadow' : 'text-secondary hover:text-slate-800 dark:hover:text-white'}`}>
                    Masaniello
                  </button>
-                 <button onClick={() => updateProfile({ preferredStrategy: 'target' })} className={`flex-1 py-2 text-xs font-bold rounded-lg transition-colors ${profile.preferredStrategy === 'target' ? 'bg-[#00e676] text-black shadow' : 'text-secondary hover:text-slate-800 dark:hover:text-white'}`}>
+                 <button onClick={() => updateProfile({ preferredStrategy: 'target' })} className={`flex-1 py-2 text-xs font-bold rounded-lg transition-colors ${profile.preferredStrategy === 'target' ? 'bg-[#059669] text-black shadow' : 'text-secondary hover:text-slate-800 dark:hover:text-white'}`}>
                    Daily Target
                  </button>
                </div>
@@ -260,7 +260,7 @@ export function ProfileTab() {
          </div>
 
          <div className="pt-2">
-            <button onClick={handleSave} className={`w-full shadow-[0_0_15px_rgba(255,255,255,0.3)] py-3 rounded-xl font-extrabold text-sm hover:scale-[1.02] transition-all flex justify-center items-center gap-2 ${isSaving ? 'bg-[#00e676] text-black scale-[0.98]' : 'bg-slate-800 dark:bg-white text-white dark:text-slate-900'}`}>
+            <button onClick={handleSave} className={`w-full shadow-[0_0_15px_rgba(255,255,255,0.3)] py-3 rounded-xl font-extrabold text-sm hover:scale-[1.02] transition-all flex justify-center items-center gap-2 ${isSaving ? 'bg-[#059669] text-black scale-[0.98]' : 'bg-slate-800 dark:bg-white text-white dark:text-slate-900'}`}>
                {isSaving ? (
                  <>
                    <svg className="animate-spin h-4 w-4 text-black" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>

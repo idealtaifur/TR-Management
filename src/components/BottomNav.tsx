@@ -3,7 +3,7 @@ export function BottomNav({ currentTab, setTab }: { currentTab: string, setTab: 
     <div className="flex justify-between gap-2.5 relative w-[95%] mx-auto mt-0 pb-3">
       
       {/* Target Mode */}
-      <button onClick={() => setTab('target')} className={`flex flex-col items-center justify-center flex-1 h-[70px] transition-all rounded-2xl border backdrop-blur-md relative ${currentTab === 'target' ? 'bg-gradient-to-br from-[#00e676] to-[#00b25e] border-transparent shadow-[0_8px_20px_rgba(0,230,118,0.4)] text-white' : 'bg-emerald-50/70 dark:bg-emerald-900/30 border-emerald-200/60 dark:border-emerald-700/40 hover:bg-emerald-100/80 dark:hover:bg-emerald-800/50 text-emerald-600 dark:text-emerald-400'}`}>
+      <button onClick={() => setTab('target')} className={`flex flex-col items-center justify-center flex-1 h-[70px] transition-all rounded-2xl border backdrop-blur-md relative ${currentTab === 'target' ? 'bg-gradient-to-br from-[#059669] to-[#047857] border-transparent shadow-[0_8px_20px_rgba(16,185,129,0.4)] text-white' : 'bg-emerald-50/70 dark:bg-emerald-900/30 border-emerald-200/60 dark:border-emerald-700/40 hover:bg-emerald-100/80 dark:hover:bg-emerald-800/50 text-emerald-600 dark:text-emerald-400'}`}>
         <div className={`w-8 h-8 rounded-full flex items-center justify-center mb-1 transition-transform ${currentTab === 'target' ? 'scale-110' : ''}`} >
            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
         </div>

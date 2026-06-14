@@ -80,10 +80,10 @@ export function Onboarding({ onComplete }: { onComplete?: () => void }) {
 
   const { theme } = useStore();
   const isDark = theme === 'dark';
-  const inputClass = `w-full border rounded-xl px-4 py-3 outline-none focus:border-[#00e676] focus:ring-2 focus:ring-[#00e676]/30 transition-all font-medium ${isDark ? 'bg-black/20 border-white/10 text-white placeholder-white/30' : 'bg-white border-slate-200 text-slate-800 placeholder-slate-400'} shadow-sm`;
+  const inputClass = `w-full border rounded-xl px-4 py-3 outline-none focus:border-[#059669] focus:ring-2 focus:ring-[#059669]/30 transition-all font-medium ${isDark ? 'bg-black/20 border-white/10 text-white placeholder-white/30' : 'bg-white border-slate-200 text-slate-800 placeholder-slate-400'} shadow-sm`;
 
   return (
-    <div className={`w-full min-h-[100dvh] flex flex-col justify-center items-center p-4 selection:bg-[#00e676]/30 ${isDark ? 'bg-black text-white' : 'bg-slate-50 text-slate-800'}`}>
+    <div className={`w-full min-h-[100dvh] flex flex-col justify-center items-center p-4 selection:bg-[#059669]/30 ${isDark ? 'bg-black text-white' : 'bg-slate-50 text-slate-800'}`}>
       
       {/* Background Gradients for Glassmorphism */}
       {isDark && (
@@ -99,7 +99,7 @@ export function Onboarding({ onComplete }: { onComplete?: () => void }) {
         {/* Decorative elements */}
         {isDark && (
           <>
-            <div className="absolute top-[-10%] right-[-10%] w-[200px] h-[200px] bg-[#00e676] rounded-full blur-[80px] opacity-[0.15] pointer-events-none"></div>
+            <div className="absolute top-[-10%] right-[-10%] w-[200px] h-[200px] bg-[#059669] rounded-full blur-[80px] opacity-[0.15] pointer-events-none"></div>
             <div className="absolute bottom-[-10%] left-[-10%] w-[200px] h-[200px] bg-purple-500 rounded-full blur-[80px] opacity-[0.15] pointer-events-none"></div>
           </>
         )}
@@ -107,7 +107,7 @@ export function Onboarding({ onComplete }: { onComplete?: () => void }) {
         {/* Header */}
         <div className="flex justify-between items-center mb-6 z-10 w-full relative">
           <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 rounded-full bg-[#00e676] flex items-center justify-center">
+            <div className="w-8 h-8 rounded-full bg-[#059669] flex items-center justify-center">
               <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
               </svg>
@@ -119,9 +119,9 @@ export function Onboarding({ onComplete }: { onComplete?: () => void }) {
 
         {/* Progress Bar */}
         <div className="flex space-x-1.5 mb-8 z-10 w-full relative">
-          <div className={`h-1.5 flex-1 rounded-full ${step >= 1 ? 'bg-[#00e676]' : 'bg-slate-200'}`} />
-          <div className={`h-1.5 flex-1 rounded-full ${step >= 2 ? 'bg-[#00e676]' : 'bg-slate-200'}`} />
-          <div className={`h-1.5 flex-1 rounded-full ${step >= 3 ? 'bg-[#00e676]' : 'bg-slate-200'}`} />
+          <div className={`h-1.5 flex-1 rounded-full ${step >= 1 ? 'bg-[#059669]' : 'bg-slate-200'}`} />
+          <div className={`h-1.5 flex-1 rounded-full ${step >= 2 ? 'bg-[#059669]' : 'bg-slate-200'}`} />
+          <div className={`h-1.5 flex-1 rounded-full ${step >= 3 ? 'bg-[#059669]' : 'bg-slate-200'}`} />
         </div>
 
         <div className="flex-1 flex flex-col justify-center w-full z-10 relative">
@@ -160,7 +160,7 @@ export function Onboarding({ onComplete }: { onComplete?: () => void }) {
               <button 
                 onClick={() => setStep(2)} 
                 disabled={!name.trim()}
-                className="w-full mt-8 bg-[#00e676] hover:bg-[#00c853] disabled:bg-slate-300 disabled:text-slate-500 text-white font-bold py-3.5 rounded-xl transition-all flex items-center justify-center space-x-2 shadow-lg shadow-[#00e676]/30">
+                className="w-full mt-8 bg-[#059669] hover:bg-[#00c853] disabled:bg-slate-300 disabled:text-slate-500 text-white font-bold py-3.5 rounded-xl transition-all flex items-center justify-center space-x-2 shadow-lg shadow-[#059669]/30">
                 <span>পরবর্তী ধাপ</span>
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" /></svg>
               </button>
@@ -192,7 +192,7 @@ export function Onboarding({ onComplete }: { onComplete?: () => void }) {
                   <p className="text-xs text-slate-500 mb-2 font-medium text-center">{enToBn(numTargetDays)} দিন পর আপনার সম্ভাব্য ব্যালেন্স</p>
                   <div className="flex justify-center items-end space-x-1">
                     <span className="text-sm font-bold text-slate-400 mb-1">$</span>
-                    <span className="text-3xl font-black text-[#00e676]">{enToBn(finalBalance.toFixed(2))}</span>
+                    <span className="text-3xl font-black text-[#059669]">{enToBn(finalBalance.toFixed(2))}</span>
                   </div>
                   <div className="text-center mt-2">
                     <span className="text-xs font-semibold text-emerald-500 bg-emerald-100 px-2 py-0.5 rounded-full">+${enToBn(totalProfit.toFixed(2))} প্রফিট</span>
@@ -209,7 +209,7 @@ export function Onboarding({ onComplete }: { onComplete?: () => void }) {
                 <button 
                   onClick={() => setStep(3)} 
                   disabled={numBalance <= 0 || numTargetPct <= 0 || numTargetDays <= 0}
-                  className="w-full bg-[#00e676] hover:bg-[#00c853] disabled:bg-slate-300 disabled:text-slate-500 text-white font-bold py-3.5 rounded-xl transition-all flex items-center justify-center shadow-lg shadow-[#00e676]/30">
+                  className="w-full bg-[#059669] hover:bg-[#00c853] disabled:bg-slate-300 disabled:text-slate-500 text-white font-bold py-3.5 rounded-xl transition-all flex items-center justify-center shadow-lg shadow-[#059669]/30">
                   <span>পরবর্তী</span>
                 </button>
               </div>
@@ -218,7 +218,7 @@ export function Onboarding({ onComplete }: { onComplete?: () => void }) {
 
           {step === 3 && (
             <div className="animate-in fade-in slide-in-from-right-4 duration-500 flex flex-col items-center w-full">
-              <div className="w-16 h-16 rounded-full bg-[#00e676] flex items-center justify-center shadow-lg shadow-[#00e676]/40 mb-6">
+              <div className="w-16 h-16 rounded-full bg-[#059669] flex items-center justify-center shadow-lg shadow-[#059669]/40 mb-6">
                 <svg className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                 </svg>
@@ -234,11 +234,11 @@ export function Onboarding({ onComplete }: { onComplete?: () => void }) {
                 </div>
                 <div className={`flex justify-between items-center py-2.5 border-b ${isDark ? 'border-white/10' : 'border-slate-200/60'}`}>
                    <span className={`text-sm font-medium ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Daily target</span>
-                   <span className="text-sm font-bold text-[#00e676]">{enToBn(numTargetPct)}%</span>
+                   <span className="text-sm font-bold text-[#059669]">{enToBn(numTargetPct)}%</span>
                 </div>
                 <div className={`flex justify-between items-center py-2.5 border-b ${isDark ? 'border-white/10' : 'border-slate-200/60'}`}>
                    <span className={`text-sm font-medium ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>{enToBn(numTargetDays)} দিনে profit</span>
-                   <span className="text-sm font-bold text-[#00e676]">+{enToBn(totalProfit.toFixed(2))}</span>
+                   <span className="text-sm font-bold text-[#059669]">+{enToBn(totalProfit.toFixed(2))}</span>
                 </div>
                 <div className="flex justify-between items-center pt-2.5">
                    <span className={`text-sm font-bold ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>শেষ ব্যালেন্স</span>
@@ -254,7 +254,7 @@ export function Onboarding({ onComplete }: { onComplete?: () => void }) {
                 </button>
                 <button 
                   onClick={handleComplete} 
-                  className="col-span-3 bg-[#00e676] hover:bg-[#00c853] text-white font-bold py-3.5 rounded-xl transition-all flex items-center justify-center space-x-2 shadow-lg shadow-[#00e676]/30">
+                  className="col-span-3 bg-[#059669] hover:bg-[#00c853] text-white font-bold py-3.5 rounded-xl transition-all flex items-center justify-center space-x-2 shadow-lg shadow-[#059669]/30">
                   <span>শুরু করুন</span>
                   <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" /></svg>
                 </button>

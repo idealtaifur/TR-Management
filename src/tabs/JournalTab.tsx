@@ -27,7 +27,7 @@ export function JournalTab() {
                 <button
                   key={m}
                   onClick={() => setSelectedMood(m)}
-                  className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-all shadow-sm ${selectedMood === m ? 'bg-[#00e676]/20 border-[#00e676]/50 text-[#00e676]' : 'bg-slate-200/50 dark:bg-white/5 border-slate-300 dark:border-white/10 text-secondary'}`}
+                  className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-all shadow-sm ${selectedMood === m ? 'bg-[#059669]/20 border-[#059669]/50 text-[#059669]' : 'bg-slate-200/50 dark:bg-white/5 border-slate-300 dark:border-white/10 text-secondary'}`}
                 >
                   {m}
                 </button>
@@ -40,7 +40,7 @@ export function JournalTab() {
              value={note}
              onChange={e => setNote(e.target.value)}
              placeholder="আজ কেন জিতলে/হারলে? কী শিখলে?"
-             className="w-full inner-glass text-slate-900 dark:text-white rounded-xl p-3 text-sm min-h-[100px] placeholder-secondary focus:border-[#00e676] focus:outline-none transition-colors resize-none relative z-10"
+             className="w-full inner-glass text-slate-900 dark:text-white rounded-xl p-3 text-sm min-h-[100px] placeholder-secondary focus:border-[#059669] focus:outline-none transition-colors resize-none relative z-10"
            />
         </div>
 

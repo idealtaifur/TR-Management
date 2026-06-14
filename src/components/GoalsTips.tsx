@@ -64,16 +64,16 @@ export function GoalsTips() {
         <div className="glass-panel rounded-[1.5rem] p-3 flex flex-col justify-between h-[155px]">
           <div className="relative z-10 flex justify-between items-center mb-1">
             <div className="flex items-center gap-1.5 font-bold text-slate-800 dark:text-white/90 text-[13px]">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#00e676" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#059669" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
               Goals
             </div>
-            <span className="text-[#00e676] text-[10px] font-bold">View All</span>
+            <span className="text-[#059669] text-[10px] font-bold">View All</span>
           </div>
 
           {/* Monthly Goal */}
           <div className="relative z-10 mb-1">
             <div className="flex items-center gap-2 mb-1">
-               <div className="w-5 h-5 rounded-full bg-slate-200 dark:bg-white/5 flex items-center justify-center flex-shrink-0 text-[#00e676]">
+               <div className="w-5 h-5 rounded-full bg-slate-200 dark:bg-white/5 flex items-center justify-center flex-shrink-0 text-[#059669]">
                  <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
                </div>
                <div className="flex justify-between flex-1 items-start">
@@ -81,14 +81,14 @@ export function GoalsTips() {
                     <div className="text-slate-800 dark:text-white text-[12px] font-bold leading-none mb-0.5">Monthly</div>
                     <div className="text-slate-500 text-[9px] font-medium leading-none">৩০ days</div>
                  </div>
-                 <div className="text-[#00e676] font-bold text-[11.5px]">{monthlyProgress.toFixed(0)}%</div>
+                 <div className="text-[#059669] font-bold text-[11.5px]">{monthlyProgress.toFixed(0)}%</div>
                </div>
             </div>
             <div className="text-slate-500 font-medium text-[9px] mb-0.5">
               ${currentProfit.toFixed(2)} / ${monthlyTargetAmount.toFixed(0)}
             </div>
             <div className="w-full bg-black/10 dark:bg-white/5 h-1 rounded-full overflow-hidden mb-1">
-              <div className="h-full bg-[#00e676]" style={{ width: `${monthlyProgress}%` }}></div>
+              <div className="h-full bg-[#059669]" style={{ width: `${monthlyProgress}%` }}></div>
             </div>
           </div>
 

@@ -81,7 +81,7 @@ export function TargetModeTab() {
            </div>
            <div className="inner-glass rounded-xl flex flex-col items-center justify-center py-2.5">
              <span className="text-secondary text-[10px] mb-0.5 tracking-wide">টার্গেট ব্যালেন্স</span>
-             <span className="text-[#00e676] font-black text-base drop-shadow-sm">${enToBn((targetAmount || 0).toFixed(2))}</span>
+             <span className="text-[#059669] font-black text-base drop-shadow-sm">${enToBn((targetAmount || 0).toFixed(2))}</span>
            </div>
            <div className="inner-glass rounded-xl flex items-center justify-between px-3 py-2">
              <span className="text-secondary text-[10px] tracking-wide">স্টপ লস</span>
@@ -100,7 +100,7 @@ export function TargetModeTab() {
             </div>
             <span className="text-secondary text-[10px] uppercase font-black tracking-[0.2em] mb-1.5 mt-1">পরবর্তী স্টেক</span>
             <span className="text-[#a855f7] dark:text-[#c084fc] text-[2.75rem] leading-none font-bold mb-1.5 drop-shadow-md tracking-tighter">${enToBn((dailyTarget.currentStake || 1).toFixed(2))}</span>
-            <span className="text-[#00e676]/90 text-[11px] font-bold tracking-wide">উইনে: +${enToBn(((dailyTarget.currentStake || 1) * ((dailyTarget.payout || 85) / 100)).toFixed(2))}</span>
+            <span className="text-[#059669]/90 text-[11px] font-bold tracking-wide">উইনে: +${enToBn(((dailyTarget.currentStake || 1) * ((dailyTarget.payout || 85) / 100)).toFixed(2))}</span>
         </div>
 
         {/* Actions */}
@@ -108,7 +108,7 @@ export function TargetModeTab() {
           <button 
             onClick={() => handleTrade(true)}
             disabled={dailyTarget.targetHit || dailyTarget.slHit}
-            className="bg-[#00e676] hover:bg-[#00e676]/90 text-slate-900 rounded-xl py-3 font-bold text-lg flex items-center justify-center gap-2 transition-all disabled:opacity-50 disabled:grayscale shadow-[0_0_15px_rgba(0,230,118,0.2)] active:scale-95"
+            className="bg-[#059669] hover:bg-[#059669]/90 text-slate-900 rounded-xl py-3 font-bold text-lg flex items-center justify-center gap-2 transition-all disabled:opacity-50 disabled:grayscale shadow-[0_0_15px_rgba(16,185,129,0.2)] active:scale-95"
           >
              WIN
           </button>
@@ -124,8 +124,8 @@ export function TargetModeTab() {
         {/* Overlays */}
         {dailyTarget.targetHit && (
            <div className="absolute inset-0 bg-slate-100/80 dark:bg-[#0b1621]/80 backdrop-blur-sm z-20 flex flex-col items-center justify-center p-3">
-             <div className="bg-white dark:bg-[#0b121e]/90 dark:backdrop-blur-xl p-6 rounded-2xl border border-[#00e676]/30 shadow-[0_0_40px_rgba(0,230,118,0.2)] dark:shadow-[inset_0_1px_1px_rgba(255,255,255,0.05),0_8px_16px_rgba(0,0,0,0.4)] flex flex-col items-center text-center w-full">
-                <span className="text-3xl font-bold text-[#00e676] mb-2">🎉</span>
+             <div className="bg-white dark:bg-[#0b121e]/90 dark:backdrop-blur-xl p-6 rounded-2xl border border-[#059669]/30 shadow-[0_0_40px_rgba(16,185,129,0.2)] dark:shadow-[inset_0_1px_1px_rgba(255,255,255,0.05),0_8px_16px_rgba(0,0,0,0.4)] flex flex-col items-center text-center w-full">
+                <span className="text-3xl font-bold text-[#059669] mb-2">🎉</span>
                 <span className="text-lg font-bold text-slate-800 dark:text-white mb-2">টার্গেট পূরণ!</span>
                 <span className="text-secondary text-xs mb-4">লভ্যাংশ বাঁচিয়ে রাখুন। অ্যাপ ২৪ ঘণ্টা পর খুলবে (লোভ থেকে বাঁচাতে)।</span>
              </div>

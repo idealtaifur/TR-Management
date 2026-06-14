@@ -44,26 +44,32 @@ export function FloatingNav({ currentTab, setTab }: { currentTab: string, setTab
   const activeIndex = tabs.findIndex(t => t.id === currentTab);
 
   return (
-    <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 w-[92%] max-w-[400px] z-[90]">
-      <div className={`relative w-full h-[65px] rounded-3xl ${navBgClass} backdrop-blur-xl shadow-[0_10px_30px_rgba(0,0,0,0.1)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.5)] flex items-center justify-between px-2`}>
+    <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 w-[92%] max-w-[400px] z-[90]">
+      <div className={`relative w-full h-[65px] rounded-[24px] ${navBgClass} border border-slate-300/60 dark:border-white/15 shadow-[0_10px_30px_rgba(0,0,0,0.15)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.6)] backdrop-blur-xl flex items-center justify-between px-2`}>
         {/* Tab Buttons */}
-        {tabs.map((tab) => {
+        {tabs.map((tab, index) => {
           const isActive = currentTab === tab.id;
           return (
-            <button 
-              key={tab.id}
-              onClick={() => setTab(tab.id)}
-              className="flex-1 flex flex-col items-center justify-center relative z-30 h-full focus:outline-none"
-            >
-              <div className={`transition-all duration-200 flex flex-col items-center justify-center ${isActive ? 'text-[#ec4899]' : 'text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300'}`}>
-                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={isActive ? "2.5" : "2"} strokeLinecap="round" strokeLinejoin="round">
-                  {tab.icon}
-                </svg>
-                <span className={`text-[10px] font-medium mt-1 ${isActive ? 'text-[#ec4899] font-bold' : 'text-slate-400 dark:text-slate-500'}`}>
-                  {tab.label}
-                </span>
-              </div>
-            </button>
+            <React.Fragment key={tab.id}>
+              <button 
+                onClick={() => setTab(tab.id)}
+                className="flex-1 flex flex-col items-center justify-center relative z-30 h-full focus:outline-none"
+              >
+                <div className={`transition-all duration-200 flex flex-col items-center justify-center ${isActive ? 'text-[#ec4899] scale-110 drop-shadow-md' : 'text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300'}`}>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={isActive ? "2.5" : "2"} strokeLinecap="round" strokeLinejoin="round">
+                    {tab.icon}
+                  </svg>
+                  <span className={`text-[10px] font-medium mt-1 ${isActive ? 'text-[#ec4899] font-bold' : 'text-slate-400 dark:text-slate-500'}`}>
+                    {tab.label}
+                  </span>
+                </div>
+              </button>
+              
+              {/* Gradient Divider */}
+              {index < tabs.length - 1 && (
+                <div className="w-[1px] h-[30px] rounded-full bg-gradient-to-b from-transparent via-slate-300 dark:via-slate-600 to-transparent opacity-50"></div>
+              )}
+            </React.Fragment>
           )
         })}
       </div>

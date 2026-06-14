@@ -80,23 +80,23 @@ export function Login() {
     }
   };
 
-  const inputClass = `w-full bg-black/40 border-t border-l border-white/10 border-b border-r border-black/50 rounded-2xl px-4 py-3 outline-none focus:border-[#00e676]/50 focus:ring-1 focus:ring-[#00e676]/30 transition-all font-medium text-white placeholder-white/30 shadow-[inset_2px_4px_16px_rgba(0,0,0,0.6)] text-sm`;
+  const inputClass = `w-full bg-black/40 border-t border-l border-white/10 border-b border-r border-black/50 rounded-2xl px-4 py-3 outline-none focus:border-[#059669]/50 focus:ring-1 focus:ring-[#059669]/30 transition-all font-medium text-white placeholder-white/30 shadow-[inset_2px_4px_16px_rgba(0,0,0,0.6)] text-sm`;
 
   return (
-    <div className={`w-full min-h-[100dvh] flex flex-col justify-center items-center p-4 selection:bg-[#00e676]/30 relative overflow-hidden ${isDark ? 'bg-[#050b14]' : 'bg-slate-100'}`}>
+    <div className={`w-full min-h-[100dvh] flex flex-col justify-center items-center p-4 selection:bg-[#059669]/30 relative overflow-hidden ${isDark ? 'bg-[#050b14]' : 'bg-slate-100'}`}>
       
       {/* Background Ambience */}
-      <div className={`absolute top-[-15%] left-[-10%] w-[600px] h-[600px] rounded-full blur-[180px] pointer-events-none ${isDark ? 'bg-[#00e676]/10' : 'bg-[#00e676]/20'}`}></div>
+      <div className={`absolute top-[-15%] left-[-10%] w-[600px] h-[600px] rounded-full blur-[180px] pointer-events-none ${isDark ? 'bg-[#059669]/10' : 'bg-[#059669]/20'}`}></div>
       <div className={`absolute bottom-[-15%] right-[-10%] w-[600px] h-[600px] rounded-full blur-[180px] pointer-events-none ${isDark ? 'bg-[#4facfe]/10' : 'bg-purple-300/30'}`}></div>
 
       <div className={`w-full max-w-[360px] relative z-10 p-7 rounded-[2rem] ${isDark ? 'bg-[#0a1120]/60 border-t border-l border-white/10 border-b border-r border-black/80 shadow-[10px_20px_40px_rgba(0,0,0,0.8),inset_1px_1px_0px_rgba(255,255,255,0.05)]' : 'bg-white/80 border-t border-l border-white border-b border-slate-300 shadow-[10px_20px_40px_rgba(0,0,0,0.1),inset_1px_1px_0px_rgba(255,255,255,1)]'} backdrop-blur-2xl animate-in fade-in slide-in-from-bottom-8 duration-700`}>
         
         {/* 3D Logo Container */}
         <div className="flex justify-center mb-6 relative">
-           <div className={`absolute inset-0 blur-[30px] rounded-full scale-[1.3] ${isDark ? 'bg-[#00e676]/20' : 'bg-[#00e676]/30'}`}></div>
+           <div className={`absolute inset-0 blur-[30px] rounded-full scale-[1.3] ${isDark ? 'bg-[#059669]/20' : 'bg-[#059669]/30'}`}></div>
            <div className={`relative w-20 h-20 rounded-2xl flex items-center justify-center p-1.5 overflow-hidden group transform hover:scale-[1.03] transition-all duration-500 ${isDark ? 'bg-gradient-to-br from-white/10 to-black/60 shadow-[4px_8px_16px_rgba(0,0,0,0.6),inset_1px_1px_2px_rgba(255,255,255,0.2)] border-t border-l border-white/10 border-b border-r border-black/80' : 'bg-gradient-to-br from-white to-slate-200 shadow-[4px_8px_16px_rgba(0,0,0,0.15),inset_1px_1px_2px_rgba(255,255,255,1)] border-t border-l border-white border-b border-slate-300'}`}>
               <div className="absolute inset-0 flex items-center justify-center relative z-10 bg-white rounded-[1rem]">
-                 <span className="text-3xl font-black bg-clip-text text-transparent bg-gradient-to-br from-[#00e676] to-[#047857] drop-shadow-sm font-sans tracking-tight">TR</span>
+                 <span className="text-3xl font-black bg-clip-text text-transparent bg-gradient-to-br from-[#059669] to-[#065f46] drop-shadow-sm font-sans tracking-tight">TR</span>
               </div>
            </div>
         </div>
@@ -117,7 +117,7 @@ export function Login() {
         )}
 
         {message && (
-           <div className="mb-6 p-3 bg-[#00e676]/10 border-t border-l border-[#00e676]/30 border-b border-r border-[#00e676]/50 rounded-xl text-[#00e676] text-xs font-semibold text-center animate-in fade-in slide-in-from-top-2 shadow-[inset_0_2px_10px_rgba(0,255,100,0.1)] backdrop-blur-md">
+           <div className="mb-6 p-3 bg-[#059669]/10 border-t border-l border-[#059669]/30 border-b border-r border-[#059669]/50 rounded-xl text-[#059669] text-xs font-semibold text-center animate-in fade-in slide-in-from-top-2 shadow-[inset_0_2px_10px_rgba(16,185,129,0.1)] backdrop-blur-md">
              {message}
            </div>
         )}
@@ -125,7 +125,7 @@ export function Login() {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="relative group">
              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-               <svg className={`w-4 h-4 ${isDark ? 'text-white/40' : 'text-slate-400'} group-focus-within:text-[#00e676] transition-colors`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" /></svg>
+               <svg className={`w-4 h-4 ${isDark ? 'text-white/40' : 'text-slate-400'} group-focus-within:text-[#059669] transition-colors`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" /></svg>
              </div>
              <input 
                type="email" 
@@ -138,7 +138,7 @@ export function Login() {
           </div>
           <div className="relative group">
              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-               <svg className={`w-4 h-4 ${isDark ? 'text-white/40' : 'text-slate-400'} group-focus-within:text-[#00e676] transition-colors`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+               <svg className={`w-4 h-4 ${isDark ? 'text-white/40' : 'text-slate-400'} group-focus-within:text-[#059669] transition-colors`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
              </div>
              <input 
                type={showPassword ? "text" : "password"} 
@@ -152,7 +152,7 @@ export function Login() {
              <button 
                type="button"
                onClick={() => setShowPassword(!showPassword)}
-               className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-[#00e676] transition-colors"
+               className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-[#059669] transition-colors"
              >
                {showPassword ? (
                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" /></svg>
@@ -177,12 +177,12 @@ export function Login() {
           <button 
             type="submit" 
             disabled={loading}
-            className={`w-full relative overflow-hidden py-3 px-4 rounded-xl shadow-xl hover:shadow-2xl active:scale-[0.98] transition-all mt-6 flex justify-center items-center gap-2 group ${isDark ? 'bg-white text-slate-900' : 'bg-[#18181b] text-white'}`}
+            className={`w-full relative overflow-hidden py-3 px-4 rounded-xl text-white shadow-xl hover:shadow-2xl active:scale-[0.98] transition-all mt-6 flex justify-center items-center gap-2 group bg-gradient-to-r from-[#059669] to-[#047857]`}
           >
             {loading ? (
-              <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+              <span className={`w-5 h-5 border-2 rounded-full animate-spin border-white/30 border-t-white`}></span>
             ) : (
-              <span className="text-white font-bold tracking-wide text-sm drop-shadow-md">
+              <span className="font-bold tracking-wide text-sm drop-shadow-md">
                 {isLogin ? 'লগইন করুন' : 'রেজিস্টার করুন'}
               </span>
             )}
@@ -198,7 +198,7 @@ export function Login() {
         <button 
            onClick={handleGoogleSignIn}
            disabled={loading}
-           className={`w-full mt-4 py-3 px-4 rounded-xl flex items-center justify-center gap-2 font-bold text-sm transition-all shadow-sm hover:shadow-md active:translate-y-0.5 ${isDark ? 'bg-white/5 hover:bg-white/10 border border-white/10 text-white' : 'bg-white hover:bg-slate-50 border border-slate-200 text-slate-700'}`}
+           className={`w-full mt-4 py-3 px-4 rounded-xl flex items-center justify-center gap-2 font-bold text-sm transition-all shadow-sm hover:shadow-md active:translate-y-0.5 ${isDark ? 'bg-white/5 hover:bg-white/10 border border-white/10 text-white' : 'bg-slate-800 hover:bg-slate-700 text-white shadow-md'}`}
         >
            <svg className="w-5 h-5" viewBox="0 0 24 24">
               <path fill="currentColor" fillRule="evenodd" d="M12.24 10.285V14.4h6.806c-.275 1.765-2.056 5.174-6.806 5.174-4.095 0-7.439-3.389-7.439-7.574s3.345-7.574 7.439-7.574c2.33 0 3.891.989 4.785 1.849l3.254-3.138C18.189 1.186 15.479 0 12.24 0c-6.635 0-12 5.365-12 12s5.365 12 12 12c6.926 0 11.52-4.869 11.52-11.726 0-.788-.085-1.39-.189-1.989H12.24z" />
@@ -210,7 +210,7 @@ export function Login() {
            <button 
              type="button"
              onClick={() => { setIsLogin(!isLogin); setError(''); }}
-             className={`text-xs font-bold transition-all hover:scale-105 inline-block pb-1 border-b-2 border-transparent hover:border-[#00e676] ${isDark ? 'text-white/60 hover:text-white' : 'text-slate-500 hover:text-slate-900'}`}
+             className={`text-xs font-bold transition-all hover:scale-105 inline-block pb-1 border-b-2 border-transparent hover:border-[#059669] ${isDark ? 'text-white/60 hover:text-white' : 'text-slate-500 hover:text-slate-900'}`}
            >
              {isLogin ? 'একাউন্ট নেই? রেজিস্ট্রেশন করুন' : 'ইতমধ্যেই একাউন্ট আছে? লগইন করুন'}
            </button>

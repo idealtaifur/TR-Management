@@ -145,7 +145,7 @@ export default function App() {
   if (!authInitialized || loadingProfile) {
     return (
       <div className={`w-full min-h-[100dvh] flex items-center justify-center ${isDark ? 'bg-[#050b14]' : 'bg-slate-50'}`}>
-        <div className="w-8 h-8 rounded-full border-2 border-[#00e676] border-t-transparent animate-spin"></div>
+        <div className="w-8 h-8 rounded-full border-2 border-[#059669] border-t-transparent animate-spin"></div>
       </div>
     );
   }
@@ -170,7 +170,7 @@ export default function App() {
   }
 
   return (
-    <div className={`w-full h-[100dvh] flex items-center justify-center selection:bg-[#00e676]/30 ${isDark ? 'bg-[#050b14] dark' : 'bg-slate-100'}`}>
+    <div className={`w-full h-[100dvh] flex items-center justify-center selection:bg-[#059669]/30 ${isDark ? 'bg-[#050b14] dark' : 'bg-slate-100'}`}>
       
       {/* Global Colorful Modern Background */}
       <div className="fixed inset-0 w-full h-[100dvh] overflow-hidden z-0 pointer-events-none flex justify-center">
@@ -189,14 +189,14 @@ export default function App() {
         )}
       </div>
 
-      <div className={`w-full h-[100dvh] max-w-[420px] relative overflow-y-auto overflow-x-hidden scrollbar-hide font-sans ${isDark ? 'bg-[#0b1120]/40 backdrop-blur-3xl text-slate-100' : 'bg-white/40 backdrop-blur-3xl text-slate-900'}`}>
+      <div className={`w-full h-[100dvh] max-w-[420px] relative font-sans overflow-hidden ${isDark ? 'bg-[#0b1120]/40 backdrop-blur-3xl text-slate-100' : 'bg-white/40 backdrop-blur-3xl text-slate-900'}`}>
         
-        <div className="relative z-10 flex flex-col px-3 pt-1 pb-3 space-y-4 min-h-full">
-           <div className="pt-1">
+        <div className="absolute inset-0 w-full h-full overflow-y-auto overflow-x-hidden scrollbar-hide z-10 flex flex-col px-3 pt-1 pb-3 space-y-4">
+           <div className="pt-1 flex-shrink-0">
              <Header setTab={setTab} />
            </div>
 
-           <div className={`w-full relative flex flex-col flex-1 ${currentTab === 'home' ? 'pb-2' : 'pb-24'}`}>
+           <div className={`w-full relative flex flex-col flex-1 flex-shrink-0 ${currentTab === 'home' ? 'pb-2' : 'pb-24'}`}>
              {currentTab === 'home' && <HomeTab setTab={setTab} currentTab={currentTab} />}
              {currentTab === 'target' && <TargetModeTab />}
              {currentTab === 'masaniello' && <MasanielloTab />}
@@ -204,15 +204,15 @@ export default function App() {
              {currentTab === 'journal' && <JournalTab />}
              {currentTab === 'profile' && <ProfileTab />}
            </div>
-
-           <FloatingNav currentTab={currentTab} setTab={setTab} />
-           
-           {showWelcome && (
-              <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-[#050b14]/60 backdrop-blur-md px-4 pb-20">
-                 <HomeCard onStart={() => setShowWelcome(false)} />
-              </div>
-           )}
         </div>
+
+        <FloatingNav currentTab={currentTab} setTab={setTab} />
+        
+        {showWelcome && (
+           <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-[#050b14]/60 backdrop-blur-md px-4 pb-20">
+              <HomeCard onStart={() => setShowWelcome(false)} />
+           </div>
+        )}
         
       </div>
     </div>

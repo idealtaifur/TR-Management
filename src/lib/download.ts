@@ -92,7 +92,7 @@ export function downloadHTMLTable(data: any[], columns: string[], filename: stri
           font-family: 'Inter', sans-serif;
           transition: all 0.2s;
         }
-        .btn-print { background: #10b981; color: white; }
+        .btn-print { background: #059669; color: white; }
         .btn-print:hover { background: #059669; }
         .btn-close { background: #e2e8f0; color: #475569; }
         .btn-close:hover { background: #cbd5e1; }
@@ -152,7 +152,7 @@ export function exportAllDataJSON(data: any) {
     ? data.journals.map((j: any) => `
         <tr>
           <td>${new Date(j.date).toLocaleDateString()}</td>
-          <td>${j.isWin ? '<span style="color:#10b981">Win</span>' : '<span style="color:#ef4444">Loss</span>'}</td>
+          <td>${j.isWin ? '<span style="color:#059669">Win</span>' : '<span style="color:#ef4444">Loss</span>'}</td>
           <td>$${Number(j.amount).toFixed(2)}</td>
         </tr>
       `).join('')
@@ -177,7 +177,7 @@ export function exportAllDataJSON(data: any) {
         tr:nth-child(even) { background-color: #f8fafc; }
         .actions { display: flex; justify-content: center; gap: 15px; }
         button { padding: 12px 24px; border-radius: 8px; border: none; font-weight: 600; cursor: pointer; }
-        .btn-print { background: #10b981; color: white; }
+        .btn-print { background: #059669; color: white; }
         .btn-close { background: #e2e8f0; color: #475569; }
         @media print { .actions { display: none; } body { padding:0; background:white; } .container { box-shadow:none; } }
       </style>

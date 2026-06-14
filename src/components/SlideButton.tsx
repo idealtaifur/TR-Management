@@ -73,16 +73,16 @@ export function SlideButton({ onSlideComplete }: { onSlideComplete: () => void }
   return (
     <div 
       ref={containerRef}
-      className={`relative w-full h-[52px] border rounded-2xl overflow-hidden shadow-inner flex items-center justify-center select-none transition-colors duration-300 ${success ? 'bg-[#00e676]/20 border-[#00e676]/50' : 'bg-[#0b1621] border-slate-700/50'}`}
+      className={`relative w-full h-[52px] border rounded-2xl overflow-hidden shadow-inner flex items-center justify-center select-none transition-colors duration-300 ${success ? 'bg-[#059669]/20 border-[#059669]/50' : 'bg-[#0b1621] border-slate-700/50'}`}
     >
       <div 
-        className={`absolute inset-y-0 left-0 transition-all ${success ? 'duration-500 bg-[#00e676]/40' : 'duration-75 bg-gradient-to-r from-[#00e676]/10 to-[#00e676]/30'}`}
+        className={`absolute inset-y-0 left-0 transition-all ${success ? 'duration-500 bg-[#059669]/40' : 'duration-75 bg-gradient-to-r from-[#059669]/10 to-[#059669]/30'}`}
         style={{ width: success ? '100%' : `${position + 26}px` }}
       ></div>
       
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10 pl-8">
         <span 
-          className={`text-[11px] font-bold uppercase tracking-wider drop-shadow-sm transition-all duration-300 ${success ? 'text-[#00e676] scale-110' : 'text-slate-400'}`}
+          className={`text-[11px] font-bold uppercase tracking-wider drop-shadow-sm transition-all duration-300 ${success ? 'text-[#059669] scale-110' : 'text-slate-400'}`}
           style={{ opacity: success ? 1 : Math.max(0, 1 - percentage * 2) }}
         >
           {success ? 'Session Started!' : 'Slide to Start New Session'}
@@ -92,11 +92,11 @@ export function SlideButton({ onSlideComplete }: { onSlideComplete: () => void }
       <div 
         onMouseDown={handleDragStart}
         onTouchStart={handleDragStart}
-        className={`absolute left-[4px] top-[4px] bottom-[4px] w-[44px] rounded-xl flex items-center justify-center text-[#0b1621] z-20 transition-all ${success ? 'bg-white shadow-[0_0_15px_rgba(255,255,255,0.8)] duration-500' : 'bg-gradient-to-br from-[#00e676] to-[#00b25c] shadow-[0_2px_8px_rgba(0,230,118,0.4)] duration-75 cursor-grab active:cursor-grabbing'}`}
+        className={`absolute left-[4px] top-[4px] bottom-[4px] w-[44px] rounded-xl flex items-center justify-center text-[#0b1621] z-20 transition-all ${success ? 'bg-white shadow-[0_0_15px_rgba(255,255,255,0.8)] duration-500' : 'bg-gradient-to-br from-[#059669] to-[#00b25c] shadow-[0_2px_8px_rgba(16,185,129,0.4)] duration-75 cursor-grab active:cursor-grabbing'}`}
         style={{ transform: `translateX(${position}px)` }}
       >
         {success ? (
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00e676" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#059669" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
         ) : (
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
         )}

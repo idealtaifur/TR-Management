@@ -63,7 +63,7 @@ export function Balance() {
           <div className="text-3xl leading-none font-bold text-primary mb-1.5 tracking-tight transition-all duration-300">
              {showBalance ? `$${balance.toFixed(2)}` : '••••••'}
           </div>
-          <div className={`${profit >= 0 ? 'text-[#00e676]' : 'text-red-500'} text-xs font-semibold flex items-center gap-1`}>
+          <div className={`${profit >= 0 ? 'text-[#059669]' : 'text-red-500'} text-xs font-semibold flex items-center gap-1`}>
             {profit >= 0 ? (
               <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="m18 15-6-6-6 6"/></svg>
             ) : (
@@ -84,8 +84,8 @@ export function Balance() {
           <AreaChart data={data} margin={{ top: 10, right: 0, left: 0, bottom: 0 }} style={{ outline: 'none' }}>
             <defs>
               <linearGradient id="colorValueGood" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#00e676" stopOpacity={0.4} />
-                <stop offset="95%" stopColor="#00e676" stopOpacity={0.0} />
+                <stop offset="5%" stopColor="#059669" stopOpacity={0.4} />
+                <stop offset="95%" stopColor="#059669" stopOpacity={0.0} />
               </linearGradient>
               <linearGradient id="colorValueBad" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor="#ef4444" stopOpacity={0.4} />
@@ -113,18 +113,18 @@ export function Balance() {
             />
             <Tooltip 
               contentStyle={{ backgroundColor: "rgba(15, 23, 42, 0.9)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "12px", color: "white", boxShadow: "0 8px 16px rgba(0,0,0,0.2)", backdropFilter: "blur(8px)", pointerEvents: 'auto' }} 
-              itemStyle={{ color: profit >= 0 ? "#00e676" : "#ef4444", fontWeight: "bold" }}
+              itemStyle={{ color: profit >= 0 ? "#059669" : "#ef4444", fontWeight: "bold" }}
               cursor={{ stroke: "rgba(148, 163, 184, 0.3)", strokeWidth: 1, strokeDasharray: "3 3" }}
             />
             <Area 
               type="linear" 
               dataKey="value" 
-              stroke={profit >= 0 ? "#00e676" : "#ef4444"} 
+              stroke={profit >= 0 ? "#059669" : "#ef4444"} 
               strokeWidth={1.5}
               fillOpacity={1} 
               fill={profit >= 0 ? "url(#colorValueGood)" : "url(#colorValueBad)"} 
               style={{ outline: 'none' }}
-              activeDot={{ outline: 'none', stroke: 'none', fill: profit >= 0 ? "#00e676" : "#ef4444" }}
+              activeDot={{ outline: 'none', stroke: 'none', fill: profit >= 0 ? "#059669" : "#ef4444" }}
             />
           </AreaChart>
         </ResponsiveContainer>
