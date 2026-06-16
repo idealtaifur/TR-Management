@@ -8,7 +8,7 @@ export function Balance() {
   
   const startBal = dailyTarget.dayStartBalance || profile.startingBalance;
   
-  const profit = balance - startBal;
+  const profit = Number((balance - startBal).toFixed(2));
   const profitPct = startBal > 0 ? (profit / startBal) * 100 : 0;
   
   // Real trades data

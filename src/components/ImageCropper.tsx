@@ -34,8 +34,17 @@ export function ImageCropper({ imageSrc, onCropComplete, onCancel }: ImageCroppe
       return '';
     }
 
-    canvas.width = pixelCrop.width;
-    canvas.height = pixelCrop.height;
+    let targetWidth = pixelCrop.width;
+    let targetHeight = pixelCrop.height;
+    const maxSize = 400; // max width/height for avatar
+    if (targetWidth > maxSize) {
+      const ratio = maxSize / targetWidth;
+      targetWidth = maxSize;
+      targetHeight *= ratio;
+    }
+
+    canvas.width = targetWidth;
+    canvas.height = targetHeight;
 
     ctx.drawImage(
       image,
@@ -45,11 +54,11 @@ export function ImageCropper({ imageSrc, onCropComplete, onCancel }: ImageCroppe
       pixelCrop.height,
       0,
       0,
-      canvas.width,
-      canvas.height
+      targetWidth,
+      targetHeight
     );
 
-    return canvas.toDataURL('image/jpeg');
+    return canvas.toDataURL('image/jpeg', 0.8);
   };
 
   const handleSave = async () => {
