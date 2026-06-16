@@ -127,17 +127,17 @@ export default function App() {
   }, [updateProfile]);
 
   useEffect(() => {
-    // Check for daily reset
-    const today = new Date().toDateString();
-    const lastSessionDate = dailyTarget.lastTradeDate 
-      ? new Date(dailyTarget.lastTradeDate).toDateString()
+    // Check for daily reset using persistent Dhaka timezone
+    const currentDay = new Date().toLocaleDateString('en-US', { timeZone: 'Asia/Dhaka' });
+    const lastSessionDay = dailyTarget.lastTradeDate 
+      ? new Date(dailyTarget.lastTradeDate).toLocaleDateString('en-US', { timeZone: 'Asia/Dhaka' })
       : null;
       
-    if (lastSessionDate !== today) {
+    if (lastSessionDay !== currentDay) {
       resetDailySession();
       updateDailyTarget({
         lastTradeDate: new Date().toISOString(),
-        dayNum: lastSessionDate ? dailyTarget.dayNum + 1 : dailyTarget.dayNum
+        dayNum: lastSessionDay ? dailyTarget.dayNum + 1 : dailyTarget.dayNum
       });
     }
   }, [dailyTarget.lastTradeDate, resetDailySession, updateDailyTarget, dailyTarget.dayNum]);

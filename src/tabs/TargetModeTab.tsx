@@ -8,19 +8,9 @@ export function TargetModeTab() {
   const [showLossModal, setShowLossModal] = useState(false);
 
   useEffect(() => {
-    if (dailyTarget.lastTradeDate) {
-      const lastTradeDay = new Date(dailyTarget.lastTradeDate).toLocaleDateString('en-US', { timeZone: 'Asia/Dhaka' });
-      const currentDay = new Date().toLocaleDateString('en-US', { timeZone: 'Asia/Dhaka' });
-      
-      if (lastTradeDay !== currentDay) {
-        updateDailyTarget({ 
-          dayNum: dailyTarget.dayNum + 1,
-          lastTradeDate: new Date().toISOString() 
-        });
-        resetDailySession();
-      }
-    }
-  }, [dailyTarget.lastTradeDate, dailyTarget.dayNum, resetDailySession, updateDailyTarget]);
+    // Daily reset logic is handled globally in App.tsx
+    // to avoid redundant checks or conflicting timezones.
+  }, []);
 
   const handleTrade = (isWin: boolean) => {
     if (dailyTarget.targetHit || dailyTarget.slHit) return;

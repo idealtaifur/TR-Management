@@ -6,22 +6,23 @@ export function Balance() {
   const { balance, profile, trades, dailyTarget, masaniello } = useStore();
   const [showBalance, setShowBalance] = useState(true);
   
-  const startBal = profile.preferredStrategy === 'masaniello' 
-    ? (masaniello.sessionStartBalance || profile.startingBalance)
-    : (dailyTarget.dayStartBalance || profile.startingBalance);
+  const startBal = dailyTarget.dayStartBalance || profile.startingBalance;
   
   const profit = balance - startBal;
   const profitPct = startBal > 0 ? (profit / startBal) * 100 : 0;
   
   // Real trades data
   const data = useMemo(() => {
-    const recentTrades = [...trades].reverse().slice(-50); 
+    const currentDayStr = new Date().toLocaleDateString('en-US', { timeZone: 'Asia/Dhaka' });
+    const todaysTrades = [...trades]
+      .filter(t => new Date(t.date).toLocaleDateString('en-US', { timeZone: 'Asia/Dhaka' }) === currentDayStr)
+      .reverse(); 
     
     let currentVal = startBal;
     const chartData = [{ time: "12:00", value: startBal }];
     let currentTime = new Date("2024-01-01T12:00:00");
     
-    recentTrades.forEach((t, i) => {
+    todaysTrades.forEach((t, i) => {
       if (t.type === 'WIN') {
         currentVal += t.amount;
       } else {

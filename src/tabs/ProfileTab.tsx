@@ -83,11 +83,33 @@ export function ProfileTab() {
     ...Intl.supportedValuesOf('timeZone').filter(tz => tz !== "Asia/Dhaka" && tz !== "Asia/Kolkata").map(tz => ({ value: tz, label: tz }))
   ];
 
-  const handleSave = () => {
+  const handleSave = async () => {
     setIsSaving(true);
+    try {
+      if (profile.uid) {
+        const { updateDoc, doc } = await import('firebase/firestore');
+        const { db } = await import('../lib/firebase');
+        await updateDoc(doc(db, 'users', profile.uid), {
+           name: profile.name || '',
+           avatar: profile.avatar || null,
+           address: profile.address || '',
+           age: profile.age || '',
+           gender: profile.gender || '',
+           experienceYears: profile.experienceYears || '0',
+           experienceMonths: profile.experienceMonths || '0',
+           timezone: profile.timezone || 'Asia/Dhaka',
+           startingBalance: profile.startingBalance || 0,
+           dailyProfitTarget: profile.dailyProfitTarget || 5,
+           targetDays: profile.targetDays || 30,
+           preferredStrategy: profile.preferredStrategy || 'target'
+        });
+      }
+    } catch (e) {
+      console.error("Failed to save profile", e);
+    }
     setTimeout(() => {
       setIsSaving(false);
-    }, 1500);
+    }, 500);
   };
 
   return (
