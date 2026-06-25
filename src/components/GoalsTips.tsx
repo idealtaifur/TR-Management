@@ -17,16 +17,19 @@ export function GoalsTips() {
   const { balance, profile, dailyTarget } = useStore();
 
   const startBal = profile.startingBalance || 215;
-  const currentProfit = Math.max(0, balance - startBal);
+  const totalProfit = Math.max(0, balance - startBal);
+  
+  const dayStartBal = dailyTarget.dayStartBalance || startBal;
+  const dailyProfit = Math.max(0, balance - dayStartBal);
   
   // Daily Goal
-  const dailyTargetAmount = startBal * (dailyTarget.dailyPct / 100);
-  const dailyProgress = Math.min(100, Math.max(0, (currentProfit / dailyTargetAmount) * 100)) || 0;
+  const dailyTargetAmount = dayStartBal * (dailyTarget.dailyPct / 100);
+  const dailyProgress = Math.min(100, Math.max(0, (dailyProfit / dailyTargetAmount) * 100)) || 0;
 
   // Monthly Goal (30 days total)
   // Just an example logic for monthly target
   const monthlyTargetAmount = startBal * 1.5; 
-  const monthlyProgress = Math.min(100, Math.max(0, (currentProfit / monthlyTargetAmount) * 100)) || 0;
+  const monthlyProgress = Math.min(100, Math.max(0, (totalProfit / monthlyTargetAmount) * 100)) || 0;
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -85,7 +88,7 @@ export function GoalsTips() {
                </div>
             </div>
             <div className="text-slate-500 font-medium text-[9px] mb-0.5">
-              ${currentProfit.toFixed(2)} / ${monthlyTargetAmount.toFixed(0)}
+              ${totalProfit.toFixed(2)} / ${monthlyTargetAmount.toFixed(0)}
             </div>
             <div className="w-full bg-black/10 dark:bg-white/5 h-1 rounded-full overflow-hidden mb-1">
               <div className="h-full bg-[#059669]" style={{ width: `${monthlyProgress}%` }}></div>
@@ -107,7 +110,7 @@ export function GoalsTips() {
                </div>
             </div>
             <div className="text-slate-500 font-medium text-[9px] mb-0.5">
-              ${currentProfit.toFixed(2)} / ${dailyTargetAmount.toFixed(0)}
+              ${dailyProfit.toFixed(2)} / ${dailyTargetAmount.toFixed(0)}
             </div>
             <div className="w-full bg-black/10 dark:bg-white/5 h-1 rounded-full overflow-hidden">
               <div className="h-full bg-[#a855f7]" style={{ width: `${dailyProgress}%` }}></div>

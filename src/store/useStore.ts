@@ -69,6 +69,7 @@ interface State {
   resetDailySession: () => void;
   startNewTargetSession: () => void;
   resetToFreshStart: (newBalance: number) => void;
+  resetTradingData: () => void;
   clearAllData: () => void;
   restartJourney: () => void;
   recordTrade: (isWin: boolean, profitAmount: number, lossReason?: LossReason) => void;
@@ -193,6 +194,46 @@ export const useStore = create<State>()(
             lastTradeDate: new Date().toISOString()
           }
         }));
+      },
+      resetTradingData: () => {
+        const { profile } = get();
+        set({
+          balance: 0,
+          profile: {
+            ...profile,
+            startingBalance: 0,
+            dailyProfitTarget: 5,
+            targetDays: 30,
+            isSetupComplete: false
+          },
+          dailyTarget: {
+            dailyPct: 5,
+            slPct: 10,
+            totalDays: 30,
+            dayNum: 1,
+            currentStake: 1,
+            consecutiveLosses: 0,
+            coverAmountTracker: 0,
+            lastTradeDate: null,
+            targetHit: false,
+            slHit: false,
+            payout: 85,
+            dayStartBalance: 0,
+          },
+          masaniello: {
+            events: 30,
+            winsNeeded: 15,
+            payout: 85,
+            currentWins: 0,
+            currentEvents: 0,
+            isFinished: false,
+            sessionStartBalance: 0,
+            consecutiveLosses: 0,
+            cooldownUntil: null
+          },
+          trades: [],
+          journals: []
+        });
       },
       clearAllData: () => {
         set({

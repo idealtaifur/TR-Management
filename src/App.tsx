@@ -52,12 +52,23 @@ export default function App() {
                      balance: parsedData.startingBalance,
                      dailyTarget: {
                         ...state.dailyTarget,
+                        dailyPct: parsedData.dailyProfitTarget || 5,
+                        totalDays: parsedData.targetDays || 30,
                         dayStartBalance: parsedData.startingBalance,
                         currentStake: parsedData.startingBalance > 0 ? Number(Math.max(1, parsedData.startingBalance * 0.01).toFixed(2)) : 1,
                      },
                      masaniello: {
                         ...state.masaniello,
                         sessionStartBalance: parsedData.startingBalance
+                     }
+                  }));
+               } else {
+                  // Ensure existing state still syncs target settings from profile
+                  useStore.setState((state: any) => ({
+                     dailyTarget: {
+                        ...state.dailyTarget,
+                        dailyPct: parsedData.dailyProfitTarget || state.dailyTarget.dailyPct,
+                        totalDays: parsedData.targetDays || state.dailyTarget.totalDays
                      }
                   }));
                }
