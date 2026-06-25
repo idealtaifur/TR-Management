@@ -13,6 +13,7 @@ import { Onboarding } from "./components/Onboarding";
 import { Login } from "./components/Login";
 import { AdminPanel } from "./components/AdminPanel";
 import { PendingApproval } from "./components/PendingApproval";
+import { SyncManager } from "./components/SyncManager";
 import { useStore } from "./store/useStore";
 import { auth, db } from "./lib/firebase";
 import { onAuthStateChanged } from "firebase/auth";
@@ -170,18 +171,35 @@ export default function App() {
   const isAdmin = user?.email && adminEmails.includes(user.email.toLowerCase());
 
   if (isAdmin) {
-    return <AdminPanel />;
+    return (
+      <>
+        <SyncManager />
+        <AdminPanel />
+      </>
+    );
   }
 
   if (!profile.isSetupComplete) {
-    return <Onboarding onComplete={() => setTab('home')} />;
+    return (
+      <>
+        <SyncManager />
+        <Onboarding onComplete={() => setTab('home')} />
+      </>
+    );
   }
 
   if (profile.status === 'pending' || profile.status === 'rejected') {
-    return <PendingApproval status={profile.status} onLogout={() => auth.signOut()} />;
+    return (
+      <>
+        <SyncManager />
+        <PendingApproval status={profile.status} onLogout={() => auth.signOut()} />
+      </>
+    );
   }
 
   return (
+    <>
+    <SyncManager />
     <div className={`w-full h-[100dvh] flex items-center justify-center selection:bg-[#059669]/30 ${isDark ? 'bg-[#050b14] dark' : 'bg-slate-100'}`}>
       
       {/* Global Colorful Modern Background */}
@@ -228,5 +246,6 @@ export default function App() {
         
       </div>
     </div>
+    </>
   );
 }

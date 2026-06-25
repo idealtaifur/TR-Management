@@ -152,7 +152,7 @@ export function Category() {
         </div>
 
         {/* Right: Trade List */}
-        <div className="flex flex-col flex-1 pl-4 h-[90px] overflow-y-auto pr-1 py-0.5 custom-scrollbar">
+        <div className="flex flex-col flex-1 pl-4 h-[90px] overflow-y-auto overscroll-contain pr-1 py-0.5" style={{ WebkitOverflowScrolling: 'touch' }}>
           {filteredTrades.length === 0 && <div className="text-[10px] text-slate-500 text-center mt-6">No records yet</div>}
           {filteredTrades.map((trade, idx) => (
             <div key={trade.id} className="flex flex-col">
