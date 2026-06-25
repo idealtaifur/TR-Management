@@ -43,6 +43,7 @@ export function Onboarding({ onComplete }: { onComplete?: () => void }) {
       address,
       experienceYears: experience,
       startingBalance: numBalance,
+      currentBalance: numBalance,
       dailyProfitTarget: numTargetPct,
       targetDays: numTargetDays,
       isSetupComplete: true,

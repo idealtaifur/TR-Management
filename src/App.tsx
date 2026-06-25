@@ -48,14 +48,15 @@ export default function App() {
                
                // Restore local store basic variables if they had been cleared
                if (useStore.getState().balance === 0 && parsedData.startingBalance > 0) {
+                  const restoredBalance = parsedData.currentBalance !== undefined ? parsedData.currentBalance : parsedData.startingBalance;
                   useStore.setState((state: any) => ({
-                     balance: parsedData.startingBalance,
+                     balance: restoredBalance,
                      dailyTarget: {
                         ...state.dailyTarget,
                         dailyPct: parsedData.dailyProfitTarget || 5,
                         totalDays: parsedData.targetDays || 30,
                         dayStartBalance: parsedData.startingBalance,
-                        currentStake: parsedData.startingBalance > 0 ? Number(Math.max(1, parsedData.startingBalance * 0.01).toFixed(2)) : 1,
+                        currentStake: restoredBalance > 0 ? Number(Math.max(1, restoredBalance * 0.01).toFixed(2)) : 1,
                      },
                      masaniello: {
                         ...state.masaniello,

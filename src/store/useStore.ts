@@ -364,6 +364,15 @@ export const useStore = create<State>()(
             lastTradeDate: new Date().toISOString(),
           }
         }));
+
+        const uid = get().profile.uid;
+        if (uid) {
+           import('../lib/firebase').then(({ db }) => {
+              import('firebase/firestore').then(({ doc, updateDoc }) => {
+                 updateDoc(doc(db, 'users', uid), { currentBalance: newBalance }).catch(() => {});
+              });
+           }).catch(() => {});
+        }
       },
 
       masaniello: { events: 10, winsNeeded: 5, payout: 85, currentWins: 0, currentEvents: 0, isFinished: false, sessionStartBalance: 228.35, cooldownUntil: null, consecutiveLosses: 0, isConfigured: false },

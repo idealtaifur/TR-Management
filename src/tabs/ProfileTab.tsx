@@ -99,6 +99,7 @@ export function ProfileTab() {
            experienceMonths: profile.experienceMonths || '0',
            timezone: profile.timezone || 'Asia/Dhaka',
            startingBalance: profile.startingBalance || 0,
+           currentBalance: store.balance || 0,
            dailyProfitTarget: profile.dailyProfitTarget || 5,
            targetDays: profile.targetDays || 30,
            preferredStrategy: profile.preferredStrategy || 'target'
@@ -235,6 +236,13 @@ export function ProfileTab() {
                     <input type="number" step="0.01" onFocus={handleFocus} value={balance !== undefined ? Number(Number(balance).toFixed(2)) : ''} onChange={e => {
                        const newBal = Number(e.target.value);
                        setBalance(newBal);
+                       if (profile.uid) {
+                          import('../lib/firebase').then(({ db }) => {
+                             import('firebase/firestore').then(({ doc, updateDoc }) => {
+                                updateDoc(doc(db, 'users', profile.uid!), { currentBalance: newBal }).catch(() => {});
+                             });
+                          }).catch(() => {});
+                       }
                        if (profile.startingBalance > 0 && newBal === profile.startingBalance) {
                            store.resetToFreshStart(newBal);
                        } else {
