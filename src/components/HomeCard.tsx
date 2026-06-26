@@ -76,13 +76,19 @@ export function HomeCard({ onStart }: { onStart: () => void }) {
                 <span>বাকি: <span className="text-[#facc15]">${enToBn(remaining.toFixed(2))}</span></span>
             </div>
 
-            <p className="text-[10px] text-center text-slate-700 dark:text-slate-200 font-medium leading-relaxed">
-                আপনি আজকের টার্গেটের {enToBn(progressPct.toFixed(0))}% পূরণ করে ফেলেছেন। ইনশাআল্লাহ্ আপনি পারবেন 💪
-            </p>
+            {progressPct >= 100 ? (
+                <p className="text-[10px] text-center text-[#52d669] font-medium leading-relaxed">
+                    {honorific} আজকের টার্গেট তো সম্পূর্ণ করে ফেলেছেন, এখন একটু রেস্ট করেন না। অনেক সময় সামান্য লোভের কারণে পুরো ব্যালেন্স জিরো হয়ে যায় তাই বলছে আজকের মতো এখানেই থাক। আর যদি চান একটু ঘুরে আসতে পারেন।
+                </p>
+            ) : (
+                <p className="text-[10px] text-center text-slate-700 dark:text-slate-200 font-medium leading-relaxed">
+                    আপনি আজকের টার্গেটের {enToBn(progressPct.toFixed(0))}% পূরণ করে ফেলেছেন। ইনশাআল্লাহ্ আপনি পারবেন 💪
+                </p>
+            )}
         </div>
 
         <button onClick={onStart} className="w-full bg-[#52d669] shadow-[0_4px_12px_rgba(82,214,105,0.25)] hover:shadow-[0_6px_16px_rgba(82,214,105,0.35)] text-black font-black tracking-wide text-[13px] py-3 rounded-[1rem] transition-all duration-300 active:scale-[0.98] border border-black/10">
-            চলুন শুরু করি
+            {progressPct >= 100 ? 'আচ্ছা একটু ঘুরেই আসি' : 'চলুন শুরু করি'}
         </button>
     </div>
   );

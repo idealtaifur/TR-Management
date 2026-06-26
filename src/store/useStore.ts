@@ -334,6 +334,16 @@ export const useStore = create<State>()(
           newStake = Math.max(1, Math.min(newStake, newBalance * 0.5));
         }
 
+        const targetPct = dailyTarget.dailyPct / 100;
+        const startBal = dailyTarget.dayStartBalance;
+        const targetLimit = Number((startBal * (1 + targetPct)).toFixed(2));
+        const slLimit = Number((startBal * (1 - dailyTarget.slPct / 100)).toFixed(2));
+
+        const remainingTarget = targetLimit - newBalance;
+        if (remainingTarget > 0 && remainingTarget < (newStake * payoutRate)) {
+            newStake = Math.max(1, remainingTarget / payoutRate);
+        }
+
         // Round all financial numbers to strictly 2 decimal places to prevent overflow or weird UI artifacts
         newBalance = Number(newBalance.toFixed(2));
         newStake = Number(newStake.toFixed(2));
@@ -345,12 +355,6 @@ export const useStore = create<State>()(
           isMasaniello: false,
           lossReason: isWin ? undefined : lossReason
         });
-
-        const targetPct = dailyTarget.dailyPct / 100;
-        const startBal = dailyTarget.dayStartBalance;
-        
-        const targetLimit = Number((startBal * (1 + targetPct)).toFixed(2));
-        const slLimit = Number((startBal * (1 - dailyTarget.slPct / 100)).toFixed(2));
 
         set((state) => ({
           balance: newBalance,
