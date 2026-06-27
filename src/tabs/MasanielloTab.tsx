@@ -69,6 +69,10 @@ export function MasanielloTab() {
   let rawStake = currentVirtualBankroll * currentFrac;
   let currentStake = rawStake > 0 ? Math.max(1, rawStake) : 0;
   
+  if (isCurrentlyFinished) {
+    currentStake = 0;
+  }
+  
   let isStakeReduced = false;
   if (currentStake > maxStake && maxStake > 0) {
     if (rawStake > maxStake) {
@@ -359,18 +363,27 @@ export function MasanielloTab() {
               <span className="text-secondary text-xs mb-3">
                  {isMathImpossible ? "গাণিতিকভাবে এই সেশনে টার্গেট পূরণ করা সম্ভব নয়।" : "আপনার বর্তমান মাসানেলো রুটিন শেষ হয়েছে।"}
               </span>
-              {isCooldownActive && (
-                <div className="bg-blue-500/10 text-blue-500 px-4 py-2 rounded-xl mb-4 font-mono font-bold">
-                   পরবর্তী সেশন: {String(cdMins).padStart(2, '0')}:{String(cdSecs).padStart(2, '0')}
+              
+              {globalRemainingTarget <= 0 ? (
+                <div className="bg-[#059669]/10 text-[#059669] px-4 py-3 rounded-xl w-full text-center font-bold text-sm">
+                   আপনার আজকের ডেইলি টার্গেট পূর্ণ হয়েছে। আজকের মতো ট্রেড থেকে বিরতি নিন।
                 </div>
+              ) : (
+                <>
+                  {isCooldownActive && (
+                    <div className="bg-blue-500/10 text-blue-500 px-4 py-2 rounded-xl mb-4 font-mono font-bold">
+                       পরবর্তী সেশন: {String(cdMins).padStart(2, '0')}:{String(cdSecs).padStart(2, '0')}
+                    </div>
+                  )}
+                  <button 
+                    onClick={() => updateMasaniello({ isFinished: false, currentWins: 0, currentEvents: 0, sessionStartBalance: balance, cooldownUntil: null, consecutiveLosses: 0 })} 
+                    className="bg-[#059669] text-black hover:bg-[#059669]/90 font-bold py-2.5 px-6 rounded-xl w-full disabled:opacity-50"
+                    disabled={isCooldownActive}
+                  >
+                    নতুন করে শুরু করুন
+                  </button>
+                </>
               )}
-              <button 
-                onClick={() => updateMasaniello({ isFinished: false, currentWins: 0, currentEvents: 0, sessionStartBalance: balance, cooldownUntil: null, consecutiveLosses: 0 })} 
-                className="bg-[#059669] text-black hover:bg-[#059669]/90 font-bold py-2.5 px-6 rounded-xl w-full disabled:opacity-50"
-                disabled={isCooldownActive}
-              >
-                নতুন করে শুরু করুন
-              </button>
            </div>
          </div>
       )}
@@ -456,7 +469,7 @@ export function MasanielloTab() {
           <div className="bg-white dark:bg-slate-900 rounded-[1.5rem] p-6 w-full max-w-sm shadow-2xl animate-in zoom-in-95 duration-300">
             <h3 className="text-xl font-bold text-center text-slate-900 dark:text-white mb-4">অভিনন্দন! 🎉</h3>
             <p className="text-[13px] text-center text-slate-700 dark:text-slate-300 mb-6 leading-relaxed">
-              {useStore.getState().profile.gender === 'male' ? 'ভাইয়া' : 'আপু'}, আজকের টার্গেট পূরণ হয়ে গেলো, আর ট্রেড না করায় ভালো। অল্প অল্প করে অনেক দূরে যেতে হবে।
+              {useStore.getState().profile.gender?.toLowerCase() === 'female' ? 'আপু' : 'ভাইয়া'}, আজকের টার্গেট পূরণ হয়ে গেলো, আর ট্রেড না করায় ভালো। অল্প অল্প করে অনেক দূরে যেতে হবে।
             </p>
             <div className="flex flex-col gap-3">
               <button
