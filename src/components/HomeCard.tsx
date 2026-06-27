@@ -16,15 +16,15 @@ export function HomeCard({ onStart }: { onStart: () => void }) {
   // Compounding math based on daily target
   const targetPct = dailyTarget.dailyPct / 100;
   
-  // Theoretical starting balance of today
-  const theoreticalStartBalance = profile.startingBalance * Math.pow(1 + targetPct, dailyTarget.dayNum - 1);
-  const todayTargetProfit = theoreticalStartBalance * targetPct;
-  const expectedTotalBalance = profile.startingBalance * Math.pow(1 + targetPct, dailyTarget.totalDays);
+  // Actual starting balance of today
+  const actualStartBalance = dailyTarget.dayStartBalance > 0 ? dailyTarget.dayStartBalance : profile.startingBalance;
+  const todayTargetProfit = actualStartBalance * targetPct;
+  const expectedTotalBalance = actualStartBalance * Math.pow(1 + targetPct, Math.max(1, dailyTarget.totalDays - dailyTarget.dayNum + 1));
   
   const daysLeft = Math.max(0, dailyTarget.totalDays - dailyTarget.dayNum);
   
   // Progress calculation
-  const sessionProfit = balance - theoreticalStartBalance;
+  const sessionProfit = balance - actualStartBalance;
   const progressPct = Math.max(0, Math.min(100, (sessionProfit / todayTargetProfit) * 100)) || 0;
   const remaining = Math.max(0, todayTargetProfit - sessionProfit);
 

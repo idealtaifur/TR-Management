@@ -140,20 +140,31 @@ export default function App() {
   }, [updateProfile]);
 
   useEffect(() => {
-    // Check for daily reset using persistent Dhaka timezone
-    const currentDay = new Date().toLocaleDateString('en-US', { timeZone: 'Asia/Dhaka' });
-    const lastSessionDay = dailyTarget.lastTradeDate 
-      ? new Date(dailyTarget.lastTradeDate).toLocaleDateString('en-US', { timeZone: 'Asia/Dhaka' })
-      : null;
+    const checkDailyReset = () => {
+      const state = useStore.getState();
+      if (!state.profile.isSetupComplete) return;
       
-    if (lastSessionDay !== currentDay) {
-      resetDailySession();
-      updateDailyTarget({
-        lastTradeDate: new Date().toISOString(),
-        dayNum: lastSessionDay ? dailyTarget.dayNum + 1 : dailyTarget.dayNum
-      });
-    }
-  }, [dailyTarget.lastTradeDate, resetDailySession, updateDailyTarget, dailyTarget.dayNum]);
+      const currentDay = new Date().toLocaleDateString('en-US', { timeZone: 'Asia/Dhaka' });
+      const lastSessionDay = state.dailyTarget.lastTradeDate 
+        ? new Date(state.dailyTarget.lastTradeDate).toLocaleDateString('en-US', { timeZone: 'Asia/Dhaka' })
+        : null;
+        
+      if (lastSessionDay !== currentDay) {
+        state.resetDailySession();
+        state.updateDailyTarget({
+          lastTradeDate: new Date().toISOString(),
+          dayNum: lastSessionDay ? state.dailyTarget.dayNum + 1 : state.dailyTarget.dayNum
+        });
+      }
+    };
+
+    // Check immediately on mount and auth change
+    checkDailyReset();
+    
+    // Check every minute if midnight passed
+    const intervalId = setInterval(checkDailyReset, 60000);
+    return () => clearInterval(intervalId);
+  }, [authInitialized]);
 
   if (!authInitialized || loadingProfile) {
     return (
