@@ -10,13 +10,15 @@ const enToBn = (num: number | string) => {
 };
 
 export function MasanielloTab() {
-  const { balance, setBalance, masaniello, updateMasaniello } = useStore();
+  const { balance, setBalance, masaniello, updateMasaniello, dailyTarget } = useStore();
   
   const [showSettings, setShowSettings] = useState(!masaniello.isConfigured);
   const [tipIdx, setTipIdx] = useState(0);
   const [showConsecutiveLossWarning, setShowConsecutiveLossWarning] = useState(false);
   const [showBadMarketWarning, setShowBadMarketWarning] = useState(false);
   const [now, setNow] = useState(Date.now());
+  const [showGlobalTargetReached, setShowGlobalTargetReached] = useState(false);
+  const [hasDismissedGlobalTarget, setHasDismissedGlobalTarget] = useState(false);
   
   const [events, setEvents] = useState(masaniello.events);
   const [winsNeeded, setWinsNeeded] = useState(masaniello.winsNeeded);
@@ -73,6 +75,20 @@ export function MasanielloTab() {
       isStakeReduced = true;
     }
     currentStake = Math.max(1, maxStake);
+  }
+
+  // Cap by global daily target
+  const globalTargetPct = dailyTarget.dailyPct / 100;
+  const globalStartBal = dailyTarget.dayStartBalance > 0 ? dailyTarget.dayStartBalance : (useStore.getState().profile.startingBalance || 0);
+  const globalTargetLimit = globalStartBal * (1 + globalTargetPct);
+  const globalRemainingTarget = globalTargetLimit - balance;
+  
+  if (globalRemainingTarget > 0 && masaniello.payout > 0) {
+    const globalMaxStake = globalRemainingTarget / (masaniello.payout / 100);
+    if (currentStake > globalMaxStake) {
+      currentStake = Math.max(1, globalMaxStake);
+      isStakeReduced = true;
+    }
   }
   
   if (currentStake > balance && balance >= 1) {
@@ -138,6 +154,10 @@ export function MasanielloTab() {
     
     let finished = false;
     let cooldownStr = masaniello.cooldownUntil;
+
+    if (newBalance >= globalTargetLimit && !hasDismissedGlobalTarget) {
+      setShowGlobalTargetReached(true);
+    }
 
     const evLeft = masaniello.events - newEvents;
     const wLeft = masaniello.winsNeeded - newWins;
@@ -429,6 +449,37 @@ export function MasanielloTab() {
             </div>
             </div>
          </div>
+      )}
+
+      {showGlobalTargetReached && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-slate-900 rounded-[1.5rem] p-6 w-full max-w-sm shadow-2xl animate-in zoom-in-95 duration-300">
+            <h3 className="text-xl font-bold text-center text-slate-900 dark:text-white mb-4">অভিনন্দন! 🎉</h3>
+            <p className="text-[13px] text-center text-slate-700 dark:text-slate-300 mb-6 leading-relaxed">
+              {useStore.getState().profile.gender === 'male' ? 'ভাইয়া' : 'আপু'}, আজকের টার্গেট পূরণ হয়ে গেলো, আর ট্রেড না করায় ভালো। অল্প অল্প করে অনেক দূরে যেতে হবে।
+            </p>
+            <div className="flex flex-col gap-3">
+              <button
+                onClick={() => {
+                  setShowGlobalTargetReached(false);
+                  updateMasaniello({ isFinished: true });
+                }}
+                className="w-full py-3 rounded-full bg-[#059669] text-white font-bold text-sm"
+              >
+                আচ্ছা ঠিক আছে
+              </button>
+              <button
+                onClick={() => {
+                  setShowGlobalTargetReached(false);
+                  setHasDismissedGlobalTarget(true);
+                }}
+                className="w-full py-3 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold text-sm"
+              >
+                চালিয়ে যেতে চাই
+              </button>
+            </div>
+          </div>
+        </div>
       )}
 
       <LossReasonModal 
