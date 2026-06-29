@@ -99,7 +99,7 @@ export function MasanielloTab() {
     currentStake = balance;
   }
   
-  if (currentStake < 1) {
+  if (currentStake < 1 && !isCurrentlyFinished) {
     currentStake = 1;
   }
 

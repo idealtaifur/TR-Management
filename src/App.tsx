@@ -164,7 +164,7 @@ export default function App() {
     // Check every minute if midnight passed
     const intervalId = setInterval(checkDailyReset, 60000);
     return () => clearInterval(intervalId);
-  }, [authInitialized]);
+  }, [authInitialized, dailyTarget.lastTradeDate]);
 
   if (!authInitialized || loadingProfile) {
     return (
