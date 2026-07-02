@@ -82,13 +82,12 @@ export function GoalsTips() {
                <div className="flex justify-between flex-1 items-start">
                  <div className="flex flex-col">
                     <div className="text-slate-800 dark:text-white text-[12px] font-bold leading-none mb-0.5">Monthly</div>
-                    <div className="text-slate-500 text-[9px] font-medium leading-none">৩০ days</div>
                  </div>
                  <div className="text-[#059669] font-bold text-[11.5px]">{monthlyProgress.toFixed(0)}%</div>
                </div>
             </div>
             <div className="text-slate-500 font-medium text-[9px] mb-0.5">
-              ${totalProfit.toFixed(2)} / ${monthlyTargetAmount.toFixed(0)}
+              {enToBn(dailyTarget.dayNum)}/{enToBn(dailyTarget.totalDays)}
             </div>
             <div className="w-full bg-black/10 dark:bg-white/5 h-1 rounded-full overflow-hidden mb-1">
               <div className="h-full bg-[#059669]" style={{ width: `${monthlyProgress}%` }}></div>
@@ -104,7 +103,6 @@ export function GoalsTips() {
                <div className="flex justify-between flex-1 items-start">
                  <div className="flex flex-col">
                     <div className="text-slate-800 dark:text-white text-[12px] font-bold leading-none mb-0.5">Daily</div>
-                    <div className="text-slate-500 text-[9px] font-medium leading-none">Day ২/৩০</div>
                  </div>
                  <div className="text-[#a855f7] font-bold text-[11.5px]">{dailyProgress.toFixed(0)}%</div>
                </div>

@@ -69,7 +69,19 @@ export function SyncManager() {
        
        updateDoc(doc(db, 'users', auth.currentUser.uid), {
           appState: JSON.stringify(stateToSave),
-          currentBalance: storeState.balance
+          currentBalance: storeState.balance,
+          startingBalance: storeState.profile.startingBalance,
+          name: storeState.profile.name || '',
+          avatar: storeState.profile.avatar || null,
+          address: storeState.profile.address || '',
+          age: storeState.profile.age || '',
+          gender: storeState.profile.gender || '',
+          experienceYears: storeState.profile.experienceYears || '0',
+          experienceMonths: storeState.profile.experienceMonths || '0',
+          timezone: storeState.profile.timezone || 'Asia/Dhaka',
+          dailyProfitTarget: storeState.profile.dailyProfitTarget || 5,
+          targetDays: storeState.profile.targetDays || 30,
+          preferredStrategy: storeState.profile.preferredStrategy || 'target'
        }).catch(() => {});
     }, 2000);
     

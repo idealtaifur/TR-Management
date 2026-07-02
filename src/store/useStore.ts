@@ -72,6 +72,7 @@ interface State {
   resetTradingData: () => void;
   clearAllData: () => void;
   restartJourney: () => void;
+  adjustBalance: (amount: number, type: 'deposit' | 'withdraw') => void;
   recordTrade: (isWin: boolean, profitAmount: number, lossReason?: LossReason) => void;
 
   // Masaniello
@@ -308,8 +309,26 @@ export const useStore = create<State>()(
             currentWins: 0,
             isFinished: false
           },
-          trades: [], // Optional: clear trades? Or maybe not. Let's keep journals but clear trades for the new journey.
+          trades: [],
         }));
+      },
+      adjustBalance: (amount, type) => {
+        set((state) => {
+          const adjustment = type === 'deposit' ? amount : -amount;
+          const newBalance = Math.max(0, state.balance + adjustment);
+          const newStartingBalance = Math.max(0, state.profile.startingBalance + adjustment);
+          const newDayStartBalance = Math.max(0, state.dailyTarget.dayStartBalance + adjustment);
+          const newSessionStartBalance = Math.max(0, (state.masaniello.sessionStartBalance || 0) + adjustment);
+
+          const updatedState = {
+            balance: newBalance,
+            profile: { ...state.profile, startingBalance: newStartingBalance },
+            dailyTarget: { ...state.dailyTarget, dayStartBalance: newDayStartBalance },
+            masaniello: { ...state.masaniello, sessionStartBalance: newSessionStartBalance }
+          };
+
+          return updatedState;
+        });
       },
       recordTrade: (isWin, profitAmount, lossReason) => {
         const { balance, dailyTarget } = get();
@@ -368,15 +387,6 @@ export const useStore = create<State>()(
             lastTradeDate: new Date().toISOString(),
           }
         }));
-
-        const uid = get().profile.uid;
-        if (uid) {
-           import('../lib/firebase').then(({ db }) => {
-              import('firebase/firestore').then(({ doc, updateDoc }) => {
-                 updateDoc(doc(db, 'users', uid), { currentBalance: newBalance }).catch(() => {});
-              });
-           }).catch(() => {});
-        }
       },
 
       masaniello: { events: 10, winsNeeded: 5, payout: 85, currentWins: 0, currentEvents: 0, isFinished: false, sessionStartBalance: 228.35, cooldownUntil: null, consecutiveLosses: 0, isConfigured: false },

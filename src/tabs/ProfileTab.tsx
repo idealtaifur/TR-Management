@@ -48,6 +48,11 @@ export function ProfileTab() {
   const [isSaving, setIsSaving] = useState(false);
   const [showExportModal, setShowExportModal] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [adjustmentAmount, setAdjustmentAmount] = useState<string>('');
+
+  const [showAdjustmentModal, setShowAdjustmentModal] = useState<'deposit' | 'withdraw' | null>(null);
+  const [isAdjusting, setIsAdjusting] = useState(false);
+  const [adjustmentSuccessMsg, setAdjustmentSuccessMsg] = useState<string | null>(null);
 
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
      if (e.target.files && e.target.files.length > 0) {
@@ -85,29 +90,7 @@ export function ProfileTab() {
 
   const handleSave = async () => {
     setIsSaving(true);
-    try {
-      if (profile.uid) {
-        const { updateDoc, doc } = await import('firebase/firestore');
-        const { db } = await import('../lib/firebase');
-        await updateDoc(doc(db, 'users', profile.uid), {
-           name: profile.name || '',
-           avatar: profile.avatar || null,
-           address: profile.address || '',
-           age: profile.age || '',
-           gender: profile.gender || '',
-           experienceYears: profile.experienceYears || '0',
-           experienceMonths: profile.experienceMonths || '0',
-           timezone: profile.timezone || 'Asia/Dhaka',
-           startingBalance: profile.startingBalance || 0,
-           currentBalance: store.balance || 0,
-           dailyProfitTarget: profile.dailyProfitTarget || 5,
-           targetDays: profile.targetDays || 30,
-           preferredStrategy: profile.preferredStrategy || 'target'
-        });
-      }
-    } catch (e) {
-      console.error("Failed to save profile", e);
-    }
+    // SyncManager automatically handles pushing profile updates to Firestore.
     setTimeout(() => {
       setIsSaving(false);
     }, 500);
@@ -157,9 +140,6 @@ export function ProfileTab() {
                </label>
             </div>
             <span className="text-[10px] text-[#059669] mt-4 font-bold uppercase tracking-wider">Change Photo</span>
-            <button onClick={handleLogout} className="mt-4 bg-red-500/10 text-red-500 font-bold py-2.5 px-6 rounded-full text-xs shadow hover:bg-red-500/20 transition-colors">
-              Log Out
-            </button>
          </div>
 
          <div className="grid grid-cols-2 gap-3">
@@ -236,13 +216,6 @@ export function ProfileTab() {
                     <input type="number" step="0.01" onFocus={handleFocus} value={balance !== undefined ? Number(Number(balance).toFixed(2)) : ''} onChange={e => {
                        const newBal = Number(e.target.value);
                        setBalance(newBal);
-                       if (profile.uid) {
-                          import('../lib/firebase').then(({ db }) => {
-                             import('firebase/firestore').then(({ doc, updateDoc }) => {
-                                updateDoc(doc(db, 'users', profile.uid!), { currentBalance: newBal }).catch(() => {});
-                             });
-                          }).catch(() => {});
-                       }
                        if (profile.startingBalance > 0 && newBal === profile.startingBalance) {
                            store.resetToFreshStart(newBal);
                        } else {
@@ -277,13 +250,13 @@ export function ProfileTab() {
             </div>
 
             <div className="col-span-2 mt-2">
-               <label className="text-[10px] text-secondary font-semibold mb-2 block uppercase">হোম পেজ ডিসপ্লে (Home Page Display Strategy)</label>
-               <div className="flex bg-slate-200/50 dark:bg-black/30 rounded-xl p-1 border border-slate-300 dark:border-white/10">
-                 <button onClick={() => updateProfile({ preferredStrategy: 'masaniello' })} className={`flex-1 py-2 text-xs font-bold rounded-lg transition-colors ${profile.preferredStrategy === 'masaniello' ? 'bg-[#059669] text-black shadow' : 'text-secondary hover:text-slate-800 dark:hover:text-white'}`}>
-                   Masaniello
+               <label className="text-[10px] text-secondary font-semibold mb-2 block uppercase">ব্যালেন্স অ্যাডজাস্টমেন্ট (Balance Adjustment)</label>
+               <div className="flex gap-2">
+                 <button onClick={() => setShowAdjustmentModal('deposit')} className="flex-1 bg-[#059669] text-white py-3 text-xs font-bold rounded-xl shadow hover:bg-[#047857] transition-colors">
+                   Deposit
                  </button>
-                 <button onClick={() => updateProfile({ preferredStrategy: 'target' })} className={`flex-1 py-2 text-xs font-bold rounded-lg transition-colors ${profile.preferredStrategy === 'target' ? 'bg-[#059669] text-black shadow' : 'text-secondary hover:text-slate-800 dark:hover:text-white'}`}>
-                   Daily Target
+                 <button onClick={() => setShowAdjustmentModal('withdraw')} className="flex-1 bg-[#ef4444] text-white py-3 text-xs font-bold rounded-xl shadow hover:bg-[#dc2626] transition-colors">
+                   Withdraw
                  </button>
                </div>
             </div>
@@ -311,6 +284,9 @@ export function ProfileTab() {
              </button>
              <button onClick={() => setShowExportModal(true)} className="w-full bg-blue-500/10 text-blue-400 border border-blue-500/30 py-3 rounded-xl font-bold text-xs hover:bg-blue-500/20 transition-colors">
                 Export All Data
+             </button>
+             <button onClick={handleLogout} className="w-full bg-red-500/10 text-red-500 border border-red-500/30 py-3 rounded-xl font-bold text-xs hover:bg-red-500/20 transition-colors">
+                লগআউট (Log Out)
              </button>
          </div>
 
@@ -357,6 +333,90 @@ export function ProfileTab() {
                 </button>
              </div>
           </div>
+        </div>
+      )}
+
+      {showAdjustmentModal && (
+        <div className="fixed inset-0 z-[400] bg-black/80 flex items-center justify-center p-5 backdrop-blur-sm">
+           <div className="glass-panel p-6 rounded-3xl w-full max-w-sm flex flex-col items-center text-center relative border border-white/10 shadow-2xl">
+              <button 
+                onClick={() => { setShowAdjustmentModal(null); setAdjustmentAmount(''); setAdjustmentSuccessMsg(null); setIsAdjusting(false); }} 
+                className="absolute top-4 right-4 text-slate-400 hover:text-white"
+                disabled={isAdjusting}
+              >
+                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+              </button>
+              
+              {!adjustmentSuccessMsg ? (
+                <>
+                  <div className={`w-14 h-14 rounded-full flex items-center justify-center mb-4 border ${showAdjustmentModal === 'deposit' ? 'bg-[#059669]/20 border-[#059669]/30 text-[#059669]' : 'bg-[#ef4444]/20 border-[#ef4444]/30 text-[#ef4444]'}`}>
+                    {showAdjustmentModal === 'deposit' ? (
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" x2="12" y1="5" y2="19"/><line x1="5" x2="19" y1="12" y2="12"/></svg>
+                    ) : (
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="5" x2="19" y1="12" y2="12"/></svg>
+                    )}
+                  </div>
+                  <h3 className="text-xl font-black text-slate-900 dark:text-white mb-2 capitalize">{showAdjustmentModal}</h3>
+                  <p className="text-slate-500 text-xs mb-6">পরিমাণ লিখুন (Enter Amount)</p>
+                  
+                  <div className="w-full relative mb-6">
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">$</span>
+                    <input 
+                      type="number" 
+                      autoFocus
+                      placeholder="0.00" 
+                      value={adjustmentAmount} 
+                      onChange={(e) => setAdjustmentAmount(e.target.value)} 
+                      className="w-full inner-glass text-slate-900 dark:text-white text-center rounded-2xl px-8 py-4 text-2xl font-bold focus:border-[#059669] focus:outline-none transition-colors" 
+                      disabled={isAdjusting}
+                    />
+                  </div>
+
+                  <button 
+                    onClick={() => {
+                       const amt = Number(adjustmentAmount);
+                       if (amt > 0) {
+                         setIsAdjusting(true);
+                         setTimeout(() => {
+                           store.adjustBalance(amt, showAdjustmentModal);
+                           setIsAdjusting(false);
+                           setAdjustmentSuccessMsg(`আপনার ${showAdjustmentModal === 'deposit' ? 'ডিপোজিট' : 'উইথড্র'} সফলভাবে সম্পূর্ণ হয়েছে।`);
+                         }, 1500);
+                       }
+                    }} 
+                    disabled={isAdjusting || !Number(adjustmentAmount)}
+                    className={`w-full py-4 rounded-xl font-bold text-sm shadow-lg flex justify-center items-center gap-2 transition-all ${
+                      showAdjustmentModal === 'deposit' 
+                        ? 'bg-[#059669] hover:bg-[#047857] text-white shadow-[#059669]/30' 
+                        : 'bg-[#ef4444] hover:bg-[#dc2626] text-white shadow-[#ef4444]/30'
+                    } disabled:opacity-50 disabled:cursor-not-allowed`}
+                  >
+                    {isAdjusting ? (
+                      <>
+                        <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                        প্রসেসিং...
+                      </>
+                    ) : (
+                      'নিশ্চিত করুন'
+                    )}
+                  </button>
+                </>
+              ) : (
+                <div className="flex flex-col items-center py-4 animate-in zoom-in duration-300">
+                  <div className="w-16 h-16 bg-[#059669] text-white rounded-full flex items-center justify-center mb-4 shadow-[0_0_20px_rgba(5,150,105,0.4)]">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                  </div>
+                  <h3 className="text-xl font-black text-slate-900 dark:text-white mb-2">সফল হয়েছে!</h3>
+                  <p className="text-[#059669] text-sm mb-6 font-bold">{adjustmentSuccessMsg}</p>
+                  <button 
+                    onClick={() => { setShowAdjustmentModal(null); setAdjustmentAmount(''); setAdjustmentSuccessMsg(null); }} 
+                    className="bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-white hover:bg-slate-200 dark:hover:bg-slate-700 py-3 px-8 rounded-xl font-bold text-sm transition-colors"
+                  >
+                    বন্ধ করুন
+                  </button>
+                </div>
+              )}
+           </div>
         </div>
       )}
 
