@@ -7,13 +7,18 @@ export function TargetModeTab() {
   const { balance, dailyTarget, recordTrade, resetDailySession, updateDailyTarget, profile } = useStore();
   const [showLossModal, setShowLossModal] = useState(false);
 
+  const [now, setNow] = useState(Date.now());
+
   useEffect(() => {
-    // Daily reset logic is handled globally in App.tsx
-    // to avoid redundant checks or conflicting timezones.
+    const intv = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(intv);
   }, []);
 
+  const cooldownTime = dailyTarget.cooldownUntil ? new Date(dailyTarget.cooldownUntil).getTime() : 0;
+  const isCooldownActive = cooldownTime > now;
+
   const handleTrade = (isWin: boolean) => {
-    if (dailyTarget.targetHit || dailyTarget.slHit) return;
+    if (dailyTarget.targetHit || dailyTarget.slHit || isCooldownActive) return;
     
     if (!isWin) {
       setShowLossModal(true);
@@ -97,14 +102,14 @@ export function TargetModeTab() {
         <div className="grid grid-cols-2 gap-2 mt-auto mb-2">
           <button 
             onClick={() => handleTrade(true)}
-            disabled={dailyTarget.targetHit || dailyTarget.slHit}
+            disabled={dailyTarget.targetHit || dailyTarget.slHit || isCooldownActive}
             className="bg-[#059669] hover:bg-[#059669]/90 text-slate-900 rounded-xl py-3 font-bold text-lg flex items-center justify-center gap-2 transition-all disabled:opacity-50 disabled:grayscale shadow-[0_0_15px_rgba(16,185,129,0.2)] active:scale-95"
           >
              WIN
           </button>
           <button 
             onClick={() => handleTrade(false)}
-            disabled={dailyTarget.targetHit || dailyTarget.slHit}
+            disabled={dailyTarget.targetHit || dailyTarget.slHit || isCooldownActive}
             className="bg-[#ff4d4d] hover:bg-[#ff4d4d]/90 text-white rounded-xl py-3 font-bold text-lg flex items-center justify-center gap-2 transition-all disabled:opacity-50 disabled:grayscale shadow-[0_0_15px_rgba(255,77,77,0.2)] active:scale-95"
           >
             LOSS
@@ -112,6 +117,19 @@ export function TargetModeTab() {
         </div>
 
         {/* Overlays */}
+        {isCooldownActive && !dailyTarget.targetHit && !dailyTarget.slHit && (
+           <div className="absolute inset-0 bg-slate-100/90 dark:bg-[#0b1621]/90 backdrop-blur-sm z-20 flex flex-col items-center justify-center p-4">
+             <div className="bg-white dark:bg-[#0b121e]/90 dark:backdrop-blur-xl p-6 rounded-2xl border border-red-500/50 shadow-[0_0_40px_rgba(239,68,68,0.2)] flex flex-col items-center text-center w-full">
+                <span className="text-4xl mb-4">⚠️</span>
+                <span className="text-xl font-bold text-red-500 mb-2">সতর্কতা!</span>
+                <span className="text-slate-800 dark:text-slate-300 text-sm mb-4 leading-relaxed">
+                   আপনার পর পর ২টা লস হয়েছে। ইমোশনাল হয়ে ওভারট্রেড করবেন না। একটু বিরতি নিন এবং মার্কেট অ্যানালাইসিস করুন।
+                </span>
+                <button onClick={() => updateDailyTarget({ cooldownUntil: null })} className="text-xs text-slate-400 hover:text-slate-500 underline mt-2">আমি এখন শান্ত, ট্রেড শুরু করতে চাই</button>
+             </div>
+           </div>
+        )}
+
         {dailyTarget.targetHit && (
            <div className="absolute inset-0 bg-slate-100/80 dark:bg-[#0b1621]/80 backdrop-blur-sm z-20 flex flex-col items-center justify-center p-3">
              <div className="bg-white dark:bg-[#0b121e]/90 dark:backdrop-blur-xl p-6 rounded-2xl border border-[#059669]/30 shadow-[0_0_40px_rgba(16,185,129,0.2)] dark:shadow-[inset_0_1px_1px_rgba(255,255,255,0.05),0_8px_16px_rgba(0,0,0,0.4)] flex flex-col items-center text-center w-full">

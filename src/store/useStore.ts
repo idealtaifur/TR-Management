@@ -64,6 +64,7 @@ interface State {
     slHit: boolean;
     payout: number;
     dayStartBalance: number;
+    cooldownUntil: string | null;
   };
   updateDailyTarget: (data: Partial<State['dailyTarget']>) => void;
   resetDailySession: () => void;
@@ -314,11 +315,12 @@ export const useStore = create<State>()(
       },
       adjustBalance: (amount, type) => {
         set((state) => {
-          const adjustment = type === 'deposit' ? amount : -amount;
-          const newBalance = Math.max(0, state.balance + adjustment);
-          const newStartingBalance = Math.max(0, state.profile.startingBalance + adjustment);
-          const newDayStartBalance = Math.max(0, state.dailyTarget.dayStartBalance + adjustment);
-          const newSessionStartBalance = Math.max(0, (state.masaniello.sessionStartBalance || 0) + adjustment);
+          const amt = Number(amount) || 0;
+          const adjustment = type === 'deposit' ? amt : -amt;
+          const newBalance = Math.max(0, Number(state.balance || 0) + adjustment);
+          const newStartingBalance = Math.max(0, Number(state.profile.startingBalance || 0) + adjustment);
+          const newDayStartBalance = Math.max(0, Number(state.dailyTarget.dayStartBalance || 0) + adjustment);
+          const newSessionStartBalance = Math.max(0, Number(state.masaniello.sessionStartBalance || 0) + adjustment);
 
           const updatedState = {
             balance: newBalance,
@@ -353,6 +355,13 @@ export const useStore = create<State>()(
           newStake = Math.max(1, Math.min(newStake, newBalance * 0.5));
         }
 
+        let newCooldown = dailyTarget.cooldownUntil;
+        if (!isWin && newConsecutive === 2) {
+           const cDate = new Date();
+           cDate.setMinutes(cDate.getMinutes() + 5);
+           newCooldown = cDate.toISOString();
+        }
+
         const targetPct = dailyTarget.dailyPct / 100;
         const startBal = dailyTarget.dayStartBalance;
         const targetLimit = Number((startBal * (1 + targetPct)).toFixed(2));
@@ -385,6 +394,7 @@ export const useStore = create<State>()(
             targetHit: newBalance >= targetLimit,
             slHit: newBalance <= slLimit,
             lastTradeDate: new Date().toISOString(),
+            cooldownUntil: newCooldown,
           }
         }));
       },

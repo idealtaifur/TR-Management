@@ -27,9 +27,8 @@ export function GoalsTips() {
   const dailyProgress = Math.min(100, Math.max(0, (dailyProfit / dailyTargetAmount) * 100)) || 0;
 
   // Monthly Goal (30 days total)
-  // Just an example logic for monthly target
-  const monthlyTargetAmount = startBal * 1.5; 
-  const monthlyProgress = Math.min(100, Math.max(0, (totalProfit / monthlyTargetAmount) * 100)) || 0;
+  // Calculate based on days progressed
+  const monthlyProgress = Math.min(100, Math.max(0, (dailyTarget.dayNum / dailyTarget.totalDays) * 100)) || 0;
 
   useEffect(() => {
     const interval = setInterval(() => {
