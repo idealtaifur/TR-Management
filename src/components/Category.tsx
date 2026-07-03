@@ -126,15 +126,34 @@ export function Category() {
         {/* Left: Donut Chart or Stopwatch */}
         <div className="relative w-[90px] h-[90px] flex-shrink-0 -mt-2">
           {timeLeft !== null ? (
-            <div className="w-full h-full rounded-full border-4 border-slate-700 dark:border-white/10 flex flex-col items-center justify-center relative bg-slate-800 dark:bg-black/40 overflow-hidden shadow-[inset_0_0_15px_rgba(0,0,0,0.5)]">
-               <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1.5 h-2 bg-red-500 rounded-b-sm"></div>
-               <div className="absolute top-2 left-1/2 -translate-x-1/2 w-0.5 h-1.5 bg-red-500/50"></div>
-               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400 mb-0.5 mt-2 opacity-50"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-               <span className="text-[12px] font-black text-red-500 font-mono tracking-wider drop-shadow-md">
-                 {Math.floor(timeLeft / 60000)}:{(Math.floor(timeLeft / 1000) % 60).toString().padStart(2, '0')}
-               </span>
-               <span className="text-[6px] text-slate-400 uppercase font-bold tracking-widest mt-0.5">Cooldown</span>
-            </div>
+            (() => {
+              const progress = Math.min(1, Math.max(0, timeLeft / 300000));
+              const hue = (1 - progress) * 120;
+              const dynamicColor = `hsl(${hue}, 80%, 50%)`;
+              return (
+                <div className="w-full h-full rounded-full flex flex-col items-center justify-center relative bg-slate-800 dark:bg-black/40 shadow-[inset_0_0_15px_rgba(0,0,0,0.5)]">
+                   <svg className="absolute inset-0 w-full h-full -rotate-90 pointer-events-none" viewBox="0 0 90 90">
+                     <circle cx="45" cy="45" r="41" className="stroke-slate-700 dark:stroke-white/10" strokeWidth="4" fill="none" />
+                     <circle 
+                       cx="45" cy="45" r="41" 
+                       strokeWidth="4" 
+                       fill="none" 
+                       strokeLinecap="round"
+                       strokeDasharray={257.6}
+                       strokeDashoffset={257.6 * (1 - progress)}
+                       style={{ transition: 'stroke-dashoffset 1s linear, stroke 1s linear', stroke: dynamicColor }}
+                     />
+                   </svg>
+                   <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1.5 h-2 rounded-b-sm z-10" style={{ backgroundColor: dynamicColor }}></div>
+                   <div className="absolute top-2 left-1/2 -translate-x-1/2 w-0.5 h-1.5 z-10" style={{ backgroundColor: dynamicColor, opacity: 0.5 }}></div>
+                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400 mb-0.5 mt-2 opacity-50 z-10"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                   <span className="text-[12px] font-black font-mono tracking-wider drop-shadow-md z-10" style={{ color: dynamicColor }}>
+                     {Math.floor(timeLeft / 60000)}:{(Math.floor(timeLeft / 1000) % 60).toString().padStart(2, '0')}
+                   </span>
+                   <span className="text-[6px] text-slate-400 uppercase font-bold tracking-widest mt-0.5 z-10">Cooldown</span>
+                </div>
+              );
+            })()
           ) : data.length > 0 ? (
             <>
               <ResponsiveContainer width="100%" height="100%" className="focus:outline-none" style={{ outline: 'none' }}>
