@@ -42,6 +42,7 @@ export function ProfileTab() {
     }
   };
 
+  const [settingsTab, setSettingsTab] = useState<'personal' | 'trading'>('personal');
   const [uncroppedImage, setUncroppedImage] = useState<string | null>(null);
   const [expType, setExpType] = useState<'years' | 'months'>(Number(profile.experienceYears) > 0 ? 'years' : 'months');
   const [showFullImage, setShowFullImage] = useState(false);
@@ -114,153 +115,166 @@ export function ProfileTab() {
         />
       )}
       
+      
+      <div className="flex bg-slate-200/50 dark:bg-black/30 rounded-xl p-1 border border-slate-300 dark:border-white/10 mb-2">
+         <button onClick={() => setSettingsTab('personal')} className={`flex-1 py-2 text-sm font-bold rounded-lg transition-colors ${settingsTab === 'personal' ? 'bg-white dark:bg-white/20 text-slate-800 dark:text-white shadow' : 'text-secondary hover:text-slate-800 dark:hover:text-white'}`}>
+           ব্যক্তিগত প্রোফাইল
+         </button>
+         <button onClick={() => setSettingsTab('trading')} className={`flex-1 py-2 text-sm font-bold rounded-lg transition-colors ${settingsTab === 'trading' ? 'bg-white dark:bg-white/20 text-slate-800 dark:text-white shadow' : 'text-secondary hover:text-slate-800 dark:hover:text-white'}`}>
+           ট্রেডিং প্রোফাইল
+         </button>
+      </div>
+
       <div className="glass-panel rounded-[2rem] p-5 space-y-5 relative overflow-hidden">
-         
-         <div className="flex flex-col items-center">
-            <div className="relative group">
-               <div 
-                 className="cursor-pointer w-24 h-24 rounded-full bg-slate-200 dark:bg-black/40 ring-2 ring-[#059669]/50 hover:ring-[#059669] shadow-[0_0_20px_rgba(16,185,129,0.2)] transition-all overflow-hidden flex items-center justify-center p-1"
-                 onClick={() => setShowFullImage(true)}
-               >
-                  <div className="w-full h-full rounded-full overflow-hidden bg-black/40 flex items-center justify-center">
-                    {profile.avatar ? (
-                      <img src={profile.avatar} alt="Avatar" className="w-full h-full object-cover" />
-                    ) : (
-                      <div className={`w-full h-full relative flex items-center justify-center ${isDark ? 'bg-white/10 text-white' : 'bg-slate-200 text-slate-800'}`}>
-                        <span className="text-4xl font-bold">{profile.name ? profile.name.charAt(0).toUpperCase() : 'U'}</span>
+         {settingsTab === 'personal' && (
+           <>
+              <div className="flex flex-col items-center">
+                 <div className="relative group">
+                    <div
+                       className="cursor-pointer w-24 h-24 rounded-full bg-slate-200 dark:bg-black/40 ring-2 ring-[#059669]/50 hover:ring-[#059669] shadow-[0_0_20px_rgba(16,185,129,0.2)] transition-all overflow-hidden flex items-center justify-center p-1"
+                      onClick={() => setShowFullImage(true)}
+                    >
+                       <div className="w-full h-full rounded-full overflow-hidden bg-black/40 flex items-center justify-center">
+                         {profile.avatar ? (
+                           <img src={profile.avatar} alt="Avatar" className="w-full h-full object-cover" />
+                         ) : (
+                           <div className={`w-full h-full relative flex items-center justify-center ${isDark ? 'bg-white/10 text-white' : 'bg-slate-200 text-slate-800'}`}>
+                             <span className="text-4xl font-bold">{profile.name ? profile.name.charAt(0).toUpperCase() : 'U'}</span>
+                           </div>
+                         )}
+                       </div>
+                    </div>
+                    <label className="absolute bottom-0 right-0 cursor-pointer">
+                      <input type="file" accept="image/*" className="hidden" onChange={handleAvatarChange} />
+                      <div className="bg-[#059669] text-white p-1.5 rounded-full shadow-lg border-2 border-white dark:border-[#0b1621] hover:scale-110 transition-transform">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></svg>
                       </div>
-                    )}
-                  </div>
-               </div>
-               <label className="absolute bottom-0 right-0 cursor-pointer">
-                 <input type="file" accept="image/*" className="hidden" onChange={handleAvatarChange} />
-                 <div className="bg-[#059669] text-slate-900 p-1.5 rounded-full shadow-lg border-2 border-[#0b1621] hover:scale-110 transition-transform">
-                   <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></svg>
+                    </label>
                  </div>
-               </label>
-            </div>
-            <span className="text-[10px] text-[#059669] mt-4 font-bold uppercase tracking-wider">Change Photo</span>
-         </div>
-
-         <div className="grid grid-cols-2 gap-3">
-            <div className="col-span-2">
-               <label className="text-[10px] text-secondary font-semibold mb-1 block uppercase">নাম (Name)</label>
-               <input type="text" onFocus={handleFocus} value={profile.name} onChange={e => updateProfile({ name: e.target.value })} className="w-full inner-glass text-slate-900 dark:text-white rounded-xl px-3 py-2.5 text-sm font-medium focus:border-[#059669] focus:outline-none transition-colors" />
-            </div>
-            <div className="col-span-2">
-               <label className="text-[10px] text-secondary font-semibold mb-1 block uppercase">ঠিকানা (Address)</label>
-               <input type="text" onFocus={handleFocus} value={profile.address} onChange={e => updateProfile({ address: e.target.value })} className="w-full inner-glass text-slate-900 dark:text-white rounded-xl px-3 py-2.5 text-sm font-medium focus:border-[#059669] focus:outline-none transition-colors" />
-            </div>
-            
-            <div>
-               <label className="text-[10px] text-secondary font-semibold mb-1 block uppercase">বয়স (Age)</label>
-               <input type="number" onFocus={handleFocus} value={profile.age} onChange={e => updateProfile({ age: e.target.value })} className="w-full inner-glass text-slate-900 dark:text-white rounded-xl px-3 py-2.5 text-sm font-medium focus:border-[#059669] focus:outline-none transition-colors" />
-            </div>
-            <div>
-               <label className="text-[10px] text-secondary font-semibold mb-1 block uppercase">জেন্ডার (Gender)</label>
-               <select value={profile.gender?.charAt(0).toUpperCase() + profile.gender?.slice(1)} onChange={e => updateProfile({ gender: e.target.value })} className="w-full inner-glass text-slate-900 dark:text-white rounded-xl px-3 py-2.5 text-sm font-medium focus:border-[#059669] focus:outline-none transition-colors">
-                 <option value="">Select...</option>
-                 <option value="Male">Male</option>
-                 <option value="Female">Female</option>
-                 <option value="Other">Other</option>
-               </select>
-            </div>
-
-            <div className="col-span-2">
-               <label className="text-[10px] text-secondary font-semibold mb-2 block uppercase">অভিজ্ঞতা (Experience)</label>
-               <div className="flex bg-slate-200/50 dark:bg-black/30 rounded-xl p-1 border border-slate-300 dark:border-white/10 mb-2">
-                 <button onClick={() => setExpType('years')} className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-colors ${expType === 'years' ? 'bg-white dark:bg-white/20 text-slate-800 dark:text-white shadow' : 'text-secondary hover:text-slate-800 dark:hover:text-white'}`}>
-                   Years
-                 </button>
-                 <button onClick={() => setExpType('months')} className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-colors ${expType === 'months' ? 'bg-white dark:bg-white/20 text-slate-800 dark:text-white shadow' : 'text-secondary hover:text-slate-800 dark:hover:text-white'}`}>
-                   Months
-                 </button>
-               </div>
-               
-               {expType === 'years' ? (
-                  <select value={profile.experienceYears} onChange={e => updateProfile({ experienceYears: e.target.value, experienceMonths: '0' })} className="w-full inner-glass text-slate-900 dark:text-white rounded-xl px-3 py-2.5 text-sm font-medium focus:border-[#059669] focus:outline-none transition-colors">
-                    <option value="0">0 Years</option>
-                    <option value="1">1 Year</option>
-                    {[2,3,4,5,6,7,8,9,10].map(y => <option key={y} value={y}>{y} Years</option>)}
-                    <option value="10+">10+ Years</option>
-                  </select>
-               ) : (
-                  <select value={profile.experienceMonths} onChange={e => updateProfile({ experienceMonths: e.target.value, experienceYears: '0' })} className="w-full inner-glass text-slate-900 dark:text-white rounded-xl px-3 py-2.5 text-sm font-medium focus:border-[#059669] focus:outline-none transition-colors">
-                    {[0,1,2,3,4,5,6,7,8,9,10,11].map(m => <option key={m} value={m}>{m} Months</option>)}
-                  </select>
-               )}
-            </div>
-
-            <div className="col-span-2">
-               <label className="text-[10px] text-secondary font-semibold mb-1 block uppercase">টাইম জোন (Time Zone)</label>
-               <select value={profile.timezone} onChange={e => updateProfile({ timezone: e.target.value })} className="w-full inner-glass text-slate-900 dark:text-white rounded-xl px-3 py-2.5 text-sm font-medium focus:border-[#059669] focus:outline-none transition-colors">
-                 {timezones.map(tz => <option key={tz.value} value={tz.value}>{tz.label}</option>)}
-               </select>
-            </div>
-            
-            <div className="col-span-2 mt-2 pt-2 border-t border-slate-200 dark:border-white/10">
-               <label className="text-xs font-bold text-slate-800 dark:text-white mb-2 block">অ্যাকাউন্ট সেটিংস (Account Settings)</label>
-               <div className="grid grid-cols-2 gap-3">
-                 <div>
-                    <label className="text-[10px] text-secondary font-semibold mb-1 block uppercase truncate">Start Bal / শুরু</label>
-                    <input type="number" step="0.01" onFocus={handleFocus} value={profile.startingBalance ? Number(Number(profile.startingBalance).toFixed(2)) : ''} onChange={e => {
-                       const newStartBal = Number(e.target.value);
-                       updateProfile({ startingBalance: newStartBal });
-                       if (newStartBal > 0 && newStartBal === balance) {
-                           store.resetToFreshStart(newStartBal);
-                       }
-                    }} className="w-full inner-glass text-slate-900 dark:text-white rounded-xl px-3 py-2.5 text-sm font-medium focus:border-[#059669] focus:outline-none transition-colors" />
+                 <span className="text-[10px] text-[#059669] mt-4 font-bold uppercase tracking-wider">Change Photo</span>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                 <div className="col-span-2">
+                    <label className="text-[10px] text-secondary font-semibold mb-1 block uppercase">নাম (Name)</label>
+                    <input type="text" onFocus={handleFocus} value={profile.name} onChange={e => updateProfile({ name: e.target.value })} className="w-full inner-glass text-slate-900 dark:text-white rounded-xl px-3 py-2.5 text-sm font-medium focus:border-[#059669] focus:outline-none transition-colors" />
                  </div>
-                 <div>
-                    <label className="text-[10px] text-secondary font-semibold mb-1 block uppercase truncate">Curr Bal / বর্তমান</label>
-                    <input type="number" step="0.01" onFocus={handleFocus} value={balance !== undefined ? Number(Number(balance).toFixed(2)) : ''} onChange={e => {
-                       const newBal = Number(e.target.value);
-                       setBalance(newBal);
-                       if (profile.startingBalance > 0 && newBal === profile.startingBalance) {
-                           store.resetToFreshStart(newBal);
-                       } else {
-                           const targetPct = dailyTarget.dailyPct / 100;
-                           if (profile.startingBalance > 0 && targetPct > 0 && newBal >= profile.startingBalance) {
-                              let n = Math.log(newBal / profile.startingBalance) / Math.log(1 + targetPct);
-                              if (n < 0) n = 0;
-                              const potentialDay = Math.floor(n) + 1;
-                              store.updateDailyTarget({ dayNum: potentialDay });
-                           }
-                       }
-                    }} className="w-full inner-glass text-[#059669] font-bold rounded-xl px-3 py-2.5 text-sm focus:border-[#059669] focus:outline-none transition-colors" />
+                 <div className="col-span-2">
+                    <label className="text-[10px] text-secondary font-semibold mb-1 block uppercase">ঠিকানা (Address)</label>
+                    <input type="text" onFocus={handleFocus} value={profile.address} onChange={e => updateProfile({ address: e.target.value })} className="w-full inner-glass text-slate-900 dark:text-white rounded-xl px-3 py-2.5 text-sm font-medium focus:border-[#059669] focus:outline-none transition-colors" />
                  </div>
                  
                  <div>
-                    <label className="text-[10px] text-secondary font-semibold mb-1 block uppercase truncate">Daily Prf / টার্গেট</label>
-                    <input type="number" step="0.01" onFocus={handleFocus} value={profile.dailyProfitTarget ? Number(Number(profile.dailyProfitTarget).toFixed(2)) : ''} onChange={e => { updateProfile({ dailyProfitTarget: Number(e.target.value) }); store.updateDailyTarget({ dailyPct: Number(e.target.value) }); }} className="w-full inner-glass text-slate-900 dark:text-white rounded-xl px-3 py-2.5 text-sm font-medium focus:border-[#059669] focus:outline-none transition-colors" />
+                    <label className="text-[10px] text-secondary font-semibold mb-1 block uppercase">বয়স (Age)</label>
+                    <input type="number" onFocus={handleFocus} value={profile.age} onChange={e => updateProfile({ age: e.target.value })} className="w-full inner-glass text-slate-900 dark:text-white rounded-xl px-3 py-2.5 text-sm font-medium focus:border-[#059669] focus:outline-none transition-colors" />
                  </div>
                  <div>
-                    <label className="text-[10px] text-secondary font-semibold mb-1 block uppercase truncate">Tgt Days / দিন</label>
-                    <input type="number" onFocus={handleFocus} value={profile.targetDays || ''} onChange={e => { updateProfile({ targetDays: Number(e.target.value) }); store.updateDailyTarget({ totalDays: Number(e.target.value) }); }} className="w-full inner-glass text-slate-900 dark:text-white rounded-xl px-3 py-2.5 text-sm font-medium focus:border-[#059669] focus:outline-none transition-colors" />
+                    <label className="text-[10px] text-secondary font-semibold mb-1 block uppercase">জেন্ডার (Gender)</label>
+                    <select value={profile.gender?.charAt(0).toUpperCase() + profile.gender?.slice(1)} onChange={e => updateProfile({ gender: e.target.value })} className="w-full inner-glass text-slate-900 dark:text-white rounded-xl px-3 py-2.5 text-sm font-medium focus:border-[#059669] focus:outline-none transition-colors">
+                      <option value="">Select...</option>
+                      <option value="Male">Male</option>
+                      <option value="Female">Female</option>
+                      <option value="Other">Other</option>
+                    </select>
                  </div>
-                 <div>
-                    <label className="text-[10px] text-secondary font-semibold mb-1 block uppercase truncate">Curr Day / বর্তমান দিন</label>
-                    <input type="number" onFocus={handleFocus} value={dailyTarget.dayNum || ''} onChange={e => store.updateDailyTarget({ dayNum: Number(e.target.value) })} className="w-full inner-glass text-slate-900 dark:text-white rounded-xl px-3 py-2.5 text-sm font-medium focus:border-[#059669] focus:outline-none transition-colors" />
+                 <div className="col-span-2">
+                    <label className="text-[10px] text-secondary font-semibold mb-2 block uppercase">অভিজ্ঞতা (Experience)</label>
+                    <div className="flex bg-slate-200/50 dark:bg-black/30 rounded-xl p-1 border border-slate-300 dark:border-white/10 mb-2">
+                      <button onClick={() => setExpType('years')} className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-colors ${expType === 'years' ? 'bg-white dark:bg-white/20 text-slate-800 dark:text-white shadow' : 'text-secondary hover:text-slate-800 dark:hover:text-white'}`}>
+                        Years
+                      </button>
+                      <button onClick={() => setExpType('months')} className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-colors ${expType === 'months' ? 'bg-white dark:bg-white/20 text-slate-800 dark:text-white shadow' : 'text-secondary hover:text-slate-800 dark:hover:text-white'}`}>
+                        Months
+                      </button>
+                    </div>
+                    
+                    {expType === 'years' ? (
+                       <select value={profile.experienceYears} onChange={e => updateProfile({ experienceYears: e.target.value, experienceMonths: '0' })} className="w-full inner-glass text-slate-900 dark:text-white rounded-xl px-3 py-2.5 text-sm font-medium focus:border-[#059669] focus:outline-none transition-colors">
+                         <option value="0">0 Years</option>
+                         <option value="1">1 Year</option>
+                         {[2,3,4,5,6,7,8,9,10].map(y => <option key={y} value={y}>{y} Years</option>)}
+                         <option value="10+">10+ Years</option>
+                       </select>
+                    ) : (
+                       <select value={profile.experienceMonths} onChange={e => updateProfile({ experienceMonths: e.target.value, experienceYears: '0' })} className="w-full inner-glass text-slate-900 dark:text-white rounded-xl px-3 py-2.5 text-sm font-medium focus:border-[#059669] focus:outline-none transition-colors">
+                         {[0,1,2,3,4,5,6,7,8,9,10,11].map(m => <option key={m} value={m}>{m} Months</option>)}
+                       </select>
+                    )}
                  </div>
-                 <div>
-                    <label className="text-[10px] text-secondary font-semibold mb-1 block uppercase truncate">Payout / পেআউট (%)</label>
-                    <input type="number" onFocus={handleFocus} value={dailyTarget.payout || ''} onChange={e => store.updateDailyTarget({ payout: Number(e.target.value) })} className="w-full inner-glass text-slate-900 dark:text-white rounded-xl px-3 py-2.5 text-sm font-medium focus:border-[#059669] focus:outline-none transition-colors" />
+                 <div className="col-span-2">
+                    <label className="text-[10px] text-secondary font-semibold mb-1 block uppercase">টাইম জোন (Time Zone)</label>
+                    <select value={profile.timezone} onChange={e => updateProfile({ timezone: e.target.value })} className="w-full inner-glass text-slate-900 dark:text-white rounded-xl px-3 py-2.5 text-sm font-medium focus:border-[#059669] focus:outline-none transition-colors">
+                      {timezones.map(tz => <option key={tz.value} value={tz.value}>{tz.label}</option>)}
+                    </select>
                  </div>
-               </div>
-            </div>
-
-            <div className="col-span-2 mt-2">
-               <label className="text-[10px] text-secondary font-semibold mb-2 block uppercase">ব্যালেন্স অ্যাডজাস্টমেন্ট (Balance Adjustment)</label>
-               <div className="flex gap-2">
-                 <button onClick={() => setShowAdjustmentModal('deposit')} className="flex-1 bg-[#059669] text-white py-3 text-xs font-bold rounded-xl shadow hover:bg-[#047857] transition-colors">
-                   Deposit
-                 </button>
-                 <button onClick={() => setShowAdjustmentModal('withdraw')} className="flex-1 bg-[#ef4444] text-white py-3 text-xs font-bold rounded-xl shadow hover:bg-[#dc2626] transition-colors">
-                   Withdraw
-                 </button>
-               </div>
-            </div>
-         </div>
+              </div>
+           </>
+         )}
+         
+         {settingsTab === 'trading' && (
+           <>
+              <div>
+                 <label className="text-xs font-bold text-slate-800 dark:text-white mb-2 block">অ্যাকাউন্ট সেটিংস (Account Settings)</label>
+                 <div className="grid grid-cols-2 gap-3">
+                   <div>
+                      <label className="text-[10px] text-secondary font-semibold mb-1 block uppercase truncate">Start Bal / শুরু</label>
+                      <input type="number" step="0.01" onFocus={handleFocus} value={profile.startingBalance ? Number(Number(profile.startingBalance).toFixed(2)) : ''} onChange={e => {
+                         const newStartBal = Number(e.target.value);
+                         updateProfile({ startingBalance: newStartBal });
+                         if (newStartBal > 0 && newStartBal === balance) {
+                             store.resetToFreshStart(newStartBal);
+                         }
+                      }} className="w-full inner-glass text-slate-900 dark:text-white rounded-xl px-3 py-2.5 text-sm font-medium focus:border-[#059669] focus:outline-none transition-colors" />
+                   </div>
+                   <div>
+                      <label className="text-[10px] text-secondary font-semibold mb-1 block uppercase truncate">Curr Bal / বর্তমান</label>
+                      <input type="number" step="0.01" onFocus={handleFocus} value={balance !== undefined ? Number(Number(balance).toFixed(2)) : ''} onChange={e => {
+                         const newBal = Number(e.target.value);
+                         setBalance(newBal);
+                         if (profile.startingBalance > 0 && newBal === profile.startingBalance) {
+                             store.resetToFreshStart(newBal);
+                         } else {
+                             const targetPct = dailyTarget.dailyPct / 100;
+                             if (profile.startingBalance > 0 && targetPct > 0 && newBal >= profile.startingBalance) {
+                                let n = Math.log(newBal / profile.startingBalance) / Math.log(1 + targetPct);
+                                if (n < 0) n = 0;
+                                const potentialDay = Math.floor(n) + 1;
+                                store.updateDailyTarget({ dayNum: potentialDay });
+                             }
+                         }
+                      }} className="w-full inner-glass text-[#059669] font-bold rounded-xl px-3 py-2.5 text-sm focus:border-[#059669] focus:outline-none transition-colors" />
+                   </div>
+                   
+                   <div>
+                      <label className="text-[10px] text-secondary font-semibold mb-1 block uppercase truncate">Daily Prf / টার্গেট</label>
+                      <input type="number" step="0.01" onFocus={handleFocus} value={profile.dailyProfitTarget ? Number(Number(profile.dailyProfitTarget).toFixed(2)) : ''} onChange={e => { updateProfile({ dailyProfitTarget: Number(e.target.value) }); store.updateDailyTarget({ dailyPct: Number(e.target.value) }); }} className="w-full inner-glass text-slate-900 dark:text-white rounded-xl px-3 py-2.5 text-sm font-medium focus:border-[#059669] focus:outline-none transition-colors" />
+                   </div>
+                   <div>
+                      <label className="text-[10px] text-secondary font-semibold mb-1 block uppercase truncate">Tgt Days / দিন</label>
+                      <input type="number" onFocus={handleFocus} value={profile.targetDays || ''} onChange={e => { updateProfile({ targetDays: Number(e.target.value) }); store.updateDailyTarget({ totalDays: Number(e.target.value) }); }} className="w-full inner-glass text-slate-900 dark:text-white rounded-xl px-3 py-2.5 text-sm font-medium focus:border-[#059669] focus:outline-none transition-colors" />
+                   </div>
+                   <div>
+                      <label className="text-[10px] text-secondary font-semibold mb-1 block uppercase truncate">Curr Day / বর্তমান দিন</label>
+                      <input type="number" onFocus={handleFocus} value={dailyTarget.dayNum || ''} onChange={e => store.updateDailyTarget({ dayNum: Number(e.target.value) })} className="w-full inner-glass text-slate-900 dark:text-white rounded-xl px-3 py-2.5 text-sm font-medium focus:border-[#059669] focus:outline-none transition-colors" />
+                   </div>
+                   <div>
+                      <label className="text-[10px] text-secondary font-semibold mb-1 block uppercase truncate">Payout / পেআউট (%)</label>
+                      <input type="number" onFocus={handleFocus} value={dailyTarget.payout || ''} onChange={e => store.updateDailyTarget({ payout: Number(e.target.value) })} className="w-full inner-glass text-slate-900 dark:text-white rounded-xl px-3 py-2.5 text-sm font-medium focus:border-[#059669] focus:outline-none transition-colors" />
+                   </div>
+                 </div>
+              </div>
+              <div className="mt-4 pt-4 border-t border-slate-200 dark:border-white/10">
+                 <label className="text-[10px] text-secondary font-semibold mb-2 block uppercase">ব্যালেন্স অ্যাডজাস্টমেন্ট (Balance Adjustment)</label>
+                 <div className="flex gap-2">
+                   <button onClick={() => setShowAdjustmentModal('deposit')} className="flex-1 bg-[#059669] text-white py-3 text-xs font-bold rounded-xl shadow hover:bg-[#047857] transition-colors">
+                     Deposit
+                   </button>
+                   <button onClick={() => setShowAdjustmentModal('withdraw')} className="flex-1 bg-[#ef4444] text-white py-3 text-xs font-bold rounded-xl shadow hover:bg-[#dc2626] transition-colors">
+                     Withdraw
+                   </button>
+                 </div>
+              </div>
+           </>
+         )}
 
          <div className="pt-2">
             <button onClick={handleSave} className={`w-full shadow-[0_0_15px_rgba(5,150,105,0.3)] py-3 rounded-xl font-extrabold text-sm hover:scale-[1.02] transition-all flex justify-center items-center gap-2 ${isSaving ? 'bg-[#065f46] text-white scale-[0.98]' : 'bg-[#047857] text-white hover:bg-[#065f46] shadow-lg'}`}>
@@ -272,26 +286,23 @@ export function ProfileTab() {
                ) : 'Save Settings'}
             </button>
          </div>
-
-         <div className="pt-4 space-y-3 border-t border-slate-200 dark:border-white/10">
-             <SlideButton 
-                onSlideComplete={() => {
-                   store.startNewTargetSession();
-                }} 
-             />
-             <button onClick={() => setShowDeleteConfirm(true)} className="w-full bg-red-500/10 text-red-500 border border-red-500/30 py-3 rounded-xl font-bold text-xs hover:bg-red-500/20 transition-colors">
-                সব তথ্য মুছুন
-             </button>
-             <button onClick={() => setShowExportModal(true)} className="w-full bg-blue-500/10 text-blue-400 border border-blue-500/30 py-3 rounded-xl font-bold text-xs hover:bg-blue-500/20 transition-colors">
-                Export All Data
-             </button>
-             <button onClick={handleLogout} className="w-full bg-red-500/10 text-red-500 border border-red-500/30 py-3 rounded-xl font-bold text-xs hover:bg-red-500/20 transition-colors">
-                লগআউট (Log Out)
-             </button>
-         </div>
-
       </div>
-
+      <div className="pt-4 space-y-3 border-t border-slate-200 dark:border-white/10">
+         <SlideButton
+             onSlideComplete={() => {
+               store.startNewTargetSession();
+            }}
+          />
+         <button onClick={() => setShowDeleteConfirm(true)} className="w-full bg-red-500/10 text-red-500 border border-red-500/30 py-3 rounded-xl font-bold text-xs hover:bg-red-500/20 transition-colors">
+            সব তথ্য মুছুন
+         </button>
+         <button onClick={() => setShowExportModal(true)} className="w-full bg-blue-500/10 text-blue-400 border border-blue-500/30 py-3 rounded-xl font-bold text-xs hover:bg-blue-500/20 transition-colors">
+            Export All Data
+         </button>
+         <button onClick={handleLogout} className="w-full bg-red-500/10 text-red-500 border border-red-500/30 py-3 rounded-xl font-bold text-xs hover:bg-red-500/20 transition-colors">
+            লগআউট (Log Out)
+         </button>
+      </div>
       {showDeleteConfirm && (
         <div className="fixed inset-0 z-[300] bg-black/90 flex items-center justify-center p-5 backdrop-blur-md">
            <div className="glass-panel p-6 rounded-3xl w-full max-w-sm flex flex-col items-center text-center relative border border-white/10">
@@ -322,7 +333,7 @@ export function ProfileTab() {
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
              </button>
              <h2 className="text-white font-bold mb-4">Exported Data JSON</h2>
-             <div className="flex-1 overflow-auto bg-[#0b1621] p-3 rounded-xl border border-white/5 mb-4 text-[10px] text-green-400 font-mono text-left whitespace-pre-wrap">
+             <div className="flex-1 overflow-auto bg-slate-100 dark:bg-[#0b1621] p-3 rounded-xl border border-slate-300 dark:border-white/5 mb-4 text-[10px] text-green-600 dark:text-green-400 font-mono text-left whitespace-pre-wrap">
                 {JSON.stringify({ profile, balance, dailyTarget, masaniello: store.masaniello, journals: store.journals, trades: store.trades }, null, 2)}
              </div>
              <div className="flex justify-between items-center">

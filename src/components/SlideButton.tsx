@@ -73,7 +73,7 @@ export function SlideButton({ onSlideComplete }: { onSlideComplete: () => void }
   return (
     <div 
       ref={containerRef}
-      className={`relative w-full h-[52px] border rounded-2xl overflow-hidden shadow-inner flex items-center justify-center select-none transition-colors duration-300 ${success ? 'bg-[#059669]/20 border-[#059669]/50' : 'bg-[#0b1621] border-slate-700/50'}`}
+      className={`relative w-full h-[52px] border rounded-2xl overflow-hidden shadow-inner flex items-center justify-center select-none transition-colors duration-300 ${success ? 'bg-[#059669]/20 border-[#059669]/50' : 'bg-slate-100 dark:bg-[#0b1621] border-slate-300 dark:border-slate-700/50'}`}
     >
       <div 
         className={`absolute inset-y-0 left-0 transition-all ${success ? 'duration-500 bg-[#059669]/40' : 'duration-75 bg-gradient-to-r from-[#059669]/10 to-[#059669]/30'}`}
@@ -82,10 +82,10 @@ export function SlideButton({ onSlideComplete }: { onSlideComplete: () => void }
       
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10 pl-8">
         <span 
-          className={`text-[11px] font-bold uppercase tracking-wider drop-shadow-sm transition-all duration-300 ${success ? 'text-[#059669] scale-110' : 'text-slate-400'}`}
+          className={`text-[11px] font-bold uppercase tracking-wider drop-shadow-sm transition-all duration-300 ${success ? 'text-[#059669] scale-110' : 'text-slate-500 dark:text-slate-400'}`}
           style={{ opacity: success ? 1 : Math.max(0, 1 - percentage * 2) }}
         >
-          {success ? 'Session Started!' : 'Slide to Start New Session'}
+          {success ? 'সেশন শুরু হয়েছে!' : 'স্লাইড নিউ সেশন'}
         </span>
       </div>
       

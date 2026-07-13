@@ -186,7 +186,7 @@ export function Category() {
                 <span className="text-[7px] text-slate-400 font-bold tracking-wide text-center leading-[1.1] max-w-[50px]">
                   {activeSegment ? activeSegment.name : 'Total Vol'}
                 </span>
-                <span className={`font-black text-[11px] leading-tight my-0.5 ${activeSegment ? '' : 'text-white'}`} style={activeSegment ? { color: activeSegment.color } : {}}>
+                <span className={`font-black text-[11px] leading-tight my-0.5 ${activeSegment ? '' : 'text-slate-800 dark:text-white'}`} style={activeSegment ? { color: activeSegment.color } : {}}>
                   ${activeSegment ? activeSegment.value.toFixed(2) : totalVol.toFixed(2)}
                 </span>
                 <span className="text-[7.5px] text-slate-400">

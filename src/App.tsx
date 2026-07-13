@@ -9,6 +9,7 @@ import { JournalTab } from "./tabs/JournalTab";
 import { ProfileTab } from "./tabs/ProfileTab";
 import { Header } from "./components/Header";
 import { HomeCard } from "./components/HomeCard";
+import { WelcomeMessage } from "./components/WelcomeMessage";
 import { Onboarding } from "./components/Onboarding";
 import { Login } from "./components/Login";
 import { AdminPanel } from "./components/AdminPanel";
@@ -21,12 +22,19 @@ import { doc, getDoc, setDoc } from "firebase/firestore";
 
 export default function App() {
   const [currentTab, setTab] = useState('home');
+  const [showQuote, setShowQuote] = useState(true);
   const [showWelcome, setShowWelcome] = useState(true);
   const [authInitialized, setAuthInitialized] = useState(false);
   const [loadingProfile, setLoadingProfile] = useState(false);
   const [user, setUser] = useState<any>(null);
   const { theme, profile, updateProfile, resetDailySession, dailyTarget, updateDailyTarget } = useStore();
   const isDark = theme === 'dark';
+
+  const [now, setNow] = useState(Date.now());
+  useEffect(() => {
+    const intv = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(intv);
+  }, []);
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, async (firebaseUser) => {
@@ -249,9 +257,31 @@ export default function App() {
 
         <FloatingNav currentTab={currentTab} setTab={setTab} />
         
-        {showWelcome && (
-           <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-[#050b14]/60 backdrop-blur-md px-4 pb-20">
+        {showQuote && (
+           <WelcomeMessage onContinue={() => setShowQuote(false)} />
+        )}
+
+        {!showQuote && showWelcome && (
+           <div className="absolute inset-0 z-[90] flex flex-col items-center justify-center bg-[#050b14]/60 backdrop-blur-md px-4 pb-20">
               <HomeCard onStart={() => setShowWelcome(false)} />
+           </div>
+        )}
+        
+        {dailyTarget.blockedUntil && new Date(dailyTarget.blockedUntil).getTime() > now && (
+           <div className="absolute inset-0 z-[110] flex flex-col items-center justify-center bg-white/95 dark:bg-[#050b14]/95 backdrop-blur-xl px-6 text-center animate-in fade-in duration-500">
+             <div className="max-w-md w-full flex flex-col items-center bg-slate-50 dark:bg-[#0b121e] p-8 rounded-3xl border border-red-500/30 shadow-[0_0_50px_rgba(239,68,68,0.2)]">
+                <span className="text-6xl mb-6 drop-shadow-md">🛑</span>
+                <h2 className="text-xl font-bold text-red-500 mb-4 leading-relaxed tracking-wide">
+                  আপনি অনেক বেশি ট্রেডিং করে ফেলেছেন!
+                </h2>
+                <p className="text-slate-700 dark:text-slate-300 text-sm mb-8 leading-relaxed">
+                  একদিনে বড়লোক হবার ধান্দা নাকি? অপেক্ষা করুন, মাথা ঠান্ডা করে চিন্তা করুন, মার্কেট পালিয়ে যাচ্ছে না। ধীরে ধীরে সব হবে।
+                </p>
+                <div className="bg-red-500/10 text-red-600 dark:text-red-500 px-6 py-3 rounded-xl font-mono text-xl font-bold border border-red-500/30">
+                   {Math.floor((new Date(dailyTarget.blockedUntil).getTime() - now) / 60000)}:
+                   {Math.floor(((new Date(dailyTarget.blockedUntil).getTime() - now) % 60000) / 1000).toString().padStart(2, '0')}
+                </div>
+             </div>
            </div>
         )}
         

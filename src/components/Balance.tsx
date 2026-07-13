@@ -12,17 +12,43 @@ export function Balance() {
   const profitPct = startBal > 0 ? (profit / startBal) * 100 : 0;
   
   // Real trades data
+  const [timeRange, setTimeRange] = useState<'today' | 'weekly' | 'monthly'>('today');
+  const [showDropdown, setShowDropdown] = useState(false);
+
   const data = useMemo(() => {
-    const currentDayStr = new Date().toLocaleDateString('en-US', { timeZone: 'Asia/Dhaka' });
-    const todaysTrades = [...trades]
-      .filter(t => new Date(t.date).toLocaleDateString('en-US', { timeZone: 'Asia/Dhaka' }) === currentDayStr)
-      .reverse(); 
+    let filteredTrades = [...trades];
+    const now = new Date();
     
-    let currentVal = startBal;
-    const chartData = [{ time: "12:00", value: startBal }];
+    if (timeRange === 'today') {
+      const currentDayStr = now.toLocaleDateString('en-US', { timeZone: 'Asia/Dhaka' });
+      filteredTrades = filteredTrades.filter(t => new Date(t.date).toLocaleDateString('en-US', { timeZone: 'Asia/Dhaka' }) === currentDayStr);
+    } else if (timeRange === 'weekly') {
+      const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+      filteredTrades = filteredTrades.filter(t => new Date(t.date) >= oneWeekAgo);
+    } else if (timeRange === 'monthly') {
+      const oneMonthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+      filteredTrades = filteredTrades.filter(t => new Date(t.date) >= oneMonthAgo);
+    }
+    
+    filteredTrades.reverse();
+
+    // Determine the baseline start balance for the period
+    // If today, use dayStartBalance if available. Otherwise, attempt to backtrack from current balance
+    let baseline = startBal;
+    if (timeRange !== 'today') {
+        let backwardsBal = balance;
+        for (let t of [...filteredTrades].reverse()) {
+            if (t.type === 'WIN') backwardsBal -= t.amount;
+            else backwardsBal += t.amount;
+        }
+        baseline = backwardsBal;
+    }
+
+    let currentVal = baseline;
+    const chartData = [{ time: "Start", value: baseline }];
     let currentTime = new Date("2024-01-01T12:00:00");
     
-    todaysTrades.forEach((t, i) => {
+    filteredTrades.forEach((t, i) => {
       if (t.type === 'WIN') {
         currentVal += t.amount;
       } else {
@@ -33,15 +59,22 @@ export function Balance() {
       chartData.push({ time: timeStr, value: currentVal });
     });
     
-    // Pad to ensure at least 9 points are visible for the 8-9 times requirement
     while (chartData.length < 9) {
       currentTime.setMinutes(currentTime.getMinutes() + 5);
       const timeStr = currentTime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-      chartData.push({ time: timeStr, value: currentVal });
+      chartData.push({ time: currentVal === baseline && filteredTrades.length === 0 ? "12:00" : timeStr, value: currentVal });
     }
     
     return chartData;
-  }, [trades, startBal, balance]);
+  }, [trades, startBal, balance, timeRange]);
+
+  const rangeProfit = useMemo(() => {
+    if (data.length > 0) {
+      return data[data.length - 1].value - data[0].value;
+    }
+    return 0;
+  }, [data]);
+  const rangeProfitPct = data.length > 0 && data[0].value > 0 ? (rangeProfit / data[0].value) * 100 : 0;
 
   const dataMin = Math.min(...data.map((d) => d.value));
   const dataMax = Math.max(...data.map((d) => d.value));
@@ -64,20 +97,30 @@ export function Balance() {
           <div className="text-3xl leading-none font-bold text-primary mb-1.5 tracking-tight transition-all duration-300">
              {showBalance ? `$${balance.toFixed(2)}` : '••••••'}
           </div>
-          <div className={`${profit >= 0 ? 'text-[#059669]' : 'text-red-500'} text-xs font-semibold flex items-center gap-1`}>
-            {profit >= 0 ? (
+          <div className={`${rangeProfit >= 0 ? 'text-[#059669]' : 'text-red-500'} text-xs font-semibold flex items-center gap-1`}>
+            {rangeProfit >= 0 ? (
               <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="m18 15-6-6-6 6"/></svg>
             ) : (
               <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
             )}
-             {profit >= 0 ? '+' : '-'}${Math.abs(profit).toFixed(2)} ({Math.abs(profitPct).toFixed(2)}%)
+             {rangeProfit >= 0 ? '+' : '-'}${Math.abs(rangeProfit).toFixed(2)} ({Math.abs(rangeProfitPct).toFixed(2)}%)
           </div>
         </div>
         
-        <button className="bg-black/5 dark:bg-white/10 text-[10px] flex-shrink-0 font-semibold px-2.5 py-1 rounded-full flex items-center gap-1 text-primary border border-slate-200/50 dark:border-white/10 mt-1 hover:bg-black/10 dark:hover:bg-white/20 transition-all">
-          আজকের
-          <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-        </button>
+        <div className="relative z-50">
+          <button onClick={() => setShowDropdown(!showDropdown)} className="bg-black/5 dark:bg-white/10 text-[10px] flex-shrink-0 font-semibold px-2.5 py-1 rounded-full flex items-center gap-1 text-primary border border-slate-200/50 dark:border-white/10 mt-1 hover:bg-black/10 dark:hover:bg-white/20 transition-all">
+            {timeRange === 'today' ? 'আজকের' : timeRange === 'weekly' ? 'সাপ্তাহিক' : 'মাসিক'}
+            <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+          </button>
+          
+          {showDropdown && (
+             <div className="absolute top-full right-0 mt-1 bg-white dark:bg-[#0b1621] border border-slate-200 dark:border-white/10 rounded-xl shadow-xl overflow-hidden py-1 w-24">
+                <button onClick={() => { setTimeRange('today'); setShowDropdown(false); }} className={`w-full text-left px-3 py-1.5 text-[10px] font-bold ${timeRange === 'today' ? 'bg-[#059669]/10 text-[#059669]' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5'}`}>আজকের</button>
+                <button onClick={() => { setTimeRange('weekly'); setShowDropdown(false); }} className={`w-full text-left px-3 py-1.5 text-[10px] font-bold ${timeRange === 'weekly' ? 'bg-[#059669]/10 text-[#059669]' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5'}`}>সাপ্তাহিক</button>
+                <button onClick={() => { setTimeRange('monthly'); setShowDropdown(false); }} className={`w-full text-left px-3 py-1.5 text-[10px] font-bold ${timeRange === 'monthly' ? 'bg-[#059669]/10 text-[#059669]' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5'}`}>মাসিক</button>
+             </div>
+          )}
+        </div>
       </div>
 
       <div className="absolute left-0 right-0 bottom-0 top-[75px] z-0 overflow-hidden pointer-events-none">
@@ -114,18 +157,18 @@ export function Balance() {
             />
             <Tooltip 
               contentStyle={{ backgroundColor: "rgba(15, 23, 42, 0.9)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "12px", color: "white", boxShadow: "0 8px 16px rgba(0,0,0,0.2)", backdropFilter: "blur(8px)", pointerEvents: 'auto' }} 
-              itemStyle={{ color: profit >= 0 ? "#059669" : "#ef4444", fontWeight: "bold" }}
+              itemStyle={{ color: rangeProfit >= 0 ? "#059669" : "#ef4444", fontWeight: "bold" }}
               cursor={{ stroke: "rgba(148, 163, 184, 0.3)", strokeWidth: 1, strokeDasharray: "3 3" }}
             />
             <Area 
               type="linear" 
               dataKey="value" 
-              stroke={profit >= 0 ? "#059669" : "#ef4444"} 
+              stroke={rangeProfit >= 0 ? "#059669" : "#ef4444"} 
               strokeWidth={1.5}
               fillOpacity={1} 
-              fill={profit >= 0 ? "url(#colorValueGood)" : "url(#colorValueBad)"} 
+              fill={rangeProfit >= 0 ? "url(#colorValueGood)" : "url(#colorValueBad)"} 
               style={{ outline: 'none' }}
-              activeDot={{ outline: 'none', stroke: 'none', fill: profit >= 0 ? "#059669" : "#ef4444" }}
+              activeDot={{ outline: 'none', stroke: 'none', fill: rangeProfit >= 0 ? "#059669" : "#ef4444" }}
             />
           </AreaChart>
         </ResponsiveContainer>

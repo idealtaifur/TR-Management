@@ -247,48 +247,56 @@ export function MasanielloTab() {
         </div>
       </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-2 gap-3 w-full flex-shrink-0">
-           <div className="glass-panel rounded-[1.5rem] py-4 flex flex-col items-center justify-center relative min-h-[76px] shadow-sm">
-             <div className="absolute top-2.5 left-2.5 w-4 h-4 rounded-full bg-gradient-to-br from-[#facc15]/20 to-transparent flex items-center justify-center text-[#facc15] border border-[#facc15]/20">
-               <svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-             </div>
-             <span className="text-slate-500 dark:text-white/60 text-[8px] font-black tracking-[0.1em] mb-1 ml-4 uppercase">মেইন ব্যালেন্স</span>
-             <span className="text-slate-800 dark:text-slate-50 text-[15px] font-bold tracking-tight">${enToBn(balance.toFixed(2))}</span>
-           </div>
-           
-           <div className="glass-panel rounded-[1.5rem] py-4 flex flex-col items-center justify-center relative min-h-[76px] shadow-sm">
-             <div className="absolute top-2.5 left-2.5 w-4 h-4 rounded-full bg-gradient-to-br from-[#059669]/20 to-transparent flex items-center justify-center text-[#059669] border border-[#059669]/20">
-               <svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-             </div>
-             <span className="text-slate-500 dark:text-white/60 text-[8px] font-black tracking-[0.1em] mb-1 ml-4 uppercase">ট্রেড হয়েছে</span>
-             <span className="text-slate-800 dark:text-slate-50 text-[15px] font-bold tracking-tight flex items-center gap-0.5">
-               {enToBn(masaniello.events)}<span className="text-[10px]">টি</span>
-             </span>
-           </div>
-           
-           <div className="glass-panel rounded-[1.5rem] py-4 flex flex-col items-center justify-center relative min-h-[76px] shadow-sm">
-             <div className="absolute top-2.5 left-2.5 w-4 h-4 rounded-full bg-gradient-to-br from-[#3b82f6]/20 to-transparent flex items-center justify-center text-[#3b82f6] border border-[#3b82f6]/20">
-               <svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
-             </div>
-             <span className="text-slate-500 dark:text-white/60 text-[8px] font-black tracking-[0.1em] mb-1 ml-4 uppercase">দরকার উইন</span>
-             <span className="text-slate-800 dark:text-slate-50 text-[15px] font-bold tracking-tight flex items-center gap-0.5">
-               {enToBn(winsLeft > 0 ? winsLeft : 0)}<span className="text-[10px]">টি</span>
-             </span>
-           </div>
-           
-           <div className="glass-panel rounded-[1.5rem] py-4 flex flex-col items-center justify-center relative min-h-[76px] shadow-sm">
-             <div className="absolute top-2.5 left-2.5 w-4 h-4 rounded-full bg-gradient-to-br from-[#ef4444]/20 to-transparent flex items-center justify-center text-[#ef4444] border border-[#ef4444]/20">
-               <svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-             </div>
-             <span className="text-slate-500 dark:text-white/60 text-[8px] font-black tracking-[0.1em] mb-1 ml-4 uppercase">লস হয়েছে</span>
-             <span className="text-[#ef4444] text-[15px] font-bold tracking-tight flex items-center gap-0.5">
-               {enToBn(losses)}<span className="text-[10px]">টি</span>
-             </span>
-           </div>
+      {/* Balance Panel */}
+      <div className="glass-panel w-full rounded-[1.5rem] py-6 px-5 flex flex-col items-center justify-center relative shadow-[0_4px_20px_rgba(0,0,0,0.05)] dark:shadow-[0_4px_20px_rgba(0,0,0,0.4)] border-t border-white/50 dark:border-white/10 mb-3 bg-gradient-to-br from-white/60 to-white/30 dark:from-slate-800/80 dark:to-slate-900/40 flex-shrink-0">
+          <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-[#059669]/50 to-transparent"></div>
+          <span className="text-slate-500 dark:text-white/60 text-[10px] font-black tracking-[0.1em] mb-1 uppercase flex items-center gap-1.5">
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+              মেইন ব্যালেন্স
+          </span>
+          <span className="text-slate-900 dark:text-white text-3xl font-black tracking-tight drop-shadow-sm">${enToBn(balance.toFixed(2))}</span>
       </div>
 
-      {/* Actions */}
+      {/* Stats Grid */}
+      <div className="grid grid-cols-2 gap-3 w-full flex-shrink-0 mb-4">
+           
+           {/* Trades Taken & Left */}
+           <div className="glass-panel rounded-[1.5rem] p-4 flex flex-col justify-center relative min-h-[86px] shadow-sm">
+             <span className="text-slate-500 dark:text-white/60 text-[8px] font-black tracking-[0.1em] mb-1 uppercase">ট্রেড হয়েছে</span>
+             <span className="text-slate-800 dark:text-white text-xl font-black tracking-tight flex items-baseline gap-1">
+               {enToBn(masaniello.currentEvents)}<span className="text-[10px] font-bold text-slate-500 dark:text-white/50">টি</span>
+             </span>
+             <span className="text-[#3b82f6] text-[10px] font-bold mt-1">বাকি আছে: {enToBn(Math.max(0, masaniello.events - masaniello.currentEvents))}টি</span>
+           </div>
+           
+           {/* Wins Needed */}
+           <div className="glass-panel rounded-[1.5rem] p-4 flex flex-col justify-center relative min-h-[86px] shadow-sm">
+             <span className="text-slate-500 dark:text-white/60 text-[8px] font-black tracking-[0.1em] mb-1 uppercase">দরকার উইন</span>
+             <span className="text-[#059669] text-xl font-black tracking-tight flex items-baseline gap-1">
+               {enToBn(winsLeft > 0 ? winsLeft : 0)}<span className="text-[10px] font-bold text-[#059669]/60">টি</span>
+             </span>
+           </div>
+           
+           {/* Losses */}
+           <div className="glass-panel rounded-[1.5rem] p-4 flex flex-col justify-center relative min-h-[86px] shadow-sm">
+             <span className="text-slate-500 dark:text-white/60 text-[8px] font-black tracking-[0.1em] mb-1 uppercase">লস হয়েছে</span>
+             <span className="text-[#ef4444] text-xl font-black tracking-tight flex items-baseline gap-1">
+               {enToBn(losses)}<span className="text-[10px] font-bold text-[#ef4444]/60">টি</span>
+             </span>
+           </div>
+           
+           {/* Remaining Trades Heartbeat */}
+           <div className="glass-panel rounded-[1.5rem] p-4 flex flex-col items-center justify-center relative min-h-[86px] shadow-sm overflow-hidden">
+             <span className="text-slate-500 dark:text-white/60 text-[8px] font-black tracking-[0.1em] mb-1 uppercase z-10">অবশিষ্ট ট্রেড</span>
+             <div className={`text-[#ef4444] text-3xl font-black tracking-tight flex items-center justify-center mt-0 z-10 ${Math.max(0, masaniello.events - masaniello.currentEvents) <= 3 ? (Math.max(0, masaniello.events - masaniello.currentEvents) <= 1 ? 'animate-[pulse_0.4s_ease-in-out_infinite]' : 'animate-[pulse_0.8s_ease-in-out_infinite]') : 'animate-[pulse_1.5s_ease-in-out_infinite]'}`}>
+                {enToBn(Math.max(0, masaniello.events - masaniello.currentEvents))}
+             </div>
+             <div className="absolute inset-0 bg-[#ef4444]/5 flex items-center justify-center">
+                <svg className={`w-16 h-16 text-[#ef4444]/15 ${Math.max(0, masaniello.events - masaniello.currentEvents) <= 3 ? (Math.max(0, masaniello.events - masaniello.currentEvents) <= 1 ? 'animate-[ping_0.4s_cubic-bezier(0,0,0.2,1)_infinite]' : 'animate-[ping_0.8s_cubic-bezier(0,0,0.2,1)_infinite]') : 'animate-[ping_1.5s_cubic-bezier(0,0,0.2,1)_infinite]'}`} fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+             </div>
+           </div>
+      </div>
+{/* Actions */}
       <div className="grid grid-cols-2 gap-3 mt-4 pb-8 flex-shrink-0">
         <button 
           onClick={() => handleTrade(true)}

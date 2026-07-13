@@ -65,6 +65,8 @@ interface State {
     payout: number;
     dayStartBalance: number;
     cooldownUntil: string | null;
+    resetCount: number;
+    blockedUntil: string | null;
   };
   updateDailyTarget: (data: Partial<State['dailyTarget']>) => void;
   resetDailySession: () => void;
@@ -145,21 +147,33 @@ export const useStore = create<State>()(
         slHit: false,
         payout: 85,
         dayStartBalance: 228.35,
+        resetCount: 0,
+        blockedUntil: null,
       },
       updateDailyTarget: (data) => set((state) => ({ dailyTarget: { ...state.dailyTarget, ...data } })),
       startNewTargetSession: () => {
-        const { balance } = get();
+        const state = get();
+        const { balance, dailyTarget } = state;
+        let newResetCount = (dailyTarget.resetCount || 0) + 1;
+        let newBlockedUntil = dailyTarget.blockedUntil;
+        
+        if (newResetCount > 3) {
+           newBlockedUntil = new Date(Date.now() + 30 * 60000).toISOString();
+           newResetCount = 0; // reset for next time they are unblocked? Or maybe they stay blocked until it expires, then it's 0.
+        }
+
         set((state) => ({
           dailyTarget: {
             ...state.dailyTarget,
-            dayNum: state.dailyTarget.dayNum + 1,
             currentStake: Number(Math.max(1, balance * 0.01).toFixed(2)),
             consecutiveLosses: 0,
             coverAmountTracker: 0,
             targetHit: false,
             slHit: false,
             dayStartBalance: Number(balance.toFixed(2)),
-            lastTradeDate: new Date().toISOString()
+            lastTradeDate: new Date().toISOString(),
+            resetCount: newResetCount,
+            blockedUntil: newBlockedUntil
           }
         }));
       },
@@ -221,6 +235,8 @@ export const useStore = create<State>()(
             slHit: false,
             payout: 85,
             dayStartBalance: 0,
+            resetCount: 0,
+            blockedUntil: null,
           },
           masaniello: {
             events: 30,
@@ -272,6 +288,8 @@ export const useStore = create<State>()(
             slHit: false,
             payout: 85,
             dayStartBalance: 0,
+            resetCount: 0,
+            blockedUntil: null,
           },
           masaniello: {
             events: 30,
