@@ -78,13 +78,13 @@ export function TargetModeTab() {
              <span className="text-secondary text-[10px] mb-0.5 tracking-wide">টার্গেট ব্যালেন্স</span>
              <span className="text-[#059669] font-black text-base drop-shadow-sm">${enToBn((targetAmount || 0).toFixed(2))}</span>
            </div>
-           <div className="inner-glass rounded-xl flex items-center justify-between px-3 py-2">
-             <span className="text-secondary text-[10px] tracking-wide">স্টপ লস</span>
-             <span className="text-[#ff4d4d] font-bold text-xs">${enToBn((currentSlLimit || 0).toFixed(2))}</span>
+           <div className="inner-glass rounded-xl flex flex-col items-center justify-center py-2.5">
+             <span className="text-secondary text-[10px] mb-0.5 tracking-wide">স্টপ লস</span>
+             <span className="text-[#ff4d4d] font-bold text-base drop-shadow-sm">${enToBn((currentSlLimit || 0).toFixed(2))}</span>
            </div>
-           <div className="inner-glass rounded-xl flex items-center justify-between px-3 py-2">
-             <span className="text-secondary text-[10px] tracking-wide">লস স্ট্রিক</span>
-             <span className="text-[#facc15] font-bold text-xs">{enToBn(dailyTarget.consecutiveLosses || 0)}</span>
+           <div className="inner-glass rounded-xl flex flex-col items-center justify-center py-2.5">
+             <span className="text-secondary text-[10px] mb-0.5 tracking-wide">লস স্ট্রিক</span>
+             <span className="text-[#facc15] font-bold text-base drop-shadow-sm">{enToBn(dailyTarget.consecutiveLosses || 0)}</span>
            </div>
         </div>
 

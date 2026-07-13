@@ -14,6 +14,7 @@ const ICONS = [
 export function GoalsTips() {
   const [currentTipIdx, setCurrentTipIdx] = useState(0);
   const [showAllTips, setShowAllTips] = useState(false);
+  const [selectedTip, setSelectedTip] = useState<string | null>(null);
   const { balance, profile, dailyTarget } = useStore();
 
   const startBal = profile.startingBalance || 215;
@@ -127,7 +128,7 @@ export function GoalsTips() {
               </div>
            </div>
 
-           <div className="relative z-10 flex-1 mt-1 flex flex-col justify-start gap-1.5 overflow-hidden pointer-events-none">
+           <div className="relative z-10 flex-1 mt-1 flex flex-col justify-start gap-1.5 overflow-hidden">
               <AnimatePresence mode="popLayout">
                 {[currentTipIdx, (currentTipIdx + 1) % eliteTips.length].map((idx, index) => (
                   <motion.div 
@@ -137,7 +138,8 @@ export function GoalsTips() {
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.95 }}
                     transition={{ duration: 0.4, ease: "easeOut" }}
-                    className="flex items-start gap-2 bg-slate-100 dark:bg-white/[0.03] p-2 rounded-xl border border-slate-200 dark:border-white/[0.05] shadow-[0_2px_8px_rgba(0,0,0,0.02)] dark:shadow-none"
+                    className="flex items-start gap-2 bg-slate-100 dark:bg-white/[0.03] p-2 rounded-xl border border-slate-200 dark:border-white/[0.05] shadow-[0_2px_8px_rgba(0,0,0,0.02)] dark:shadow-none cursor-pointer"
+                    onClick={() => setSelectedTip(eliteTips[idx])}
                   >
                      <div className={`mt-0.5 w-4 h-4 rounded-full flex-shrink-0 flex items-center justify-center ${index === 0 ? 'bg-orange-500/20 text-orange-500' : 'bg-cyan-500/20 text-cyan-500'}`}>
                          {ICONS[idx % ICONS.length]}
@@ -149,7 +151,28 @@ export function GoalsTips() {
            </div>
         </div>
       </div>
+    
+      {selectedTip && (
+        <div className="fixed inset-0 z-[110] bg-slate-900/40 dark:bg-black/60 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setSelectedTip(null)}>
+           <motion.div 
+             initial={{ opacity: 0, scale: 0.9, y: 20 }}
+             animate={{ opacity: 1, scale: 1, y: 0 }}
+             className="bg-white dark:bg-[#15202b] rounded-2xl p-5 w-full max-w-sm shadow-2xl relative border border-slate-200 dark:border-white/10"
+             onClick={e => e.stopPropagation()}
+           >
+             <button onClick={() => setSelectedTip(null)} className="absolute top-3 right-3 w-8 h-8 bg-slate-100 dark:bg-white/10 rounded-full flex items-center justify-center text-slate-500 hover:text-slate-800 dark:hover:text-white transition-colors">
+               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+             </button>
+             <h3 className="text-[#facc15] font-bold text-lg mb-3 flex items-center gap-2">
+               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5.8 11.3 2 22l10.7-3.8-2.6-2.6L12 14l-2.7-2.7Z"/><path d="M12.9 6.2 16.5 2.6c1.1-1.1 2.8-1.1 3.9 0l1 1c1.1 1.1 1.1 2.8 0 3.9l-3.6 3.6-4.9-4.9Z"/></svg>
+               এলিট টিপস
+             </h3>
+             <p className="text-slate-700 dark:text-slate-300 text-[15px] leading-relaxed font-medium">
+               {selectedTip}
+             </p>
+           </motion.div>
+        </div>
+      )}
     </>
   );
 }
-

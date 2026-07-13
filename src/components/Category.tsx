@@ -131,9 +131,9 @@ export function Category() {
               const hue = (1 - progress) * 120;
               const dynamicColor = `hsl(${hue}, 80%, 50%)`;
               return (
-                <div className="w-full h-full rounded-full flex flex-col items-center justify-center relative bg-slate-800 dark:bg-black/40 shadow-[inset_0_0_15px_rgba(0,0,0,0.5)]">
+                <div className="w-full h-full rounded-full flex flex-col items-center justify-center relative bg-white dark:bg-black/40 shadow-[0_0_15px_rgba(0,0,0,0.05)] dark:shadow-[inset_0_0_15px_rgba(0,0,0,0.5)]">
                    <svg className="absolute inset-0 w-full h-full -rotate-90 pointer-events-none" viewBox="0 0 90 90">
-                     <circle cx="45" cy="45" r="41" className="stroke-slate-700 dark:stroke-white/10" strokeWidth="4" fill="none" />
+                     <circle cx="45" cy="45" r="41" className="stroke-slate-200 dark:stroke-white/10" strokeWidth="4" fill="none" />
                      <circle 
                        cx="45" cy="45" r="41" 
                        strokeWidth="4" 
@@ -146,11 +146,11 @@ export function Category() {
                    </svg>
                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1.5 h-2 rounded-b-sm z-10" style={{ backgroundColor: dynamicColor }}></div>
                    <div className="absolute top-2 left-1/2 -translate-x-1/2 w-0.5 h-1.5 z-10" style={{ backgroundColor: dynamicColor, opacity: 0.5 }}></div>
-                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400 mb-0.5 mt-2 opacity-50 z-10"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-slate-500 dark:text-slate-400 mb-0.5 mt-2 opacity-50 z-10"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                    <span className="text-[12px] font-black font-mono tracking-wider drop-shadow-md z-10" style={{ color: dynamicColor }}>
                      {Math.floor(timeLeft / 60000)}:{(Math.floor(timeLeft / 1000) % 60).toString().padStart(2, '0')}
                    </span>
-                   <span className="text-[6px] text-slate-400 uppercase font-bold tracking-widest mt-0.5 z-10">Cooldown</span>
+                   <span className="text-[6px] text-slate-500 dark:text-slate-400 uppercase font-bold tracking-widest mt-0.5 z-10">Cooldown</span>
                 </div>
               );
             })()
