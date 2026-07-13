@@ -258,41 +258,38 @@ export function MasanielloTab() {
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-2 gap-3 w-full flex-shrink-0 mb-4">
+      <div className="grid grid-cols-2 gap-2 w-full flex-shrink-0 mb-3">
            
            {/* Trades Taken & Left */}
-           <div className="glass-panel rounded-[1.5rem] p-4 flex flex-col justify-center relative min-h-[86px] shadow-sm">
-             <span className="text-slate-500 dark:text-white/60 text-[8px] font-black tracking-[0.1em] mb-1 uppercase">ট্রেড হয়েছে</span>
-             <span className="text-slate-800 dark:text-white text-xl font-black tracking-tight flex items-baseline gap-1">
+           <div className="glass-panel rounded-2xl p-2 flex flex-col items-center justify-center relative min-h-[50px] shadow-sm border border-slate-200/50 dark:border-white/5">
+             <span className="text-slate-500 dark:text-white/60 text-[9px] font-black tracking-[0.1em] mb-0.5 uppercase text-center w-full block">ট্রেড হয়েছে</span>
+             <span className="text-slate-800 dark:text-white text-xl font-black tracking-tight flex items-baseline justify-center gap-0.5 leading-none mt-1 w-full text-center">
                {enToBn(masaniello.currentEvents)}<span className="text-[10px] font-bold text-slate-500 dark:text-white/50">টি</span>
              </span>
-             <span className="text-[#3b82f6] text-[10px] font-bold mt-1">বাকি আছে: {enToBn(Math.max(0, masaniello.events - masaniello.currentEvents))}টি</span>
+             <span className="text-[#3b82f6] text-[9px] font-bold mt-1 text-center w-full block">বাকি: {enToBn(Math.max(0, masaniello.events - masaniello.currentEvents))}টি</span>
            </div>
            
            {/* Wins Needed */}
-           <div className="glass-panel rounded-[1.5rem] p-4 flex flex-col justify-center relative min-h-[86px] shadow-sm">
-             <span className="text-slate-500 dark:text-white/60 text-[8px] font-black tracking-[0.1em] mb-1 uppercase">দরকার উইন</span>
-             <span className="text-[#059669] text-xl font-black tracking-tight flex items-baseline gap-1">
-               {enToBn(winsLeft > 0 ? winsLeft : 0)}<span className="text-[10px] font-bold text-[#059669]/60">টি</span>
+           <div className="glass-panel rounded-2xl p-2 flex flex-col items-center justify-center relative min-h-[50px] shadow-sm border border-slate-200/50 dark:border-white/5">
+             <span className="text-slate-500 dark:text-white/60 text-[9px] font-black tracking-[0.1em] mb-0.5 uppercase text-center w-full block">দরকার উইন</span>
+             <span className="text-[#059669] text-2xl font-black tracking-tight flex items-baseline justify-center gap-0.5 leading-none mt-1 w-full text-center">
+               {enToBn(winsLeft > 0 ? winsLeft : 0)}<span className="text-[11px] font-bold text-[#059669]/60">টি</span>
              </span>
            </div>
            
            {/* Losses */}
-           <div className="glass-panel rounded-[1.5rem] p-4 flex flex-col justify-center relative min-h-[86px] shadow-sm">
-             <span className="text-slate-500 dark:text-white/60 text-[8px] font-black tracking-[0.1em] mb-1 uppercase">লস হয়েছে</span>
-             <span className="text-[#ef4444] text-xl font-black tracking-tight flex items-baseline gap-1">
-               {enToBn(losses)}<span className="text-[10px] font-bold text-[#ef4444]/60">টি</span>
+           <div className="glass-panel rounded-2xl p-2 flex flex-col items-center justify-center relative min-h-[50px] shadow-sm border border-slate-200/50 dark:border-white/5">
+             <span className="text-slate-500 dark:text-white/60 text-[9px] font-black tracking-[0.1em] mb-0.5 uppercase text-center w-full block">লস হয়েছে</span>
+             <span className="text-[#ef4444] text-2xl font-black tracking-tight flex items-baseline justify-center gap-0.5 leading-none mt-1 w-full text-center">
+               {enToBn(losses)}<span className="text-[11px] font-bold text-[#ef4444]/60">টি</span>
              </span>
            </div>
            
            {/* Remaining Trades Heartbeat */}
-           <div className="glass-panel rounded-[1.5rem] p-4 flex flex-col items-center justify-center relative min-h-[86px] shadow-sm overflow-hidden">
-             <span className="text-slate-500 dark:text-white/60 text-[8px] font-black tracking-[0.1em] mb-1 uppercase z-10">অবশিষ্ট ট্রেড</span>
-             <div className={`text-[#ef4444] text-3xl font-black tracking-tight flex items-center justify-center mt-0 z-10 ${Math.max(0, masaniello.events - masaniello.currentEvents) <= 3 ? (Math.max(0, masaniello.events - masaniello.currentEvents) <= 1 ? 'animate-[pulse_0.4s_ease-in-out_infinite]' : 'animate-[pulse_0.8s_ease-in-out_infinite]') : 'animate-[pulse_1.5s_ease-in-out_infinite]'}`}>
+           <div className="glass-panel rounded-2xl p-2 flex flex-col items-center justify-center relative min-h-[50px] shadow-sm overflow-hidden border border-slate-200/50 dark:border-white/5">
+             <span className="text-slate-500 dark:text-white/60 text-[9px] font-black tracking-[0.1em] mb-0.5 uppercase z-10 text-center w-full block">অবশিষ্ট ট্রেড</span>
+             <div className={`text-[#ef4444] text-3xl font-black tracking-tight flex items-center justify-center mt-1 z-10 leading-none w-full text-center ${Math.max(0, masaniello.events - masaniello.currentEvents) <= 3 ? (Math.max(0, masaniello.events - masaniello.currentEvents) <= 1 ? 'animate-heartbeat-critical' : 'animate-heartbeat-fast') : 'animate-heartbeat-slow'}`}>
                 {enToBn(Math.max(0, masaniello.events - masaniello.currentEvents))}
-             </div>
-             <div className="absolute inset-0 bg-[#ef4444]/5 flex items-center justify-center">
-                <svg className={`w-16 h-16 text-[#ef4444]/15 ${Math.max(0, masaniello.events - masaniello.currentEvents) <= 3 ? (Math.max(0, masaniello.events - masaniello.currentEvents) <= 1 ? 'animate-[ping_0.4s_cubic-bezier(0,0,0.2,1)_infinite]' : 'animate-[ping_0.8s_cubic-bezier(0,0,0.2,1)_infinite]') : 'animate-[ping_1.5s_cubic-bezier(0,0,0.2,1)_infinite]'}`} fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
              </div>
            </div>
       </div>

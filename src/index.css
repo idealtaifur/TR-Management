@@ -78,3 +78,14 @@
     outline: none !important;
   }
 }
+
+@theme {
+  --animate-heartbeat-slow: heartbeat 2s ease-in-out infinite;
+  --animate-heartbeat-fast: heartbeat 1s ease-in-out infinite;
+  --animate-heartbeat-critical: heartbeat 0.4s ease-in-out infinite;
+
+  @keyframes heartbeat {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.15); opacity: 0.7; }
+  }
+}
