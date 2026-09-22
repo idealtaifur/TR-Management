@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { calculateTargetRecoveryStake } from '../utils';
 
 export type Mood = '😊 ভালো' | '🧘 শান্ত' | '🎯 ফোকাসড' | '😰 চাপে' | '😔 হতাশ';
 
@@ -64,13 +65,18 @@ interface State {
     slHit: boolean;
     payout: number;
     dayStartBalance: number;
-    cooldownUntil: string | null;
+    cooldownUntil?: string | null;
     resetCount: number;
     blockedUntil: string | null;
+    allocatedBalance?: number;
+    targetProfitAmount?: number;
+    initialStake?: number;
+    strategyMode?: 'smart_recovery' | 'fixed' | 'compound';
+    sessionStartBalance?: number;
   };
   updateDailyTarget: (data: Partial<State['dailyTarget']>) => void;
   resetDailySession: () => void;
-  startNewTargetSession: () => void;
+  startNewTargetSession: (newAllocatedBalance?: number, newDailyPct?: number, newInitialStake?: number) => void;
   resetToFreshStart: (newBalance: number) => void;
   resetTradingData: () => void;
   clearAllData: () => void;
@@ -135,45 +141,55 @@ export const useStore = create<State>()(
       updateProfile: (data) => set((state) => ({ profile: { ...state.profile, ...data } })),
 
       dailyTarget: {
-        dailyPct: 5,
-        slPct: 10,
+        dailyPct: 10,
+        slPct: 20,
         totalDays: 30,
         dayNum: 1,
-        currentStake: 1,
+        currentStake: 10,
         consecutiveLosses: 0,
         coverAmountTracker: 0,
         lastTradeDate: null,
         targetHit: false,
         slHit: false,
         payout: 85,
-        dayStartBalance: 228.35,
+        dayStartBalance: 1000,
+        sessionStartBalance: 1000,
         resetCount: 0,
         blockedUntil: null,
+        allocatedBalance: 200,
+        initialStake: 10,
+        targetProfitAmount: 100,
+        strategyMode: 'smart_recovery',
       },
       updateDailyTarget: (data) => set((state) => ({ dailyTarget: { ...state.dailyTarget, ...data } })),
-      startNewTargetSession: () => {
+      startNewTargetSession: (newAllocatedBalance?: number, newDailyPct?: number, newInitialStake?: number) => {
         const state = get();
         const { balance, dailyTarget } = state;
-        let newResetCount = (dailyTarget.resetCount || 0) + 1;
-        let newBlockedUntil = dailyTarget.blockedUntil;
         
-        if (newResetCount > 3) {
-           newBlockedUntil = new Date(Date.now() + 30 * 60000).toISOString();
-           newResetCount = 0; // reset for next time they are unblocked? Or maybe they stay blocked until it expires, then it's 0.
-        }
+        const currentBal = balance > 0 ? balance : 1000;
+        const allocated = newAllocatedBalance || dailyTarget.allocatedBalance || 200;
+        const pct = newDailyPct || dailyTarget.dailyPct || 10;
+        const targetProfitAmount = (currentBal * pct) / 100;
+        const baseStake = newInitialStake || dailyTarget.initialStake || Math.max(1, Math.round(allocated * 0.05)) || 10;
 
         set((state) => ({
           dailyTarget: {
             ...state.dailyTarget,
-            currentStake: Number(Math.max(1, balance * 0.01).toFixed(2)),
+            allocatedBalance: allocated,
+            dailyPct: pct,
+            targetProfitAmount: Number(targetProfitAmount.toFixed(2)),
+            initialStake: baseStake,
+            currentStake: baseStake,
             consecutiveLosses: 0,
             coverAmountTracker: 0,
             targetHit: false,
             slHit: false,
-            dayStartBalance: Number(balance.toFixed(2)),
+            dayStartBalance: Number(currentBal.toFixed(2)),
+            sessionStartBalance: Number(currentBal.toFixed(2)),
             lastTradeDate: new Date().toISOString(),
-            resetCount: newResetCount,
-            blockedUntil: newBlockedUntil
+            resetCount: 0,
+            blockedUntil: null,
+            cooldownUntil: null
           }
         }));
       },
@@ -352,52 +368,92 @@ export const useStore = create<State>()(
       },
       recordTrade: (isWin, profitAmount, lossReason) => {
         const { balance, dailyTarget } = get();
-        const payoutRate = dailyTarget.payout / 100;
+        const payoutRate = (dailyTarget.payout || 85) / 100;
         
         let newBalance = balance;
-        let newStake = dailyTarget.currentStake;
-        let newConsecutive = dailyTarget.consecutiveLosses;
-        let newCover = dailyTarget.coverAmountTracker;
-        
+        let newConsecutive = dailyTarget.consecutiveLosses || 0;
+        let newCover = dailyTarget.coverAmountTracker || 0;
+
+        // Session start balance (ensuring reference is user's session balance, defaults to 1000 if not set)
+        const sessionStartBal = (dailyTarget.sessionStartBalance && dailyTarget.sessionStartBalance > 0)
+          ? dailyTarget.sessionStartBalance
+          : (dailyTarget.dayStartBalance && dailyTarget.dayStartBalance > 300)
+            ? dailyTarget.dayStartBalance
+            : balance > 0 ? balance : 1000;
+
+        // The user's allocated budget is their EXACT stop loss (e.g. $200). User can use all $200.
+        const allocatedCap = (dailyTarget.allocatedBalance && dailyTarget.allocatedBalance > 0)
+          ? dailyTarget.allocatedBalance
+          : 200;
+
+        // Target profit amount (e.g. 10% of 1000 = $100)
+        const dailyPct = dailyTarget.dailyPct || 10;
+        const targetProfitAmount = (dailyTarget.targetProfitAmount && dailyTarget.targetProfitAmount > 0)
+          ? dailyTarget.targetProfitAmount
+          : Number(((sessionStartBal * dailyPct) / 100).toFixed(2));
+
+        // Base Stake: User's set initial stake (e.g. 10 or 12).
+        // Fallback is 5% of allocatedCap (200 * 0.05 = 10) or 10. NEVER 5% of whole 1000 balance!
+        const baseStake = Math.max(1, dailyTarget.initialStake || Math.round(allocatedCap * 0.05) || 10);
+
+        let newStake = baseStake;
+
         if (isWin) {
           newBalance += profitAmount;
-          newStake = Math.max(1, newBalance * 0.01);
           newConsecutive = 0;
           newCover = 0;
+          newStake = baseStake; // ALWAYS reset to base initial stake (e.g. 10 or 12) upon WIN / recovery
         } else {
-          newBalance -= dailyTarget.currentStake;
+          const currentStakeAmount = dailyTarget.currentStake || baseStake;
+          newBalance -= currentStakeAmount;
           newConsecutive += 1;
-          newCover += dailyTarget.currentStake;
-          // Martingale: prev/payout + prev
-          newStake = (newCover / payoutRate) + newCover; 
-          newStake = Math.max(1, Math.min(newStake, newBalance * 0.5));
+          newCover += currentStakeAmount;
+
+          newStake = calculateTargetRecoveryStake({
+            cumulativeLoss: newCover,
+            baseStake,
+            payout: dailyTarget.payout || 85,
+            consecutiveLosses: newConsecutive,
+            allocatedBudget: allocatedCap,
+            strategyMode: dailyTarget.strategyMode || 'smart_recovery'
+          });
         }
 
-        let newCooldown = dailyTarget.cooldownUntil;
-        if (!isWin && newConsecutive === 2) {
-           const cDate = new Date();
-           cDate.setMinutes(cDate.getMinutes() + 5);
-           newCooldown = cDate.toISOString();
+        const targetLimit = Number((sessionStartBal + targetProfitAmount).toFixed(2));
+        const remainingTarget = Number((targetLimit - newBalance).toFixed(2));
+
+        // When not in recovery (consecutive = 0), if remaining target is small, don't overshoot
+        if (newConsecutive === 0 && remainingTarget > 0 && remainingTarget < (newStake * payoutRate)) {
+          const refinedStake = Number((remainingTarget / payoutRate).toFixed(2));
+          if (refinedStake >= 1) {
+            newStake = refinedStake;
+          }
         }
 
-        const targetPct = dailyTarget.dailyPct / 100;
-        const startBal = dailyTarget.dayStartBalance;
-        const targetLimit = Number((startBal * (1 + targetPct)).toFixed(2));
-        const slLimit = Number((startBal * (1 - dailyTarget.slPct / 100)).toFixed(2));
+        // Stop Loss:
+        // The user can use the FULL allocated budget (e.g. $200).
+        // Triggers ONLY if the unrecovered cumulative loss reaches the allocated budget,
+        // OR total net drawdown in this session hits the full allocated budget.
+        const sessionNetLoss = Number((sessionStartBal - newBalance).toFixed(2));
+        const isSlHit = newCover >= allocatedCap || sessionNetLoss >= allocatedCap || newBalance <= 0;
+        const isTargetHit = newBalance >= targetLimit;
 
-        const remainingTarget = targetLimit - newBalance;
-        if (remainingTarget > 0 && remainingTarget < (newStake * payoutRate)) {
-            newStake = Math.max(1, remainingTarget / payoutRate);
+        // When target is reached, trigger an automatic 10-minute cooldown to prevent greed & overtrading
+        let newCooldown: string | null = null;
+        if (isTargetHit) {
+          const cdDate = new Date();
+          cdDate.setMinutes(cdDate.getMinutes() + 10);
+          newCooldown = cdDate.toISOString();
         }
 
-        // Round all financial numbers to strictly 2 decimal places to prevent overflow or weird UI artifacts
+        // Round all financial numbers to strictly 2 decimal places to prevent overflow
         newBalance = Number(newBalance.toFixed(2));
         newStake = Number(newStake.toFixed(2));
         newCover = Number(newCover.toFixed(2));
 
         get().addTrade({
           type: isWin ? 'WIN' : 'LOSS',
-          amount: isWin ? profitAmount : dailyTarget.currentStake,
+          amount: isWin ? profitAmount : (dailyTarget.currentStake || baseStake),
           isMasaniello: false,
           lossReason: isWin ? undefined : lossReason
         });
@@ -406,13 +462,17 @@ export const useStore = create<State>()(
           balance: newBalance,
           dailyTarget: {
             ...state.dailyTarget,
+            allocatedBalance: allocatedCap,
+            targetProfitAmount,
+            initialStake: baseStake,
             currentStake: newStake,
             consecutiveLosses: newConsecutive,
             coverAmountTracker: newCover,
-            targetHit: newBalance >= targetLimit,
-            slHit: newBalance <= slLimit,
+            targetHit: isTargetHit,
+            slHit: isSlHit,
+            sessionStartBalance: sessionStartBal,
             lastTradeDate: new Date().toISOString(),
-            cooldownUntil: newCooldown,
+            cooldownUntil: newCooldown
           }
         }));
       },

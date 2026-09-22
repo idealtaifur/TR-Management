@@ -105,12 +105,16 @@ export function MasanielloTab() {
 
   const potentialWin = currentStake * (masaniello.payout / 100);
 
+  const [syncMainBalance, setSyncMainBalance] = useState(false);
+
   const startNew = () => {
     const sessionBank = sessionBalance > 0 ? sessionBalance : 100;
     updateMasaniello({
       events, winsNeeded, payout, currentWins: 0, currentEvents: 0, isFinished: false, sessionStartBalance: sessionBank, cooldownUntil: null, consecutiveLosses: 0, isConfigured: true
     });
-    setBalance(sessionBank);
+    if (syncMainBalance || balance <= 0) {
+      setBalance(sessionBank);
+    }
     setShowSettings(false);
   };
 
@@ -201,8 +205,46 @@ export function MasanielloTab() {
   const progressPct = Math.min(100, (masaniello.currentWins / masaniello.winsNeeded) * 100) || 0;
 
   return (
-    <div className="flex flex-col pt-1 w-full z-10 px-3 pb-6 space-y-4 flex-1 overflow-y-auto">
+    <div className="flex flex-col pt-1 w-full z-10 px-3 pb-6 space-y-3 flex-1 overflow-y-auto">
       
+      {/* Masaniello Header Bar */}
+      <div className="flex items-center justify-between px-1 text-slate-800 dark:text-white">
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 rounded-xl bg-[#059669]/10 dark:bg-[#059669]/20 text-[#059669] flex items-center justify-center font-bold">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+          </div>
+          <div>
+            <h2 className="text-sm font-bold leading-tight">মাসনেলো মানি ম্যানেজমেন্ট</h2>
+            <p className="text-[10px] text-secondary">
+              সেশন ক্যাপিটাল: ${enToBn(masaniello.sessionStartBalance || balance)} • লক্ষ্য: {enToBn(masaniello.winsNeeded)}/{enToBn(masaniello.events)} উইন
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <button
+            id="open-masaniello-settings-btn"
+            onClick={() => setShowSettings(true)}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#059669]/10 text-[#059669] dark:text-emerald-400 hover:bg-[#059669]/20 text-xs font-bold transition active:scale-95 border border-[#059669]/20 shadow-sm"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+            <span>সেটিংস</span>
+          </button>
+          <button
+            id="reset-masaniello-session-btn"
+            onClick={() => {
+              if (window.confirm("মাসনেলো সেশন রিসেট করতে চান?")) {
+                updateMasaniello({ currentWins: 0, currentEvents: 0, isFinished: false, consecutiveLosses: 0, cooldownUntil: null });
+              }
+            }}
+            title="সেশন রিসেট"
+            className="p-1.5 rounded-xl bg-slate-200/60 dark:bg-white/10 text-slate-600 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-white/20 transition"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+          </button>
+        </div>
+      </div>
+
       {/* 3D Balance Panel */}
       <div className="glass-panel-3d rounded-[2rem] flex flex-col items-center justify-center relative w-full mt-1 min-h-[160px] p-4 shadow-2xl transition-transform">
           <div className="absolute top-0 right-0 p-4 flex gap-2">
@@ -409,50 +451,85 @@ export function MasanielloTab() {
             </div>
 
             <div className="inner-glass rounded-3xl p-5 shadow-lg flex flex-col gap-4 relative">
+              
+              {/* Presets */}
+              <div>
+                <label className="text-[11px] text-secondary font-semibold mb-2 block">জনপ্রিয় স্ট্র্যাটেজি প্রিসেট</label>
+                <div className="grid grid-cols-2 gap-2">
+                  {[
+                    { label: '১০ এ ৫ উইন (৫০%)', e: 10, w: 5 },
+                    { label: '১২ এ ৬ উইন (৫০%)', e: 12, w: 6 },
+                    { label: '১৫ এ ৭ উইন (৪৭%)', e: 15, w: 7 },
+                    { label: '২০ এ ৯ উইন (৪৫%)', e: 20, w: 9 },
+                  ].map((pr, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => {
+                        setEvents(pr.e);
+                        setWinsNeeded(pr.w);
+                      }}
+                      className={`py-2 px-2.5 rounded-xl text-left border text-xs font-semibold transition ${
+                        events === pr.e && winsNeeded === pr.w
+                          ? 'border-[#059669] bg-[#059669]/15 text-[#059669] dark:text-emerald-400'
+                          : 'border-slate-200 dark:border-white/10 hover:border-slate-300 dark:hover:border-white/20 text-slate-700 dark:text-slate-300'
+                      }`}
+                    >
+                      {pr.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Main Inputs */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="text-[11px] text-secondary font-semibold mb-1.5 block">সেশন ব্যালেন্স ($)</label>
                   <input type="number" onFocus={e => e.target.select()} value={sessionBalance || ''} onChange={e => setSessionBalance(Number(e.target.value))} className="w-full bg-slate-100 dark:bg-white/5 text-slate-900 dark:text-white border border-slate-200 dark:border-white/10 rounded-xl px-4 py-2.5 font-mono text-base focus:outline-none focus:border-[#059669] focus:ring-1 focus:ring-[#059669]/50 transition-colors" />
+                  <span className="text-[9px] text-secondary mt-1 block">মাসনেলোতে নির্ধারিত বাজেট</span>
                 </div>
                 <div>
                   <label className="text-[11px] text-secondary font-semibold mb-1.5 block">পে-আউট (%)</label>
                   <input type="number" onFocus={e => e.target.select()} value={payout || ''} onChange={e => setPayout(Number(e.target.value))} className="w-full bg-slate-100 dark:bg-white/5 text-slate-900 dark:text-white border border-slate-200 dark:border-white/10 rounded-xl px-4 py-2.5 font-mono text-base focus:outline-none focus:border-[#059669] focus:ring-1 focus:ring-[#059669]/50 transition-colors" />
+                  <span className="text-[9px] text-secondary mt-1 block">ব্রোকার প্রফিট রেট</span>
                 </div>
               </div>
 
-              <div className="border-t border-slate-200 dark:border-white/10 mt-2 pt-4">
-                <div onClick={() => setShowAdvanced(!showAdvanced)} className="flex items-center justify-center gap-2 text-[#059669] text-xs font-bold mb-4 cursor-pointer select-none">
-                  <svg className={`transition-transform duration-300 ${showAdvanced ? '-rotate-180' : ''}`} xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
-                  অ্যাডভান্সড সেটিংস
+              <div className="grid grid-cols-2 gap-4 pt-1">
+                <div>
+                  <label className="text-[11px] text-secondary font-semibold mb-1.5 block">মোট ট্রেড / ইভেন্ট</label>
+                  <input type="number" onFocus={e => e.target.select()} value={events || ''} onChange={e => setEvents(Number(e.target.value))} className="w-full bg-slate-100 dark:bg-white/5 text-slate-900 dark:text-white border border-slate-200 dark:border-white/10 rounded-xl px-4 py-2.5 font-mono text-base focus:outline-none focus:border-[#059669] focus:ring-1 focus:ring-[#059669]/50 transition-colors" />
                 </div>
-                {showAdvanced && (
-                  <div className="grid grid-cols-2 gap-4 animate-in slide-in-from-top-2 duration-300">
-                    <div>
-                      <label className="text-[11px] text-secondary font-semibold mb-1.5 block">মোট ট্রেড</label>
-                      <input type="number" onFocus={e => e.target.select()} value={events || ''} onChange={e => setEvents(Number(e.target.value))} className="w-full bg-slate-100 dark:bg-white/5 text-slate-900 dark:text-white border border-slate-200 dark:border-white/10 rounded-xl px-4 py-2.5 font-mono text-base focus:outline-none focus:border-[#059669] focus:ring-1 focus:ring-[#059669]/50 transition-colors" />
-                    </div>
-                    <div>
-                      <label className="text-[11px] text-secondary font-semibold mb-1.5 block">টার্গেট উইন</label>
-                      <input type="number" onFocus={e => e.target.select()} value={winsNeeded || ''} onChange={e => setWinsNeeded(Number(e.target.value))} className="w-full bg-slate-100 dark:bg-white/5 text-slate-900 dark:text-white border border-slate-200 dark:border-white/10 rounded-xl px-4 py-2.5 font-mono text-base focus:outline-none focus:border-[#059669] focus:ring-1 focus:ring-[#059669]/50 transition-colors" />
-                    </div>
-                  </div>
-                )}
+                <div>
+                  <label className="text-[11px] text-secondary font-semibold mb-1.5 block">টার্গেট উইন সংখ্যা</label>
+                  <input type="number" onFocus={e => e.target.select()} value={winsNeeded || ''} onChange={e => setWinsNeeded(Number(e.target.value))} className="w-full bg-slate-100 dark:bg-white/5 text-slate-900 dark:text-white border border-slate-200 dark:border-white/10 rounded-xl px-4 py-2.5 font-mono text-base focus:outline-none focus:border-[#059669] focus:ring-1 focus:ring-[#059669]/50 transition-colors" />
+                </div>
               </div>
 
-              <div className="bg-slate-100/80 dark:bg-[#059669]/10 border border-slate-200 dark:border-[#059669]/20 rounded-2xl p-4 mt-2">
+              {/* Optional Wallet Sync */}
+              <label className="flex items-center gap-2.5 text-xs text-slate-700 dark:text-slate-300 cursor-pointer select-none pt-1">
+                <input
+                  type="checkbox"
+                  checked={syncMainBalance}
+                  onChange={(e) => setSyncMainBalance(e.target.checked)}
+                  className="rounded border-slate-300 text-[#059669] focus:ring-[#059669]"
+                />
+                <span>আমার প্রধান একাউন্ট ব্যালেন্সকে এই সেশন ব্যালেন্সে সিঙ্ক করুন</span>
+              </label>
+
+              {/* Live Preview calculation */}
+              <div className="bg-slate-100/80 dark:bg-[#059669]/10 border border-slate-200 dark:border-[#059669]/20 rounded-2xl p-4 mt-1">
                  <div className="flex justify-between items-center mb-2">
-                   <span className="text-secondary text-xs">সম্ভাব্য লাভ</span>
-                   <span className="text-[#059669] font-bold text-lg">${(sessionBalance * (bankRatio(events, winsNeeded, payout / 100) - 1)).toFixed(2)}</span>
+                   <span className="text-secondary text-xs">সম্ভাব্য মোট লাভ</span>
+                   <span className="text-[#059669] font-bold text-lg font-mono">${(sessionBalance * (bankRatio(events, winsNeeded, payout / 100) - 1)).toFixed(2)}</span>
                  </div>
                  <div className="flex justify-between items-center mb-2">
                    <span className="text-secondary text-xs">ব্যালেন্স প্রবৃদ্ধি</span>
-                   <span className="text-slate-800 dark:text-white font-semibold text-sm">{((bankRatio(events, winsNeeded, payout / 100) - 1) * 100).toFixed(2)}%</span>
+                   <span className="text-slate-800 dark:text-white font-semibold text-sm font-mono">{((bankRatio(events, winsNeeded, payout / 100) - 1) * 100).toFixed(2)}%</span>
                  </div>
                  <div className="flex justify-between items-center mb-2">
-                   <span className="text-secondary text-xs">ঝুঁকির পরিমাণ</span>
-                   <span className={`text-sm font-bold ${bankRatio(events, winsNeeded, payout / 100) > 1.2 ? 'text-red-500' : bankRatio(events, winsNeeded, payout / 100) > 1.1 ? 'text-amber-500' : 'text-[#059669]'}`}>
-                     {bankRatio(events, winsNeeded, payout / 100) > 1.2 ? 'উচ্চ ঝুঁকি' : bankRatio(events, winsNeeded, payout / 100) > 1.1 ? 'মাঝারি ঝুঁকি' : 'নিম্ন ঝুঁকি'}
-                   </span>
+                   <span className="text-secondary text-xs">উইন রেট প্রয়োজন</span>
+                   <span className="text-slate-800 dark:text-white font-semibold text-sm font-mono">{((winsNeeded / (events || 1)) * 100).toFixed(1)}%</span>
                  </div>
                  <div className="flex justify-between items-center">
                    <span className="text-secondary text-xs">সর্বোচ্চ লস করা যাবে</span>
@@ -460,9 +537,13 @@ export function MasanielloTab() {
                  </div>
               </div>
 
-              <button onClick={startNew} className="bg-[#059669] hover:bg-[#059669]/90 text-slate-900 rounded-xl py-3.5 font-black text-[15px] flex items-center justify-center gap-2 mt-2 shadow-[0_0_15px_rgba(16,185,129,0.3)] transition-all">
+              <button 
+                id="save-masaniello-settings-btn"
+                onClick={startNew} 
+                className="bg-[#059669] hover:bg-[#059669]/90 text-white rounded-xl py-3.5 font-bold text-sm flex items-center justify-center gap-2 mt-2 shadow-[0_0_15px_rgba(16,185,129,0.3)] transition-all active:scale-95"
+              >
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-                সেশন শুরু
+                সেটিংস সংরক্ষণ করুন ও নতুন সেশন শুরু করুন
               </button>
             </div>
             </div>
