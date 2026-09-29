@@ -49,6 +49,7 @@ interface State {
     preferredStrategy: 'masaniello' | 'target';
     isSetupComplete: boolean;
     status: 'pending' | 'approved' | 'rejected';
+    role?: string;
   };
   updateProfile: (profile: Partial<State['profile']>) => void;
 

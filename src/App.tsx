@@ -31,7 +31,7 @@ export default function App() {
   const { theme, profile, updateProfile, resetDailySession, dailyTarget, updateDailyTarget } = useStore();
   const isDark = theme === 'dark';
 
-  const adminEmails = ['team.trmanagement@gmail.com', 'idealtaifur@gmail.com'];
+  const adminEmails = ['team.trmanagement@gmail.com'];
 
   const [now, setNow] = useState(Date.now());
   useEffect(() => {
@@ -194,7 +194,7 @@ export default function App() {
   }
 
   const userEmail = (user?.email || '').toLowerCase().trim();
-  const isAdmin = Boolean(userEmail && adminEmails.includes(userEmail));
+  const isAdmin = Boolean((userEmail && adminEmails.includes(userEmail)) || profile?.role === 'admin');
 
   if (isAdmin && showAdminPanel) {
     return (
