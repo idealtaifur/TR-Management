@@ -345,17 +345,17 @@ export function MasanielloTab() {
   const profitProgressPct = sessionTargetProfit > 0 ? Math.min(100, Math.max(0, (sessionProfit / sessionTargetProfit) * 100)) : 0;
 
   return (
-    <div className="flex flex-col w-full z-10 px-2.5 sm:px-4 pb-2 space-y-2 flex-1 overflow-y-auto max-w-md mx-auto">
+    <div className="flex flex-col w-full z-10 px-2 sm:px-3 pb-2 space-y-3 flex-1 overflow-y-auto max-w-md mx-auto justify-between min-h-full">
       
-      {/* Masaniello Compact Header Bar */}
+      {/* Masaniello Header Bar */}
       <div className="flex items-center justify-between px-1 text-slate-800 dark:text-white pt-1">
-        <div className="flex items-center gap-1.5 min-w-0">
-          <div className="w-7 h-7 rounded-lg bg-[#059669]/15 text-[#059669] flex items-center justify-center font-bold flex-shrink-0">
-            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        <div className="flex items-center gap-2 min-w-0">
+          <div className="w-8 h-8 rounded-xl bg-[#059669]/15 text-[#059669] flex items-center justify-center font-bold flex-shrink-0 shadow-sm border border-[#059669]/20">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
           </div>
           <div className="min-w-0">
-            <h2 className="text-xs sm:text-sm font-bold leading-none truncate">মাসনেলো মানি ম্যানেজমেন্ট</h2>
-            <p className="text-[9px] text-secondary truncate mt-0.5">
+            <h2 className="text-sm sm:text-base font-bold leading-tight truncate">মাসনেলো মানি ম্যানেজমেন্ট</h2>
+            <p className="text-[10px] sm:text-xs text-secondary truncate mt-0.5">
               ক্যাপিটাল: ${enToBn(masaniello.sessionStartBalance || balance)} • লক্ষ্য: {enToBn(masaniello.winsNeeded)}/{enToBn(masaniello.events)} উইন • টার্গেট: +${enToBn(sessionTargetProfit.toFixed(1))}
             </p>
           </div>
@@ -365,9 +365,9 @@ export function MasanielloTab() {
           <button
             id="open-masaniello-settings-btn"
             onClick={() => setShowSettings(true)}
-            className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#059669]/10 text-[#059669] dark:text-emerald-400 hover:bg-[#059669]/20 text-[11px] font-bold transition active:scale-95 border border-[#059669]/20"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#059669]/10 text-[#059669] dark:text-emerald-400 hover:bg-[#059669]/20 text-xs font-bold transition active:scale-95 border border-[#059669]/20 shadow-sm"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
             <span>সেটিংস</span>
           </button>
           <button
@@ -378,124 +378,145 @@ export function MasanielloTab() {
               }
             }}
             title="সেশন রিসেট"
-            className="p-1 rounded-lg bg-slate-200/60 dark:bg-white/10 text-slate-600 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-white/20 transition"
+            className="p-1.5 rounded-xl bg-slate-200/60 dark:bg-white/10 text-slate-600 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-white/20 transition shadow-sm"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
           </button>
         </div>
       </div>
 
-      {/* Compact Next Stake Card (Fits comfortably on mobile screen) */}
-      <div className="glass-panel-3d rounded-2xl flex flex-col items-center justify-center relative w-full py-3 px-3 shadow-md border border-emerald-500/20">
-          <div className="w-full flex items-center justify-between text-[9px] mb-1">
-             <span className="font-bold text-slate-500 dark:text-slate-400 bg-white/50 dark:bg-black/30 px-2 py-0.5 rounded-md border border-slate-200/50 dark:border-white/5">
-               বাকি: {enToBn(eventsLeft)}টি
+      {/* Prominent Next Stake Card */}
+      <div className="glass-panel-3d rounded-2xl flex flex-col items-center justify-center relative w-full py-4 sm:py-5 px-4 shadow-md border border-emerald-500/25">
+          <div className="w-full flex items-center justify-between text-[11px] mb-1.5">
+             <span className="font-bold text-slate-600 dark:text-slate-300 bg-white/60 dark:bg-black/40 px-2.5 py-1 rounded-lg border border-slate-200/60 dark:border-white/10 shadow-sm">
+               বাকি ট্রেড: {enToBn(eventsLeft)}টি
              </span>
-             <span className="font-bold text-blue-500 bg-blue-500/10 px-2 py-0.5 rounded-md border border-blue-500/20">
+             <span className="font-bold text-blue-600 dark:text-blue-400 bg-blue-500/10 px-2.5 py-1 rounded-lg border border-blue-500/20 shadow-sm font-mono">
                পেআউট: {enToBn(masaniello.payout)}%
              </span>
           </div>
           
-          <div className="flex flex-col items-center my-0.5">
-            <span className="text-secondary text-[9px] uppercase font-black tracking-widest">পরবর্তী স্টেক</span>
-            <span className="text-[#059669] text-3xl sm:text-4xl leading-tight font-black tracking-tight drop-shadow-sm">
+          <div className="flex flex-col items-center my-1.5">
+            <span className="text-secondary text-[10px] sm:text-[11px] uppercase font-black tracking-widest">পরবর্তী ট্রেড স্টেক</span>
+            <span className="text-[#059669] text-4xl sm:text-[2.75rem] leading-tight font-black tracking-tight drop-shadow-md font-mono my-0.5">
               ${enToBn(currentStake.toFixed(2))}
             </span>
-            <span className="text-slate-600 dark:text-[#059669]/90 text-[10px] font-bold tracking-wider bg-white/60 dark:bg-black/30 px-2.5 py-0.5 rounded-full border border-slate-200/60 dark:border-[#059669]/20 mt-0.5">
-              উইনে: +${enToBn(potentialWin.toFixed(2))}
+            <span className="text-slate-700 dark:text-emerald-400 text-xs font-bold tracking-wide bg-white/70 dark:bg-black/40 px-3.5 py-1 rounded-full border border-slate-200 dark:border-emerald-500/25 mt-1 shadow-sm">
+              উইনে সম্ভাব্য রিটার্ন: +${enToBn(potentialWin.toFixed(2))}
             </span>
           </div>
 
-          <div className="flex flex-wrap items-center justify-center gap-1 mt-1">
+          <div className="flex flex-wrap items-center justify-center gap-1.5 mt-1.5">
             {activeCapitalRatio < 0.999 && (
-              <span className="px-2 py-0.5 bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 rounded-full text-[9px] font-bold border border-emerald-500/20">
-                🎯 টার্গেট: +${enToBn(sessionTargetProfit.toFixed(1))} ({enToBn((masaniello.targetProfitPct || 0).toFixed(0))}%)
+              <span className="px-2.5 py-1 bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 rounded-full text-[10px] font-bold border border-emerald-500/30">
+                🎯 কাস্টম টার্গেট: +${enToBn(sessionTargetProfit.toFixed(1))} ({enToBn((masaniello.targetProfitPct || 0).toFixed(0))}%)
               </span>
             )}
             {isStakeReduced && (
-              <span className="px-2 py-0.5 bg-orange-500/20 text-orange-500 dark:text-orange-400 rounded-full text-[8px] font-black border border-orange-500/30 tracking-wider uppercase">
+              <span className="px-2.5 py-1 bg-orange-500/20 text-orange-600 dark:text-orange-400 rounded-full text-[9px] font-black border border-orange-500/30 tracking-wider uppercase">
                 স্টেক সীমিত
               </span>
             )}
           </div>
       </div>
 
-      {/* Slim Progress Bar */}
-      <div className="glass-panel rounded-xl py-1.5 px-3 flex flex-col justify-center relative w-full shadow-sm gap-1">
-        <div className="w-full flex justify-between items-center text-[9px] font-bold">
-           <span className="text-slate-500 dark:text-white/60">
-             উইন: <span className="text-[#059669] font-black">{enToBn(masaniello.currentWins)}/{enToBn(masaniello.winsNeeded)}</span>
+      {/* Session Progress Bar Card */}
+      <div className="glass-panel rounded-2xl py-2.5 px-3.5 flex flex-col justify-center relative w-full shadow-sm gap-1.5 border border-slate-200/50 dark:border-white/5">
+        <div className="w-full flex justify-between items-center text-xs font-bold">
+           <span className="text-slate-600 dark:text-white/80">
+             উইন অগ্রগতি: <span className="text-[#059669] font-black font-mono">{enToBn(masaniello.currentWins)}/{enToBn(masaniello.winsNeeded)}</span>
            </span>
-           <span className={sessionProfit >= 0 ? "text-[#059669] font-bold" : "text-red-500 font-bold"}>
+           <span className={`font-mono ${sessionProfit >= 0 ? "text-[#059669] font-bold" : "text-red-500 font-bold"}`}>
              লাভ: {sessionProfit >= 0 ? '+' : '-'}${enToBn(Math.abs(sessionProfit).toFixed(2))} / +${enToBn(sessionTargetProfit.toFixed(1))}
            </span>
         </div>
-        <div className="w-full bg-slate-200 dark:bg-black/40 h-1.5 rounded-full overflow-hidden border border-slate-300/60 dark:border-white/5">
+        <div className="w-full bg-slate-200 dark:bg-black/40 h-2 rounded-full overflow-hidden border border-slate-300/60 dark:border-white/5">
            <div 
-             className="h-full bg-gradient-to-r from-[#059669] to-[#065f46] rounded-full transition-all duration-500 shadow-[0_0_6px_rgba(16,185,129,0.5)]" 
+             className="h-full bg-gradient-to-r from-[#059669] to-[#047857] rounded-full transition-all duration-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" 
              style={{ width: `${progressPct}%` }}
            />
         </div>
       </div>
 
-      {/* 4 Compact Stats Grid (Including Main Balance so no separate giant card is needed) */}
-      <div className="grid grid-cols-2 gap-1.5 w-full">
+      {/* 4 Responsive Stats Grid */}
+      <div className="grid grid-cols-2 gap-2 sm:gap-2.5 w-full">
            {/* Card 1: Main Balance */}
-           <div className="inner-glass rounded-xl p-2 flex flex-col items-center justify-center min-h-[52px] text-center border border-slate-200/50 dark:border-white/5 shadow-sm">
-             <span className="text-secondary text-[9px] font-semibold tracking-wide block truncate">মেইন ব্যালেন্স</span>
-             <span className="text-slate-900 dark:text-white text-base sm:text-lg font-black font-mono leading-tight mt-0.5">
+           <div className="inner-glass rounded-2xl p-2.5 sm:p-3 flex flex-col items-center justify-center min-h-[64px] sm:min-h-[72px] text-center border border-slate-200/50 dark:border-white/5 shadow-sm">
+             <span className="text-secondary text-[10px] sm:text-[11px] font-semibold tracking-wide block truncate">প্রধান একাউন্ট ব্যালেন্স</span>
+             <span className="text-slate-900 dark:text-white text-base sm:text-lg font-black font-mono leading-tight mt-1">
                ${enToBn(balance.toFixed(2))}
              </span>
            </div>
 
            {/* Card 2: Wins Needed */}
-           <div className="inner-glass rounded-xl p-2 flex flex-col items-center justify-center min-h-[52px] text-center border border-slate-200/50 dark:border-white/5 shadow-sm">
-             <span className="text-secondary text-[9px] font-semibold tracking-wide block truncate">দরকার উইন</span>
-             <span className="text-[#059669] text-base sm:text-lg font-black font-mono leading-tight mt-0.5">
-               {enToBn(winsLeft > 0 ? winsLeft : 0)} <span className="text-[10px] font-bold text-[#059669]/70">টি</span>
+           <div className="inner-glass rounded-2xl p-2.5 sm:p-3 flex flex-col items-center justify-center min-h-[64px] sm:min-h-[72px] text-center border border-slate-200/50 dark:border-white/5 shadow-sm">
+             <span className="text-secondary text-[10px] sm:text-[11px] font-semibold tracking-wide block truncate">দরকার উইন</span>
+             <span className="text-[#059669] text-base sm:text-lg font-black font-mono leading-tight mt-1">
+               {enToBn(winsLeft > 0 ? winsLeft : 0)} <span className="text-xs font-bold text-[#059669]/70">টি</span>
              </span>
            </div>
 
            {/* Card 3: Trades Taken & Left */}
-           <div className="inner-glass rounded-xl p-2 flex flex-col items-center justify-center min-h-[52px] text-center border border-slate-200/50 dark:border-white/5 shadow-sm">
-             <span className="text-secondary text-[9px] font-semibold tracking-wide block truncate">ট্রেড হয়েছে</span>
-             <span className="text-slate-800 dark:text-white text-base sm:text-lg font-black font-mono leading-tight mt-0.5">
-               {enToBn(masaniello.currentEvents)} <span className="text-[9px] font-normal text-secondary">বাকি {enToBn(Math.max(0, masaniello.events - masaniello.currentEvents))}</span>
+           <div className="inner-glass rounded-2xl p-2.5 sm:p-3 flex flex-col items-center justify-center min-h-[64px] sm:min-h-[72px] text-center border border-slate-200/50 dark:border-white/5 shadow-sm">
+             <span className="text-secondary text-[10px] sm:text-[11px] font-semibold tracking-wide block truncate">ট্রেড সম্পন্ন</span>
+             <span className="text-slate-800 dark:text-white text-base sm:text-lg font-black font-mono leading-tight mt-1">
+               {enToBn(masaniello.currentEvents)} <span className="text-[10px] font-normal text-secondary">বাকি {enToBn(Math.max(0, masaniello.events - masaniello.currentEvents))}</span>
              </span>
            </div>
            
            {/* Card 4: Losses */}
-           <div className="inner-glass rounded-xl p-2 flex flex-col items-center justify-center min-h-[52px] text-center border border-slate-200/50 dark:border-white/5 shadow-sm">
-             <span className="text-secondary text-[9px] font-semibold tracking-wide block truncate">লস হয়েছে</span>
-             <span className="text-[#ef4444] text-base sm:text-lg font-black font-mono leading-tight mt-0.5">
-               {enToBn(losses)} <span className="text-[9px] font-normal text-secondary">টি</span>
+           <div className="inner-glass rounded-2xl p-2.5 sm:p-3 flex flex-col items-center justify-center min-h-[64px] sm:min-h-[72px] text-center border border-slate-200/50 dark:border-white/5 shadow-sm">
+             <span className="text-secondary text-[10px] sm:text-[11px] font-semibold tracking-wide block truncate">লস হয়েছে</span>
+             <span className="text-[#ef4444] text-base sm:text-lg font-black font-mono leading-tight mt-1">
+               {enToBn(losses)} <span className="text-xs font-normal text-secondary">টি</span>
              </span>
            </div>
       </div>
 
-      {/* Action Buttons (Directly in view on mobile screen!) */}
-      <div className="grid grid-cols-2 gap-2.5 pt-1">
+      {/* Session Progress & Profit Tracker Strip */}
+      <div className="inner-glass rounded-2xl py-2 px-3.5 flex items-center justify-between text-xs border border-slate-200/50 dark:border-white/5 shadow-sm">
+        <div className="flex items-center gap-1.5">
+          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span className="text-secondary text-[11px]">সেশন মূলধন:</span>
+          <span className="font-mono font-bold text-slate-800 dark:text-white text-[11px]">
+            ${enToBn(masaniello.sessionStartBalance || balance)}
+          </span>
+        </div>
+        <div className="flex items-center gap-1.5">
+          <span className="text-secondary text-[11px]">সেশন মোট লাভ:</span>
+          <span className={`font-mono font-bold text-[11px] px-2 py-0.5 rounded-md ${
+            sessionProfit >= 0 
+              ? 'text-[#059669] bg-emerald-500/10 border border-emerald-500/20' 
+              : 'text-red-500 bg-red-500/10 border border-red-500/20'
+          }`}>
+            {sessionProfit >= 0 ? '+' : '-'}${enToBn(Math.abs(sessionProfit).toFixed(2))}
+          </span>
+        </div>
+      </div>
+
+      {/* Action Buttons: WIN / LOSS */}
+      <div className="grid grid-cols-2 gap-3 pt-1">
         <button 
           onClick={() => handleTrade(true)}
-          disabled={isCurrentlyFinished}
-          className="bg-gradient-to-r from-[#059669] to-[#047857] text-white rounded-2xl py-3 sm:py-3.5 font-black text-base sm:text-lg flex items-center justify-center transition-all disabled:opacity-40 disabled:grayscale shadow-md hover:shadow-lg active:scale-95"
+          disabled={isCurrentlyFinished || isCooldownActive}
+          className="bg-gradient-to-r from-[#059669] to-[#047857] hover:from-[#047857] hover:to-[#065f46] text-white rounded-2xl py-3.5 sm:py-4 font-black text-lg sm:text-xl flex items-center justify-center transition-all disabled:opacity-40 disabled:grayscale shadow-lg shadow-emerald-500/25 active:scale-95 cursor-pointer"
         >
            WIN
         </button>
         <button 
           onClick={() => handleTrade(false)}
-          disabled={isCurrentlyFinished}
-          className="bg-gradient-to-r from-[#ef4444] to-[#dc2626] text-white rounded-2xl py-3 sm:py-3.5 font-black text-base sm:text-lg flex items-center justify-center transition-all disabled:opacity-40 disabled:grayscale shadow-md hover:shadow-lg active:scale-95"
+          disabled={isCurrentlyFinished || isCooldownActive}
+          className="bg-gradient-to-r from-[#ef4444] to-[#dc2626] hover:from-[#dc2626] hover:to-[#b91c1c] text-white rounded-2xl py-3.5 sm:py-4 font-black text-lg sm:text-xl flex items-center justify-center transition-all disabled:opacity-40 disabled:grayscale shadow-lg shadow-red-500/25 active:scale-95 cursor-pointer"
         >
            LOSS
         </button>
       </div>
 
-      {/* Bottom Session Profit Tag */}
-      <div className="flex items-center justify-center w-full pt-0.5">
-         <span className={`text-[9px] font-bold px-3 py-0.5 rounded-full border ${sessionProfit >= 0 ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20' : 'bg-red-500/10 text-red-500 border-red-500/20'}`}>
-           সেশন মোট লাভ: {sessionProfit >= 0 ? '+' : '-'}${enToBn(Math.abs(sessionProfit).toFixed(2))}
-         </span>
+      {/* Rotating Elite Trading Tip */}
+      <div className="flex items-center justify-center text-center px-2 py-0.5">
+        <p className="text-[10px] text-secondary/80 truncate">
+          💡 {eliteTips[tipIdx]}
+        </p>
       </div>
 
       {/* Cooldown Overlay */}
