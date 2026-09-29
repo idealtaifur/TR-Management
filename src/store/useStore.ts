@@ -93,6 +93,9 @@ interface State {
     currentEvents: number;
     isFinished: boolean;
     sessionStartBalance: number;
+    targetProfitPct?: number;
+    targetProfitAmount?: number;
+    capitalRatio?: number;
     cooldownUntil: string | null;
     consecutiveLosses: number;
     isConfigured?: boolean;
