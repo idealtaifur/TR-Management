@@ -20,14 +20,20 @@ export function MasanielloTab() {
   const [showGlobalTargetReached, setShowGlobalTargetReached] = useState(false);
   const [hasDismissedGlobalTarget, setHasDismissedGlobalTarget] = useState(false);
   
-  // Settings State
-  const [events, setEvents] = useState(masaniello.events || 10);
-  const [winsNeeded, setWinsNeeded] = useState(masaniello.winsNeeded || 5);
-  const [payout, setPayout] = useState(masaniello.payout || 85);
-  const [sessionBalance, setSessionBalance] = useState(masaniello.sessionStartBalance || balance || 100);
+  // Settings Inputs as Strings to allow easy clearing and backspacing
+  const [sessionBalanceInput, setSessionBalanceInput] = useState<string>(String(masaniello.sessionStartBalance || balance || 100));
+  const [eventsInput, setEventsInput] = useState<string>(String(masaniello.events || 10));
+  const [winsNeededInput, setWinsNeededInput] = useState<string>(String(masaniello.winsNeeded || 5));
+  const [payoutInput, setPayoutInput] = useState<string>(String(masaniello.payout || 85));
   const [syncMainBalance, setSyncMainBalance] = useState(false);
 
-  // Target Profit settings states
+  // Parsed numeric settings values
+  const sessionBalance = Math.max(1, parseFloat(sessionBalanceInput) || 100);
+  const events = Math.max(1, parseInt(eventsInput) || 10);
+  const winsNeeded = Math.max(1, Math.min(events, parseInt(winsNeededInput) || 3));
+  const payout = Math.max(1, parseFloat(payoutInput) || 85);
+
+  // Theoretical calculations
   const plannerBankRatio = useMemo(() => {
     return bankRatio(events, winsNeeded, payout / 100);
   }, [events, winsNeeded, payout]);
@@ -44,78 +50,89 @@ export function MasanielloTab() {
     return fraction(events, winsNeeded, payout / 100);
   }, [events, winsNeeded, payout]);
 
-  // Target profit states (can be customized by % or $)
-  const [targetProfitPct, setTargetProfitPct] = useState<number>(() => {
-    if (masaniello.targetProfitPct && masaniello.targetProfitPct > 0) {
-      return masaniello.targetProfitPct;
-    }
-    return Number(maxGrowthPct.toFixed(2));
-  });
-
-  const [targetProfitAmount, setTargetProfitAmount] = useState<number>(() => {
-    if (masaniello.targetProfitAmount && masaniello.targetProfitAmount > 0) {
-      return masaniello.targetProfitAmount;
-    }
-    return Number(maxPossibleProfit.toFixed(2));
-  });
-
-  // Track if user explicitly customized profit or wants 100% max
+  // Is custom target profit active
   const [isCustomMode, setIsCustomMode] = useState<boolean>(() => {
     return !!(masaniello.capitalRatio && masaniello.capitalRatio < 0.999);
   });
 
-  // Sync target profit when events/wins/payout/balance change (if not customized)
+  // String inputs for Target Profit % and Target Profit $ to allow full clearing
+  const [profitPctInput, setProfitPctInput] = useState<string>(() => {
+    if (masaniello.targetProfitPct && masaniello.targetProfitPct > 0) {
+      return String(masaniello.targetProfitPct);
+    }
+    return maxGrowthPct.toFixed(1);
+  });
+
+  const [profitAmountInput, setProfitAmountInput] = useState<string>(() => {
+    if (masaniello.targetProfitAmount && masaniello.targetProfitAmount > 0) {
+      return String(masaniello.targetProfitAmount);
+    }
+    return maxPossibleProfit.toFixed(2);
+  });
+
+  // Auto-sync target profit if settings change and user hasn't explicitly customized
   useEffect(() => {
     if (!isCustomMode) {
-      setTargetProfitPct(Number(maxGrowthPct.toFixed(2)));
-      setTargetProfitAmount(Number(maxPossibleProfit.toFixed(2)));
-    } else {
-      // Re-cap if current custom amount exceeds new maximum
-      if (targetProfitAmount > maxPossibleProfit && maxPossibleProfit > 0) {
-        setTargetProfitAmount(Number(maxPossibleProfit.toFixed(2)));
-        setTargetProfitPct(Number(maxGrowthPct.toFixed(2)));
-      }
+      setProfitPctInput(maxGrowthPct.toFixed(1));
+      setProfitAmountInput(maxPossibleProfit.toFixed(2));
     }
   }, [events, winsNeeded, payout, sessionBalance, maxGrowthPct, maxPossibleProfit, isCustomMode]);
 
-  // Handle Target Profit % change
-  const handleProfitPctChange = (newPct: number) => {
+  // Handle Target Profit % input change
+  const handleProfitPctChange = (valStr: string) => {
     setIsCustomMode(true);
-    const validPct = Math.max(0.1, Number(newPct) || 0);
-    const cappedPct = Math.min(maxGrowthPct, validPct);
-    setTargetProfitPct(cappedPct);
-    const calculatedAmt = Number(((sessionBalance * cappedPct) / 100).toFixed(2));
-    setTargetProfitAmount(calculatedAmt);
+    setProfitPctInput(valStr);
+    if (valStr.trim() === '') {
+      setProfitAmountInput('');
+      return;
+    }
+    const num = parseFloat(valStr);
+    if (!isNaN(num)) {
+      const calculatedAmt = (sessionBalance * num) / 100;
+      setProfitAmountInput(calculatedAmt > 0 ? calculatedAmt.toFixed(2) : '');
+    }
   };
 
-  // Handle Target Profit $ change
-  const handleProfitAmountChange = (newAmt: number) => {
+  // Handle Target Profit $ input change
+  const handleProfitAmountChange = (valStr: string) => {
     setIsCustomMode(true);
-    const validAmt = Math.max(0.1, Number(newAmt) || 0);
-    const cappedAmt = Math.min(maxPossibleProfit, validAmt);
-    setTargetProfitAmount(cappedAmt);
-    const calculatedPct = sessionBalance > 0 ? Number(((cappedAmt / sessionBalance) * 100).toFixed(2)) : 0;
-    setTargetProfitPct(calculatedPct);
+    setProfitAmountInput(valStr);
+    if (valStr.trim() === '') {
+      setProfitPctInput('');
+      return;
+    }
+    const num = parseFloat(valStr);
+    if (!isNaN(num)) {
+      const calculatedPct = sessionBalance > 0 ? (num / sessionBalance) * 100 : 0;
+      setProfitPctInput(calculatedPct > 0 ? calculatedPct.toFixed(1) : '');
+    }
   };
 
   // Preset percentage chips
   const applyPresetRatio = (ratio: number) => {
     if (ratio >= 1) {
       setIsCustomMode(false);
-      setTargetProfitPct(Number(maxGrowthPct.toFixed(2)));
-      setTargetProfitAmount(Number(maxPossibleProfit.toFixed(2)));
+      setProfitPctInput(maxGrowthPct.toFixed(1));
+      setProfitAmountInput(maxPossibleProfit.toFixed(2));
     } else {
       setIsCustomMode(true);
-      const newPct = Number((maxGrowthPct * ratio).toFixed(2));
-      const newAmt = Number((maxPossibleProfit * ratio).toFixed(2));
-      setTargetProfitPct(newPct);
-      setTargetProfitAmount(newAmt);
+      const newPct = maxGrowthPct * ratio;
+      const newAmt = maxPossibleProfit * ratio;
+      setProfitPctInput(newPct.toFixed(1));
+      setProfitAmountInput(newAmt.toFixed(2));
     }
   };
 
   // Preview calculations for settings modal
-  const effectiveTargetProfit = Math.min(maxPossibleProfit, isCustomMode ? targetProfitAmount : maxPossibleProfit);
-  const effectiveScaleFactor = maxPossibleProfit > 0 ? Math.min(1, Math.max(0.01, effectiveTargetProfit / maxPossibleProfit)) : 1;
+  const parsedAmt = parseFloat(profitAmountInput);
+  const effectiveTargetProfit = isCustomMode
+    ? (!isNaN(parsedAmt) && parsedAmt > 0 ? Math.min(maxPossibleProfit, parsedAmt) : maxPossibleProfit)
+    : maxPossibleProfit;
+
+  const effectiveScaleFactor = maxPossibleProfit > 0 
+    ? Math.min(1, Math.max(0.01, effectiveTargetProfit / maxPossibleProfit)) 
+    : 1;
+
   const previewAllocatedCapital = sessionBalance * effectiveScaleFactor;
   const preview1stStake = Math.max(1, previewAllocatedCapital * base1stFraction);
   const previewProfitPct = sessionBalance > 0 ? (effectiveTargetProfit / sessionBalance) * 100 : 0;
@@ -209,7 +226,10 @@ export function MasanielloTab() {
     const sessionBank = sessionBalance > 0 ? sessionBalance : 100;
     const pRatio = bankRatio(events, winsNeeded, payout / 100);
     const maxP = sessionBank * Math.max(0, pRatio - 1);
-    const finalTargetProfit = isCustomMode ? Math.min(maxP, targetProfitAmount) : maxP;
+    const parsedAmount = parseFloat(profitAmountInput);
+    const finalTargetProfit = isCustomMode && !isNaN(parsedAmount) && parsedAmount > 0 
+      ? Math.min(maxP, parsedAmount) 
+      : maxP;
     const finalScale = maxP > 0 ? Math.min(1, Math.max(0.01, finalTargetProfit / maxP)) : 1;
     const finalPct = sessionBank > 0 ? (finalTargetProfit / sessionBank) * 100 : 0;
 
@@ -325,29 +345,29 @@ export function MasanielloTab() {
   const profitProgressPct = sessionTargetProfit > 0 ? Math.min(100, Math.max(0, (sessionProfit / sessionTargetProfit) * 100)) : 0;
 
   return (
-    <div className="flex flex-col pt-1 w-full z-10 px-3 pb-6 space-y-3 flex-1 overflow-y-auto">
+    <div className="flex flex-col w-full z-10 px-2.5 sm:px-4 pb-2 space-y-2 flex-1 overflow-y-auto max-w-md mx-auto">
       
-      {/* Masaniello Header Bar */}
-      <div className="flex items-center justify-between px-1 text-slate-800 dark:text-white">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-xl bg-[#059669]/10 dark:bg-[#059669]/20 text-[#059669] flex items-center justify-center font-bold">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+      {/* Masaniello Compact Header Bar */}
+      <div className="flex items-center justify-between px-1 text-slate-800 dark:text-white pt-1">
+        <div className="flex items-center gap-1.5 min-w-0">
+          <div className="w-7 h-7 rounded-lg bg-[#059669]/15 text-[#059669] flex items-center justify-center font-bold flex-shrink-0">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
           </div>
-          <div>
-            <h2 className="text-sm font-bold leading-tight">মাসনেলো মানি ম্যানেজমেন্ট</h2>
-            <p className="text-[10px] text-secondary">
-              ক্যাপিটাল: ${enToBn(masaniello.sessionStartBalance || balance)} • লক্ষ্য: {enToBn(masaniello.winsNeeded)}/{enToBn(masaniello.events)} উইন • টার্গেট: +${enToBn(sessionTargetProfit.toFixed(2))} ({enToBn((masaniello.targetProfitPct || ((sessionTargetProfit / (masaniello.sessionStartBalance || 1)) * 100)).toFixed(1))}%)
+          <div className="min-w-0">
+            <h2 className="text-xs sm:text-sm font-bold leading-none truncate">মাসনেলো মানি ম্যানেজমেন্ট</h2>
+            <p className="text-[9px] text-secondary truncate mt-0.5">
+              ক্যাপিটাল: ${enToBn(masaniello.sessionStartBalance || balance)} • লক্ষ্য: {enToBn(masaniello.winsNeeded)}/{enToBn(masaniello.events)} উইন • টার্গেট: +${enToBn(sessionTargetProfit.toFixed(1))}
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 flex-shrink-0">
           <button
             id="open-masaniello-settings-btn"
             onClick={() => setShowSettings(true)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#059669]/10 text-[#059669] dark:text-emerald-400 hover:bg-[#059669]/20 text-xs font-bold transition active:scale-95 border border-[#059669]/20 shadow-sm"
+            className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#059669]/10 text-[#059669] dark:text-emerald-400 hover:bg-[#059669]/20 text-[11px] font-bold transition active:scale-95 border border-[#059669]/20"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
             <span>সেটিংস</span>
           </button>
           <button
@@ -358,150 +378,134 @@ export function MasanielloTab() {
               }
             }}
             title="সেশন রিসেট"
-            className="p-1.5 rounded-xl bg-slate-200/60 dark:bg-white/10 text-slate-600 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-white/20 transition"
+            className="p-1 rounded-lg bg-slate-200/60 dark:bg-white/10 text-slate-600 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-white/20 transition"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
           </button>
         </div>
       </div>
 
-      {/* 3D Balance Panel */}
-      <div className="glass-panel-3d rounded-[2rem] flex flex-col items-center justify-center relative w-full mt-1 min-h-[160px] p-4 shadow-2xl transition-transform">
-          <div className="absolute top-0 right-0 p-4 flex gap-2">
-             <span className="text-[9px] uppercase font-bold text-slate-500 dark:text-slate-400 bg-white/50 dark:bg-black/20 px-2 py-1 rounded-md border border-slate-200 dark:border-white/5 shadow-sm font-sans tracking-widest">বাকি: {enToBn(eventsLeft)}টি</span>
-             <span className="text-[9px] uppercase font-bold text-blue-500 bg-blue-500/10 px-2 py-1 rounded-md border border-blue-500/20 tracking-widest">{enToBn(masaniello.payout)}%</span>
-          </div>
-          <div className="absolute top-0 left-0 p-4 flex gap-2">
-             <button onClick={() => updateMasaniello({ isFinished: !masaniello.isFinished })} className="text-secondary hover:text-slate-800 dark:hover:text-white transition flex items-center justify-center" title="স্টপ / রিজ্যুম">
-               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
-             </button>
-             <button onClick={() => setShowSettings(!showSettings)} className="text-secondary hover:text-slate-800 dark:hover:text-white transition flex items-center justify-center" title="প্ল্যানার">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
-             </button>
+      {/* Compact Next Stake Card (Fits comfortably on mobile screen) */}
+      <div className="glass-panel-3d rounded-2xl flex flex-col items-center justify-center relative w-full py-3 px-3 shadow-md border border-emerald-500/20">
+          <div className="w-full flex items-center justify-between text-[9px] mb-1">
+             <span className="font-bold text-slate-500 dark:text-slate-400 bg-white/50 dark:bg-black/30 px-2 py-0.5 rounded-md border border-slate-200/50 dark:border-white/5">
+               বাকি: {enToBn(eventsLeft)}টি
+             </span>
+             <span className="font-bold text-blue-500 bg-blue-500/10 px-2 py-0.5 rounded-md border border-blue-500/20">
+               পেআউট: {enToBn(masaniello.payout)}%
+             </span>
           </div>
           
-          <div className="flex flex-col items-center mt-2">
-            <span className="text-secondary text-[10px] uppercase font-black tracking-[0.2em] mb-1 drop-shadow-sm">পরবর্তী স্টেক</span>
-            <span className="text-[#059669] text-[3rem] leading-none font-black mb-1 drop-shadow-md tracking-tighter">${enToBn(currentStake.toFixed(2))}</span>
-            <span className="text-slate-600 dark:text-[#059669]/80 text-[11px] font-bold tracking-widest uppercase bg-white/50 dark:bg-black/20 px-3 py-1 rounded-full border border-slate-200 dark:border-[#059669]/10">উইনে: +${enToBn(potentialWin.toFixed(2))}</span>
+          <div className="flex flex-col items-center my-0.5">
+            <span className="text-secondary text-[9px] uppercase font-black tracking-widest">পরবর্তী স্টেক</span>
+            <span className="text-[#059669] text-3xl sm:text-4xl leading-tight font-black tracking-tight drop-shadow-sm">
+              ${enToBn(currentStake.toFixed(2))}
+            </span>
+            <span className="text-slate-600 dark:text-[#059669]/90 text-[10px] font-bold tracking-wider bg-white/60 dark:bg-black/30 px-2.5 py-0.5 rounded-full border border-slate-200/60 dark:border-[#059669]/20 mt-0.5">
+              উইনে: +${enToBn(potentialWin.toFixed(2))}
+            </span>
           </div>
 
-          <div className="flex flex-wrap items-center justify-center gap-1.5 mt-2">
+          <div className="flex flex-wrap items-center justify-center gap-1 mt-1">
             {activeCapitalRatio < 0.999 && (
-              <span className="px-2.5 py-0.5 bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 rounded-full text-[9px] font-bold border border-emerald-500/20">
-                🎯 টার্গেট প্রফিট: ${enToBn(sessionTargetProfit.toFixed(2))} ({enToBn((masaniello.targetProfitPct || 0).toFixed(1))}%)
+              <span className="px-2 py-0.5 bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 rounded-full text-[9px] font-bold border border-emerald-500/20">
+                🎯 টার্গেট: +${enToBn(sessionTargetProfit.toFixed(1))} ({enToBn((masaniello.targetProfitPct || 0).toFixed(0))}%)
               </span>
             )}
             {isStakeReduced && (
-              <span className="px-2.5 py-0.5 bg-orange-500/20 text-orange-500 dark:text-orange-400 rounded-full text-[9px] font-black border border-orange-500/30 tracking-widest uppercase">
+              <span className="px-2 py-0.5 bg-orange-500/20 text-orange-500 dark:text-orange-400 rounded-full text-[8px] font-black border border-orange-500/30 tracking-wider uppercase">
                 স্টেক সীমিত
-              </span>
-            )}
-            {currentStake === 1 && rawStake < 1 && rawStake > 0 && (
-              <span className="px-2.5 py-0.5 text-secondary text-[9px] font-black tracking-widest uppercase">
-                মিনিমাম $১
               </span>
             )}
           </div>
       </div>
 
-      {/* Progress & Target Bar */}
-      <div className="glass-panel rounded-[1.5rem] py-3.5 px-4 flex flex-col items-center justify-center relative w-full shadow-sm flex-shrink-0 gap-2">
-        <div className="w-full flex justify-between items-center text-[9px] font-black tracking-[0.15em] uppercase">
-           <span className="text-slate-500 dark:text-white/60">উইন প্রোগ্রেস</span>
-           <span className="text-[#059669]">{enToBn(masaniello.currentWins)} / {enToBn(masaniello.winsNeeded)} সম্পন্ন</span>
-        </div>
-        <div className="w-full bg-slate-200 dark:bg-black/40 h-2.5 rounded-full overflow-hidden border border-slate-300 dark:border-white/5 relative">
-           <div className="h-full bg-gradient-to-r from-[#059669] to-[#065f46] rounded-full transition-all duration-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" style={{ width: `${progressPct}%` }}></div>
-        </div>
-
-        <div className="w-full flex justify-between items-center text-[9px] font-bold text-slate-500 dark:text-white/50 pt-0.5">
-           <span>টার্গেট লাভ: +${enToBn(sessionTargetProfit.toFixed(2))}</span>
-           <span className={sessionProfit >= 0 ? "text-emerald-500 font-bold" : "text-red-500 font-bold"}>
-             বর্তমান লাভ: {sessionProfit >= 0 ? '+' : '-'}${enToBn(Math.abs(sessionProfit).toFixed(2))} ({enToBn(profitProgressPct.toFixed(0))}%)
+      {/* Slim Progress Bar */}
+      <div className="glass-panel rounded-xl py-1.5 px-3 flex flex-col justify-center relative w-full shadow-sm gap-1">
+        <div className="w-full flex justify-between items-center text-[9px] font-bold">
+           <span className="text-slate-500 dark:text-white/60">
+             উইন: <span className="text-[#059669] font-black">{enToBn(masaniello.currentWins)}/{enToBn(masaniello.winsNeeded)}</span>
+           </span>
+           <span className={sessionProfit >= 0 ? "text-[#059669] font-bold" : "text-red-500 font-bold"}>
+             লাভ: {sessionProfit >= 0 ? '+' : '-'}${enToBn(Math.abs(sessionProfit).toFixed(2))} / +${enToBn(sessionTargetProfit.toFixed(1))}
            </span>
         </div>
+        <div className="w-full bg-slate-200 dark:bg-black/40 h-1.5 rounded-full overflow-hidden border border-slate-300/60 dark:border-white/5">
+           <div 
+             className="h-full bg-gradient-to-r from-[#059669] to-[#065f46] rounded-full transition-all duration-500 shadow-[0_0_6px_rgba(16,185,129,0.5)]" 
+             style={{ width: `${progressPct}%` }}
+           />
+        </div>
       </div>
 
-      {/* Main Balance Display */}
-      <div className="glass-panel w-full rounded-[1.5rem] py-4 px-5 flex flex-col items-center justify-center relative shadow-[0_4px_20px_rgba(0,0,0,0.05)] dark:shadow-[0_4px_20px_rgba(0,0,0,0.4)] border-t border-white/50 dark:border-white/10 mb-1 bg-gradient-to-br from-white/60 to-white/30 dark:from-slate-800/80 dark:to-slate-900/40 flex-shrink-0">
-          <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-[#059669]/50 to-transparent"></div>
-          <span className="text-slate-500 dark:text-white/60 text-[10px] font-black tracking-[0.1em] mb-0.5 uppercase flex items-center gap-1.5">
-              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-              মেইন ব্যালেন্স
-          </span>
-          <span className="text-slate-900 dark:text-white text-3xl font-black tracking-tight drop-shadow-sm">${enToBn(balance.toFixed(2))}</span>
-      </div>
+      {/* 4 Compact Stats Grid (Including Main Balance so no separate giant card is needed) */}
+      <div className="grid grid-cols-2 gap-1.5 w-full">
+           {/* Card 1: Main Balance */}
+           <div className="inner-glass rounded-xl p-2 flex flex-col items-center justify-center min-h-[52px] text-center border border-slate-200/50 dark:border-white/5 shadow-sm">
+             <span className="text-secondary text-[9px] font-semibold tracking-wide block truncate">মেইন ব্যালেন্স</span>
+             <span className="text-slate-900 dark:text-white text-base sm:text-lg font-black font-mono leading-tight mt-0.5">
+               ${enToBn(balance.toFixed(2))}
+             </span>
+           </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-2 gap-2 w-full flex-shrink-0 mb-2">
-           {/* Trades Taken & Left */}
-           <div className="glass-panel rounded-2xl p-2.5 flex flex-col items-center justify-center relative min-h-[50px] shadow-sm border border-slate-200/50 dark:border-white/5">
-             <span className="text-slate-500 dark:text-white/60 text-[9px] font-black tracking-[0.1em] mb-0.5 uppercase text-center w-full block">ট্রেড হয়েছে</span>
-             <span className="text-slate-800 dark:text-white text-xl font-black tracking-tight flex items-baseline justify-center gap-0.5 leading-none mt-1 w-full text-center">
-               {enToBn(masaniello.currentEvents)}<span className="text-[10px] font-bold text-slate-500 dark:text-white/50">টি</span>
-             </span>
-             <span className="text-[#3b82f6] text-[9px] font-bold mt-1 text-center w-full block">বাকি: {enToBn(Math.max(0, masaniello.events - masaniello.currentEvents))}টি</span>
-           </div>
-           
-           {/* Wins Needed */}
-           <div className="glass-panel rounded-2xl p-2.5 flex flex-col items-center justify-center relative min-h-[50px] shadow-sm border border-slate-200/50 dark:border-white/5">
-             <span className="text-slate-500 dark:text-white/60 text-[9px] font-black tracking-[0.1em] mb-0.5 uppercase text-center w-full block">দরকার উইন</span>
-             <span className="text-[#059669] text-2xl font-black tracking-tight flex items-baseline justify-center gap-0.5 leading-none mt-1 w-full text-center">
-               {enToBn(winsLeft > 0 ? winsLeft : 0)}<span className="text-[11px] font-bold text-[#059669]/60">টি</span>
+           {/* Card 2: Wins Needed */}
+           <div className="inner-glass rounded-xl p-2 flex flex-col items-center justify-center min-h-[52px] text-center border border-slate-200/50 dark:border-white/5 shadow-sm">
+             <span className="text-secondary text-[9px] font-semibold tracking-wide block truncate">দরকার উইন</span>
+             <span className="text-[#059669] text-base sm:text-lg font-black font-mono leading-tight mt-0.5">
+               {enToBn(winsLeft > 0 ? winsLeft : 0)} <span className="text-[10px] font-bold text-[#059669]/70">টি</span>
              </span>
            </div>
-           
-           {/* Losses */}
-           <div className="glass-panel rounded-2xl p-2.5 flex flex-col items-center justify-center relative min-h-[50px] shadow-sm border border-slate-200/50 dark:border-white/5">
-             <span className="text-slate-500 dark:text-white/60 text-[9px] font-black tracking-[0.1em] mb-0.5 uppercase text-center w-full block">লস হয়েছে</span>
-             <span className="text-[#ef4444] text-2xl font-black tracking-tight flex items-baseline justify-center gap-0.5 leading-none mt-1 w-full text-center">
-               {enToBn(losses)}<span className="text-[11px] font-bold text-[#ef4444]/60">টি</span>
+
+           {/* Card 3: Trades Taken & Left */}
+           <div className="inner-glass rounded-xl p-2 flex flex-col items-center justify-center min-h-[52px] text-center border border-slate-200/50 dark:border-white/5 shadow-sm">
+             <span className="text-secondary text-[9px] font-semibold tracking-wide block truncate">ট্রেড হয়েছে</span>
+             <span className="text-slate-800 dark:text-white text-base sm:text-lg font-black font-mono leading-tight mt-0.5">
+               {enToBn(masaniello.currentEvents)} <span className="text-[9px] font-normal text-secondary">বাকি {enToBn(Math.max(0, masaniello.events - masaniello.currentEvents))}</span>
              </span>
            </div>
            
-           {/* Remaining Trades */}
-           <div className="glass-panel rounded-2xl p-2.5 flex flex-col items-center justify-center relative min-h-[50px] shadow-sm overflow-hidden border border-slate-200/50 dark:border-white/5">
-             <span className="text-slate-500 dark:text-white/60 text-[9px] font-black tracking-[0.1em] mb-0.5 uppercase z-10 text-center w-full block">অবশিষ্ট সুযোগ</span>
-             <div className={`text-[#ef4444] text-3xl font-black tracking-tight flex items-center justify-center mt-1 z-10 leading-none w-full text-center ${Math.max(0, masaniello.events - masaniello.currentEvents) <= 3 ? (Math.max(0, masaniello.events - masaniello.currentEvents) <= 1 ? 'animate-heartbeat-critical' : 'animate-heartbeat-fast') : 'animate-heartbeat-slow'}`}>
-                {enToBn(Math.max(0, masaniello.events - masaniello.currentEvents))}
-             </div>
+           {/* Card 4: Losses */}
+           <div className="inner-glass rounded-xl p-2 flex flex-col items-center justify-center min-h-[52px] text-center border border-slate-200/50 dark:border-white/5 shadow-sm">
+             <span className="text-secondary text-[9px] font-semibold tracking-wide block truncate">লস হয়েছে</span>
+             <span className="text-[#ef4444] text-base sm:text-lg font-black font-mono leading-tight mt-0.5">
+               {enToBn(losses)} <span className="text-[9px] font-normal text-secondary">টি</span>
+             </span>
            </div>
       </div>
 
-      {/* Action Buttons */}
-      <div className="grid grid-cols-2 gap-3 mt-3 pb-2 flex-shrink-0">
+      {/* Action Buttons (Directly in view on mobile screen!) */}
+      <div className="grid grid-cols-2 gap-2.5 pt-1">
         <button 
           onClick={() => handleTrade(true)}
           disabled={isCurrentlyFinished}
-          className="bg-gradient-to-r from-[#059669] to-[#047857] text-white rounded-[1.5rem] py-4 font-black text-lg flex items-center justify-center transition-all disabled:opacity-50 disabled:grayscale shadow-[0_8px_16px_rgba(16,185,129,0.3)] hover:shadow-[0_10px_20px_rgba(16,185,129,0.4)] hover:-translate-y-0.5 active:scale-95"
+          className="bg-gradient-to-r from-[#059669] to-[#047857] text-white rounded-2xl py-3 sm:py-3.5 font-black text-base sm:text-lg flex items-center justify-center transition-all disabled:opacity-40 disabled:grayscale shadow-md hover:shadow-lg active:scale-95"
         >
            WIN
         </button>
         <button 
           onClick={() => handleTrade(false)}
           disabled={isCurrentlyFinished}
-          className="bg-gradient-to-r from-[#ef4444] to-[#dc2626] text-white rounded-[1.5rem] py-4 font-black text-lg flex items-center justify-center transition-all disabled:opacity-50 disabled:grayscale shadow-[0_8px_16px_rgba(239,68,68,0.3)] hover:shadow-[0_10px_20px_rgba(239,68,68,0.4)] hover:-translate-y-0.5 active:scale-95"
+          className="bg-gradient-to-r from-[#ef4444] to-[#dc2626] text-white rounded-2xl py-3 sm:py-3.5 font-black text-base sm:text-lg flex items-center justify-center transition-all disabled:opacity-40 disabled:grayscale shadow-md hover:shadow-lg active:scale-95"
         >
            LOSS
         </button>
       </div>
 
       {/* Bottom Session Profit Tag */}
-      <div className="flex items-center justify-center w-full pb-4">
-         <div className={`glass-panel px-4 py-1.5 rounded-full text-[10px] font-bold tracking-widest uppercase shadow-sm ${sessionProfit >= 0 ? 'text-[#059669]' : 'text-[#ef4444]'}`}>
-           সেশন লাভ: {sessionProfit >= 0 ? '+' : '-'}${enToBn(Math.abs(sessionProfit).toFixed(2))}
-         </div>
+      <div className="flex items-center justify-center w-full pt-0.5">
+         <span className={`text-[9px] font-bold px-3 py-0.5 rounded-full border ${sessionProfit >= 0 ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20' : 'bg-red-500/10 text-red-500 border-red-500/20'}`}>
+           সেশন মোট লাভ: {sessionProfit >= 0 ? '+' : '-'}${enToBn(Math.abs(sessionProfit).toFixed(2))}
+         </span>
       </div>
 
       {/* Cooldown Overlay */}
       {isCooldownActive && !isCurrentlyFinished && (
          <div className="fixed inset-0 bg-slate-100/80 dark:bg-[#0b1621]/80 backdrop-blur-sm z-50 flex flex-col items-center justify-center p-4">
-           <div className="bg-white dark:bg-[#0b121e]/90 dark:backdrop-blur-xl p-6 rounded-2xl border border-blue-500/30 shadow-[0_0_40px_rgba(59,130,246,0.2)] flex flex-col items-center text-center w-full max-w-sm">
-              <span className="text-3xl font-bold text-blue-500 mb-2">⏳</span>
-              <span className="text-lg font-bold text-slate-800 dark:text-white mb-2">কুলডাউন চলছে...</span>
-              <span className="text-[#a855f7] dark:text-[#c084fc] text-2xl font-black mb-4 font-mono">{String(cdMins).padStart(2, '0')}:{String(cdSecs).padStart(2, '0')}</span>
-              <span className="text-secondary text-xs">দয়া করে শান্তভাবে অপেক্ষা করুন।</span>
+           <div className="bg-white dark:bg-[#0b121e]/90 dark:backdrop-blur-xl p-5 rounded-2xl border border-blue-500/30 shadow-xl flex flex-col items-center text-center w-full max-w-xs">
+              <span className="text-2xl mb-1">⏳</span>
+              <span className="text-base font-bold text-slate-800 dark:text-white mb-1">কুলডাউন চলছে...</span>
+              <span className="text-[#a855f7] dark:text-[#c084fc] text-xl font-black mb-3 font-mono">{String(cdMins).padStart(2, '0')}:{String(cdSecs).padStart(2, '0')}</span>
+              <span className="text-secondary text-[10px]">দয়া করে শান্তভাবে অপেক্ষা করুন।</span>
            </div>
          </div>
       )}
@@ -509,13 +513,13 @@ export function MasanielloTab() {
       {/* Consecutive Loss Warning */}
       {showConsecutiveLossWarning && (
          <div className="fixed inset-0 bg-slate-100/90 dark:bg-[#0b1621]/90 backdrop-blur-sm z-50 flex flex-col items-center justify-center p-4">
-           <div className="bg-white dark:bg-[#0b121e]/90 dark:backdrop-blur-xl p-6 rounded-2xl border border-red-500/50 shadow-[0_0_40px_rgba(239,68,68,0.2)] flex flex-col items-center text-center w-full max-w-sm">
-              <span className="text-4xl mb-4">⚠️</span>
-              <span className="text-xl font-bold text-red-500 mb-2">সতর্কতা!</span>
-              <span className="text-slate-800 dark:text-slate-300 text-sm mb-6 leading-relaxed">
+           <div className="bg-white dark:bg-[#0b121e]/90 dark:backdrop-blur-xl p-5 rounded-2xl border border-red-500/50 shadow-xl flex flex-col items-center text-center w-full max-w-xs">
+              <span className="text-3xl mb-2">⚠️</span>
+              <span className="text-base font-bold text-red-500 mb-1">সতর্কতা!</span>
+              <span className="text-slate-800 dark:text-slate-300 text-xs mb-4 leading-relaxed">
                  আপনার পর পর ২টা লস হয়েছে। ইমোশনাল হয়ে ডাবল ট্রেড করবেন না। একটু শান্ত হোন, মার্কেট অ্যানালাইসিস করুন।
               </span>
-              <button onClick={() => setShowConsecutiveLossWarning(false)} className="bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-6 rounded-xl w-full transition">ঠিক আছে, শান্ত হলাম</button>
+              <button onClick={() => setShowConsecutiveLossWarning(false)} className="bg-red-500 hover:bg-red-600 text-white font-bold py-2.5 px-4 rounded-xl w-full transition text-xs">ঠিক আছে, শান্ত হলাম</button>
            </div>
          </div>
       )}
@@ -523,15 +527,15 @@ export function MasanielloTab() {
       {/* Bad Market Warning */}
       {showBadMarketWarning && (
          <div className="fixed inset-0 bg-slate-100/90 dark:bg-[#0b1621]/90 backdrop-blur-sm z-50 flex flex-col items-center justify-center p-4">
-           <div className="bg-white dark:bg-[#0b121e]/90 dark:backdrop-blur-xl p-6 rounded-2xl border border-orange-500/50 shadow-[0_0_40px_rgba(249,115,22,0.2)] flex flex-col items-center text-center w-full max-w-sm">
-              <span className="text-4xl mb-4">📉</span>
-              <span className="text-xl font-bold text-orange-500 mb-2">মার্কেট খারাপ!</span>
-              <span className="text-slate-800 dark:text-slate-300 text-sm mb-6 leading-relaxed">
+           <div className="bg-white dark:bg-[#0b121e]/90 dark:backdrop-blur-xl p-5 rounded-2xl border border-orange-500/50 shadow-xl flex flex-col items-center text-center w-full max-w-xs">
+              <span className="text-3xl mb-2">📉</span>
+              <span className="text-base font-bold text-orange-500 mb-1">মার্কেট খারাপ!</span>
+              <span className="text-slate-800 dark:text-slate-300 text-xs mb-4 leading-relaxed">
                  আপনার {enToBn(masaniello.events)} টি ট্রেডের মধ্যে কেবল {enToBn(masaniello.currentWins)} টি উইন হয়েছে। এখন ট্রেড করার দরকার নেই, লস হতে পারে।
               </span>
-              <div className="grid grid-cols-2 gap-3 w-full">
-                <button onClick={() => setShowBadMarketWarning(false)} className="bg-transparent border border-slate-300 dark:border-white/10 text-slate-700 dark:text-white hover:bg-slate-100 dark:hover:bg-white/5 font-bold py-3 pr-2 rounded-xl text-xs transition">আমি রিস্ক নিবো</button>
-                <button onClick={setBadMarketCooldown} className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 rounded-xl transition">৩০ মিনিট রেস্ট</button>
+              <div className="grid grid-cols-2 gap-2 w-full">
+                <button onClick={() => setShowBadMarketWarning(false)} className="bg-transparent border border-slate-300 dark:border-white/10 text-slate-700 dark:text-white hover:bg-slate-100 dark:hover:bg-white/5 font-bold py-2.5 rounded-xl text-[11px] transition">আমি রিস্ক নেব</button>
+                <button onClick={setBadMarketCooldown} className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-2.5 rounded-xl text-[11px] transition">৩০ মিনিট রেস্ট</button>
               </div>
            </div>
          </div>
@@ -540,18 +544,18 @@ export function MasanielloTab() {
       {/* Session Finished / Target Hit Modal */}
       {isCurrentlyFinished && (
          <div className="fixed inset-0 bg-slate-100/80 dark:bg-[#0b1621]/80 backdrop-blur-sm z-50 flex flex-col items-center justify-center p-4">
-           <div className="bg-white dark:bg-[#0b121e]/90 dark:backdrop-blur-xl p-6 rounded-3xl border border-slate-200 dark:border-white/10 shadow-[0_0_40px_rgba(0,0,0,0.1)] flex flex-col items-center text-center w-full max-w-sm animate-in zoom-in-95 duration-200">
-              <div className="text-4xl mb-2">
+           <div className="bg-white dark:bg-[#0b121e]/95 dark:backdrop-blur-xl p-5 rounded-3xl border border-slate-200 dark:border-white/10 shadow-2xl flex flex-col items-center text-center w-full max-w-xs animate-in zoom-in-95 duration-200">
+              <div className="text-3xl mb-1.5">
                 {isMathImpossible ? "❌" : isTargetAchieved ? "🎉" : "🏁"}
               </div>
-              <span className="text-lg font-bold text-slate-800 dark:text-white mb-1">
+              <span className="text-base font-bold text-slate-800 dark:text-white mb-1">
                  {isMathImpossible 
                    ? "রুটিন ব্যর্থ হয়েছে" 
                    : isTargetAchieved 
                      ? "লক্ষ্য পূরণ হয়েছে! 🎉" 
                      : "মাসনেলো রুটিন সম্পন্ন"}
               </span>
-              <span className="text-secondary text-xs mb-3">
+              <span className="text-secondary text-[11px] mb-3">
                  {isMathImpossible 
                    ? "গাণিতিকভাবে এই সেশনে টার্গেট পূরণ করা সম্ভব নয়।" 
                    : isTargetAchieved 
@@ -559,15 +563,15 @@ export function MasanielloTab() {
                      : "আপনার বর্তমান মাসানেলো রুটিন শেষ হয়েছে।"}
               </span>
 
-              <div className="bg-slate-100 dark:bg-white/5 rounded-2xl p-3 w-full mb-4 border border-slate-200 dark:border-white/10 flex justify-around text-xs">
+              <div className="bg-slate-100 dark:bg-white/5 rounded-xl p-2.5 w-full mb-3 border border-slate-200 dark:border-white/10 flex justify-around text-xs">
                 <div>
-                  <span className="text-secondary block text-[10px]">সেশন লাভ</span>
+                  <span className="text-secondary block text-[9px]">সেশন লাভ</span>
                   <span className={`font-bold font-mono text-sm ${sessionProfit >= 0 ? 'text-[#059669]' : 'text-red-500'}`}>
                     {sessionProfit >= 0 ? '+' : '-'}${enToBn(Math.abs(sessionProfit).toFixed(2))}
                   </span>
                 </div>
                 <div className="border-l border-slate-300 dark:border-white/10 pl-3">
-                  <span className="text-secondary block text-[10px]">মোট উইন</span>
+                  <span className="text-secondary block text-[9px]">মোট উইন</span>
                   <span className="font-bold text-slate-800 dark:text-white font-mono text-sm">
                     {enToBn(masaniello.currentWins)}/{enToBn(masaniello.currentEvents)}
                   </span>
@@ -575,19 +579,19 @@ export function MasanielloTab() {
               </div>
               
               {globalRemainingTarget <= 0 ? (
-                <div className="bg-[#059669]/10 text-[#059669] px-4 py-3 rounded-xl w-full text-center font-bold text-sm">
+                <div className="bg-[#059669]/10 text-[#059669] px-3 py-2.5 rounded-xl w-full text-center font-bold text-xs">
                    আপনার আজকের ডেইলি টার্গেট পূর্ণ হয়েছে। আজকের মতো ট্রেড থেকে বিরতি নিন।
                 </div>
               ) : (
                 <>
                   {isCooldownActive && (
-                    <div className="bg-blue-500/10 text-blue-500 px-4 py-2 rounded-xl mb-4 font-mono font-bold text-xs">
-                       পরবর্তী সেশন কুলডাউন: {String(cdMins).padStart(2, '0')}:{String(cdSecs).padStart(2, '0')}
+                    <div className="bg-blue-500/10 text-blue-500 px-3 py-1.5 rounded-lg mb-3 font-mono font-bold text-[11px]">
+                       কুলডাউন: {String(cdMins).padStart(2, '0')}:{String(cdSecs).padStart(2, '0')}
                     </div>
                   )}
                   <button 
                     onClick={() => updateMasaniello({ isFinished: false, currentWins: 0, currentEvents: 0, sessionStartBalance: balance, cooldownUntil: null, consecutiveLosses: 0 })} 
-                    className="bg-[#059669] text-white hover:bg-[#059669]/90 font-bold py-3 px-6 rounded-2xl w-full disabled:opacity-50 transition shadow-lg active:scale-95 text-sm"
+                    className="bg-[#059669] text-white hover:bg-[#059669]/90 font-bold py-2.5 px-5 rounded-xl w-full disabled:opacity-50 transition shadow-md active:scale-95 text-xs"
                     disabled={isCooldownActive}
                   >
                     নতুন করে শুরু করুন
@@ -597,7 +601,7 @@ export function MasanielloTab() {
                       updateMasaniello({ isFinished: false });
                       setShowSettings(true);
                     }}
-                    className="text-xs text-secondary mt-2.5 hover:underline"
+                    className="text-[11px] text-secondary mt-2 hover:underline"
                   >
                     সেটিংস পরিবর্তন করুন
                   </button>
@@ -610,24 +614,24 @@ export function MasanielloTab() {
       {/* Settings / Planner Overlay */}
       {showSettings && (
          <div className="fixed inset-0 bg-slate-100/95 dark:bg-[#0b1621]/95 backdrop-blur-md z-50 flex flex-col pt-safe-top animate-in fade-in duration-200">
-            <div className="w-full h-full overflow-y-auto shrink-0 pb-20 p-4">
-            <div className="flex items-center justify-between mb-4 mt-2">
+            <div className="w-full h-full overflow-y-auto shrink-0 pb-20 p-3 sm:p-4 max-w-lg mx-auto">
+            <div className="flex items-center justify-between mb-3 mt-1">
               <button onClick={() => setShowSettings(false)} className="bg-white dark:bg-white/10 p-2 rounded-full text-slate-700 dark:text-white shadow-sm hover:bg-slate-200 dark:hover:bg-white/20 transition">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
               </button>
-              <div className="flex items-center gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#059669" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-                <h3 className="text-xl font-bold text-slate-800 dark:text-white tracking-wide">মাসনেলো প্ল্যানার</h3>
+              <div className="flex items-center gap-1.5">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#059669" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                <h3 className="text-lg font-bold text-slate-800 dark:text-white tracking-wide">মাসনেলো প্ল্যানার</h3>
               </div>
-              <div className="w-9" />
+              <div className="w-8" />
             </div>
 
-            <div className="inner-glass rounded-3xl p-5 shadow-lg flex flex-col gap-4 relative">
+            <div className="inner-glass rounded-2xl p-4 shadow-lg flex flex-col gap-3 relative">
               
               {/* Presets */}
               <div>
-                <label className="text-[11px] text-secondary font-semibold mb-2 block">জনপ্রিয় স্ট্র্যাটেজি প্রিসেট</label>
-                <div className="grid grid-cols-2 gap-2">
+                <label className="text-[10px] text-secondary font-semibold mb-1.5 block">জনপ্রিয় স্ট্র্যাটেজি প্রিসেট</label>
+                <div className="grid grid-cols-2 gap-1.5">
                   {[
                     { label: '১০ এ ৩ উইন (৩০%)', e: 10, w: 3 },
                     { label: '১০ এ ৫ উইন (৫০%)', e: 10, w: 5 },
@@ -639,10 +643,10 @@ export function MasanielloTab() {
                       key={idx}
                       type="button"
                       onClick={() => {
-                        setEvents(pr.e);
-                        setWinsNeeded(pr.w);
+                        setEventsInput(String(pr.e));
+                        setWinsNeededInput(String(pr.w));
                       }}
-                      className={`py-2 px-2.5 rounded-xl text-left border text-xs font-semibold transition ${
+                      className={`py-1.5 px-2 rounded-lg text-left border text-[11px] font-semibold transition ${
                         events === pr.e && winsNeeded === pr.w
                           ? 'border-[#059669] bg-[#059669]/15 text-[#059669] dark:text-emerald-400'
                           : 'border-slate-200 dark:border-white/10 hover:border-slate-300 dark:hover:border-white/20 text-slate-700 dark:text-slate-300'
@@ -654,79 +658,87 @@ export function MasanielloTab() {
                 </div>
               </div>
 
-              {/* Main Inputs */}
-              <div className="grid grid-cols-2 gap-4">
+              {/* Main Inputs (Can be cleared completely without sticking) */}
+              <div className="grid grid-cols-2 gap-2.5">
                 <div>
-                  <label className="text-[11px] text-secondary font-semibold mb-1.5 block">সেশন ব্যালেন্স ($)</label>
+                  <label className="text-[10px] text-secondary font-semibold mb-1 block">সেশন ব্যালেন্স ($)</label>
                   <input 
-                    type="number" 
+                    type="text" 
+                    inputMode="decimal"
                     onFocus={e => e.target.select()} 
-                    value={sessionBalance || ''} 
-                    onChange={e => setSessionBalance(Math.max(1, Number(e.target.value) || 0))} 
-                    className="w-full bg-slate-100 dark:bg-white/5 text-slate-900 dark:text-white border border-slate-200 dark:border-white/10 rounded-xl px-4 py-2.5 font-mono text-base focus:outline-none focus:border-[#059669] focus:ring-1 focus:ring-[#059669]/50 transition-colors" 
+                    value={sessionBalanceInput} 
+                    onChange={e => setSessionBalanceInput(e.target.value)} 
+                    placeholder="100"
+                    className="w-full bg-slate-100 dark:bg-white/5 text-slate-900 dark:text-white border border-slate-200 dark:border-white/10 rounded-xl px-3 py-2 font-mono text-sm focus:outline-none focus:border-[#059669] focus:ring-1 focus:ring-[#059669]/50 transition-colors" 
                   />
-                  <span className="text-[9px] text-secondary mt-1 block">মাসনেলোর মোট বাজেট</span>
+                  <span className="text-[8px] text-secondary mt-0.5 block">মাসনেলোর বাজেট</span>
                 </div>
                 <div>
-                  <label className="text-[11px] text-secondary font-semibold mb-1.5 block">পে-আউট (%)</label>
+                  <label className="text-[10px] text-secondary font-semibold mb-1 block">পে-আউট (%)</label>
                   <input 
-                    type="number" 
+                    type="text" 
+                    inputMode="decimal"
                     onFocus={e => e.target.select()} 
-                    value={payout || ''} 
-                    onChange={e => setPayout(Math.max(1, Number(e.target.value) || 0))} 
-                    className="w-full bg-slate-100 dark:bg-white/5 text-slate-900 dark:text-white border border-slate-200 dark:border-white/10 rounded-xl px-4 py-2.5 font-mono text-base focus:outline-none focus:border-[#059669] focus:ring-1 focus:ring-[#059669]/50 transition-colors" 
+                    value={payoutInput} 
+                    onChange={e => setPayoutInput(e.target.value)} 
+                    placeholder="85"
+                    className="w-full bg-slate-100 dark:bg-white/5 text-slate-900 dark:text-white border border-slate-200 dark:border-white/10 rounded-xl px-3 py-2 font-mono text-sm focus:outline-none focus:border-[#059669] focus:ring-1 focus:ring-[#059669]/50 transition-colors" 
                   />
-                  <span className="text-[9px] text-secondary mt-1 block">ব্রোকার প্রফিট রেট</span>
+                  <span className="text-[8px] text-secondary mt-0.5 block">ব্রোকার রেট</span>
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4 pt-1">
+              <div className="grid grid-cols-2 gap-2.5">
                 <div>
-                  <label className="text-[11px] text-secondary font-semibold mb-1.5 block">মোট ট্রেড / ইভেন্ট</label>
+                  <label className="text-[10px] text-secondary font-semibold mb-1 block">মোট ট্রেড / ইভেন্ট</label>
                   <input 
-                    type="number" 
+                    type="text" 
+                    inputMode="numeric"
                     onFocus={e => e.target.select()} 
-                    value={events || ''} 
-                    onChange={e => setEvents(Math.max(1, Number(e.target.value) || 0))} 
-                    className="w-full bg-slate-100 dark:bg-white/5 text-slate-900 dark:text-white border border-slate-200 dark:border-white/10 rounded-xl px-4 py-2.5 font-mono text-base focus:outline-none focus:border-[#059669] focus:ring-1 focus:ring-[#059669]/50 transition-colors" 
+                    value={eventsInput} 
+                    onChange={e => setEventsInput(e.target.value)} 
+                    placeholder="10"
+                    className="w-full bg-slate-100 dark:bg-white/5 text-slate-900 dark:text-white border border-slate-200 dark:border-white/10 rounded-xl px-3 py-2 font-mono text-sm focus:outline-none focus:border-[#059669] focus:ring-1 focus:ring-[#059669]/50 transition-colors" 
                   />
                 </div>
                 <div>
-                  <label className="text-[11px] text-secondary font-semibold mb-1.5 block">টার্গেট উইন সংখ্যা</label>
+                  <label className="text-[10px] text-secondary font-semibold mb-1 block">টার্গেট উইন সংখ্যা</label>
                   <input 
-                    type="number" 
+                    type="text" 
+                    inputMode="numeric"
                     onFocus={e => e.target.select()} 
-                    value={winsNeeded || ''} 
-                    onChange={e => setWinsNeeded(Math.max(1, Math.min(events, Number(e.target.value) || 0)))} 
-                    className="w-full bg-slate-100 dark:bg-white/5 text-slate-900 dark:text-white border border-slate-200 dark:border-white/10 rounded-xl px-4 py-2.5 font-mono text-base focus:outline-none focus:border-[#059669] focus:ring-1 focus:ring-[#059669]/50 transition-colors" 
+                    value={winsNeededInput} 
+                    onChange={e => setWinsNeededInput(e.target.value)} 
+                    placeholder="3"
+                    className="w-full bg-slate-100 dark:bg-white/5 text-slate-900 dark:text-white border border-slate-200 dark:border-white/10 rounded-xl px-3 py-2 font-mono text-sm focus:outline-none focus:border-[#059669] focus:ring-1 focus:ring-[#059669]/50 transition-colors" 
                   />
                 </div>
               </div>
 
               {/* TARGET PROFIT & RISK CONTROL SECTION */}
-              <div className="bg-slate-100/90 dark:bg-slate-800/50 border border-slate-200 dark:border-white/10 rounded-2xl p-4 flex flex-col gap-3">
+              <div className="bg-slate-100/90 dark:bg-slate-800/50 border border-slate-200 dark:border-white/10 rounded-xl p-3 flex flex-col gap-2.5">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-1.5">
-                    <span className="text-base">🎯</span>
+                    <span className="text-sm">🎯</span>
                     <label className="text-xs font-bold text-slate-800 dark:text-white">
                       টার্গেট প্রফিট ও ঝুঁকি নিয়ন্ত্রণ
                     </label>
                   </div>
-                  <span className="text-[10px] font-bold text-[#059669] bg-[#059669]/10 px-2 py-0.5 rounded-full border border-[#059669]/20">
-                    সর্বোচ্চ লাভ: {maxGrowthPct.toFixed(1)}% (${maxPossibleProfit.toFixed(2)})
+                  <span className="text-[9px] font-bold text-[#059669] bg-[#059669]/10 px-2 py-0.5 rounded-full border border-[#059669]/20">
+                    সর্বোচ্চ লাভ: {maxGrowthPct.toFixed(1)}% (${maxPossibleProfit.toFixed(1)})
                   </span>
                 </div>
 
-                <p className="text-[10px] text-secondary leading-relaxed">
-                  আপনি চাইলে সর্বোচ্চ লাভের চেয়ে কম পারসেন্টেজ বেছে নিতে পারেন। এতে আপনার ১ম ট্রেড ও পরবর্তী সব ট্রেডের সাইজ কমে আসবে এবং রিস্ক অনেক কমে যাবে।
+                <p className="text-[9px] text-secondary leading-snug">
+                  আপনি চাইলে সর্বোচ্চ লাভের চেয়ে কম পারসেন্টেজ বেছে নিতে পারেন। এতে আপনার ১ম ট্রেডের সাইজ ও রিস্ক কমে যাবে।
                 </p>
 
                 {/* Quick Presets for Target Profit */}
-                <div className="flex flex-wrap gap-1.5 pt-0.5">
+                <div className="flex flex-wrap gap-1">
                   {[
                     { label: '১০০% (সর্বোচ্চ)', r: 1 },
                     { label: '৭৫%', r: 0.75 },
-                    { label: '৫০% (অর্ধেক ঝুঁকি)', r: 0.5 },
+                    { label: '৫০% (অর্ধেক)', r: 0.5 },
                     { label: '৩৫% (সেফ)', r: 0.35 },
                     { label: '২৫%', r: 0.25 }
                   ].map((p, idx) => {
@@ -736,7 +748,7 @@ export function MasanielloTab() {
                         key={idx}
                         type="button"
                         onClick={() => applyPresetRatio(p.r)}
-                        className={`text-[10px] px-2.5 py-1 rounded-lg font-bold transition border ${
+                        className={`text-[9px] px-2 py-0.5 rounded-md font-bold transition border ${
                           isSelected
                             ? 'bg-[#059669] text-white border-[#059669] shadow-sm'
                             : 'bg-white dark:bg-white/5 border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-white/20'
@@ -748,54 +760,52 @@ export function MasanielloTab() {
                   })}
                 </div>
 
-                {/* Two linked Inputs: Target Profit % and Target Profit $ */}
-                <div className="grid grid-cols-2 gap-3 pt-1">
+                {/* Two linked Inputs (Can be cleared completely!) */}
+                <div className="grid grid-cols-2 gap-2 pt-0.5">
                   <div>
-                    <label className="text-[10px] text-secondary font-semibold mb-1 block">
+                    <label className="text-[9px] text-secondary font-semibold mb-0.5 block">
                       টার্গেট লাভ (%)
                     </label>
                     <div className="relative">
                       <input
-                        type="number"
-                        step="0.1"
-                        min="0.1"
-                        max={maxGrowthPct}
+                        type="text"
+                        inputMode="decimal"
                         onFocus={e => e.target.select()}
-                        value={isCustomMode ? targetProfitPct : Number(maxGrowthPct.toFixed(1))}
-                        onChange={e => handleProfitPctChange(Number(e.target.value))}
-                        className="w-full bg-white dark:bg-white/5 text-slate-900 dark:text-white border border-slate-200 dark:border-white/10 rounded-xl px-3 py-2 font-mono text-sm focus:outline-none focus:border-[#059669] focus:ring-1 focus:ring-[#059669]/50 transition-colors pr-7"
+                        value={profitPctInput}
+                        onChange={e => handleProfitPctChange(e.target.value)}
+                        placeholder="35"
+                        className="w-full bg-white dark:bg-white/5 text-slate-900 dark:text-white border border-slate-200 dark:border-white/10 rounded-lg px-2.5 py-1.5 font-mono text-xs focus:outline-none focus:border-[#059669] focus:ring-1 focus:ring-[#059669]/50 transition-colors pr-6"
                       />
-                      <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs font-bold text-secondary">%</span>
+                      <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-bold text-secondary">%</span>
                     </div>
-                    <span className="text-[8px] text-secondary mt-0.5 block">সর্বোচ্চ: {maxGrowthPct.toFixed(1)}%</span>
+                    <span className="text-[8px] text-secondary mt-0.5 block">ম্যাক্স: {maxGrowthPct.toFixed(1)}%</span>
                   </div>
 
                   <div>
-                    <label className="text-[10px] text-secondary font-semibold mb-1 block">
+                    <label className="text-[9px] text-secondary font-semibold mb-0.5 block">
                       টার্গেট লাভ ($)
                     </label>
                     <div className="relative">
                       <input
-                        type="number"
-                        step="0.5"
-                        min="0.1"
-                        max={maxPossibleProfit}
+                        type="text"
+                        inputMode="decimal"
                         onFocus={e => e.target.select()}
-                        value={isCustomMode ? targetProfitAmount : Number(maxPossibleProfit.toFixed(2))}
-                        onChange={e => handleProfitAmountChange(Number(e.target.value))}
-                        className="w-full bg-white dark:bg-white/5 text-slate-900 dark:text-white border border-slate-200 dark:border-white/10 rounded-xl px-3 py-2 font-mono text-sm focus:outline-none focus:border-[#059669] focus:ring-1 focus:ring-[#059669]/50 transition-colors pl-6"
+                        value={profitAmountInput}
+                        onChange={e => handleProfitAmountChange(e.target.value)}
+                        placeholder="35"
+                        className="w-full bg-white dark:bg-white/5 text-slate-900 dark:text-white border border-slate-200 dark:border-white/10 rounded-lg px-2.5 py-1.5 font-mono text-xs focus:outline-none focus:border-[#059669] focus:ring-1 focus:ring-[#059669]/50 transition-colors pl-5"
                       />
-                      <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-xs font-bold text-secondary">$</span>
+                      <span className="absolute left-2 top-1/2 -translate-y-1/2 text-[10px] font-bold text-secondary">$</span>
                     </div>
-                    <span className="text-[8px] text-secondary mt-0.5 block">সর্বোচ্চ: ${maxPossibleProfit.toFixed(2)}</span>
+                    <span className="text-[8px] text-secondary mt-0.5 block">ম্যাক্স: ${maxPossibleProfit.toFixed(1)}</span>
                   </div>
                 </div>
 
                 {/* Range Slider */}
-                <div className="pt-1">
-                  <div className="flex justify-between text-[9px] text-secondary mb-1">
-                    <span>কম রিস্ক (ছোট স্টেক)</span>
-                    <span className="font-bold text-[#059669]">টার্গেট স্কেল: {(effectiveScaleFactor * 100).toFixed(0)}%</span>
+                <div className="pt-0.5">
+                  <div className="flex justify-between text-[8px] text-secondary mb-0.5">
+                    <span>কম রিস্ক</span>
+                    <span className="font-bold text-[#059669]">স্কেল: {(effectiveScaleFactor * 100).toFixed(0)}%</span>
                     <span>সর্বোচ্চ লাভ</span>
                   </div>
                   <input
@@ -811,74 +821,64 @@ export function MasanielloTab() {
               </div>
 
               {/* Optional Wallet Sync */}
-              <label className="flex items-center gap-2.5 text-xs text-slate-700 dark:text-slate-300 cursor-pointer select-none pt-0.5">
+              <label className="flex items-center gap-2 text-xs text-slate-700 dark:text-slate-300 cursor-pointer select-none">
                 <input
                   type="checkbox"
                   checked={syncMainBalance}
                   onChange={(e) => setSyncMainBalance(e.target.checked)}
                   className="rounded border-slate-300 text-[#059669] focus:ring-[#059669]"
                 />
-                <span>আমার প্রধান একাউন্ট ব্যালেন্সকে এই সেশন ব্যালেন্সে সিঙ্ক করুন</span>
+                <span>প্রধান ব্যালেন্সকে এই সেশন ব্যালেন্সে সিঙ্ক করুন</span>
               </label>
 
               {/* Live Preview calculation */}
-              <div className="bg-slate-100/80 dark:bg-[#059669]/10 border border-slate-200 dark:border-[#059669]/20 rounded-2xl p-4 mt-1">
-                 <div className="flex items-center justify-between border-b border-slate-200/80 dark:border-[#059669]/20 pb-2 mb-2.5">
-                   <span className="text-slate-800 dark:text-white font-bold text-xs flex items-center gap-1.5">
+              <div className="bg-slate-100/80 dark:bg-[#059669]/10 border border-slate-200 dark:border-[#059669]/20 rounded-xl p-3">
+                 <div className="flex items-center justify-between border-b border-slate-200/80 dark:border-[#059669]/20 pb-1.5 mb-2">
+                   <span className="text-slate-800 dark:text-white font-bold text-xs flex items-center gap-1">
                      <span>⚡</span> ১ম ট্রেডের সাইজ (1st Stake)
                    </span>
-                   <span className="text-[#059669] font-black text-xl font-mono">
+                   <span className="text-[#059669] font-black text-lg font-mono">
                      ${preview1stStake.toFixed(2)}
-                     <span className="text-[10px] text-secondary font-normal ml-1">
+                     <span className="text-[9px] text-secondary font-normal ml-1">
                        ({((preview1stStake / (sessionBalance || 1)) * 100).toFixed(1)}%)
                      </span>
                    </span>
                  </div>
 
-                 <div className="flex justify-between items-center mb-2">
-                   <span className="text-secondary text-xs">টার্গেট পূরণ হলে মোট লাভ</span>
-                   <span className="text-[#059669] font-bold text-base font-mono">
+                 <div className="flex justify-between items-center mb-1.5 text-xs">
+                   <span className="text-secondary text-[11px]">টার্গেট পূরণ হলে মোট লাভ</span>
+                   <span className="text-[#059669] font-bold font-mono">
                      +${effectiveTargetProfit.toFixed(2)} 
-                     <span className="text-xs font-semibold ml-1 text-slate-700 dark:text-slate-300">
+                     <span className="text-[10px] ml-1 text-slate-700 dark:text-slate-300">
                        (+{previewProfitPct.toFixed(1)}%)
                      </span>
                    </span>
                  </div>
 
-                 <div className="flex justify-between items-center mb-2">
-                   <span className="text-secondary text-xs">সর্বোচ্চ সম্ভাব্য লাভ (Max)</span>
-                   <span className="text-slate-700 dark:text-slate-300 font-semibold text-xs font-mono">
-                     +${maxPossibleProfit.toFixed(2)} (+{maxGrowthPct.toFixed(1)}%)
-                   </span>
-                 </div>
-
-                 <div className="flex justify-between items-center mb-2">
-                   <span className="text-secondary text-xs">রিস্ক ক্যাপিটাল (বরাদ্দ)</span>
-                   <span className="text-slate-800 dark:text-white font-semibold text-xs font-mono">
+                 <div className="flex justify-between items-center mb-1.5 text-xs">
+                   <span className="text-secondary text-[11px]">রিস্ক ক্যাপিটাল</span>
+                   <span className="text-slate-800 dark:text-white font-semibold font-mono text-[11px]">
                      ${previewAllocatedCapital.toFixed(2)} 
-                     <span className="text-[9px] text-[#059669] ml-1">
+                     <span className="text-[8px] text-[#059669] ml-1">
                        (বাকি ${(sessionBalance - previewAllocatedCapital).toFixed(2)} নিরাপদ)
                      </span>
                    </span>
                  </div>
 
-                 <div className="flex justify-between items-center mb-2">
-                   <span className="text-secondary text-xs">উইন রেট প্রয়োজন</span>
-                   <span className="text-slate-800 dark:text-white font-semibold text-xs font-mono">{((winsNeeded / (events || 1)) * 100).toFixed(1)}% ({winsNeeded}/{events})</span>
-                 </div>
-
-                 <div className="flex justify-between items-center">
-                   <span className="text-secondary text-xs">সর্বোচ্চ লস করা যাবে</span>
-                   <span className="text-red-500 font-bold text-xs tracking-wide">{Math.max(0, events - winsNeeded)} টি</span>
+                 <div className="flex justify-between items-center text-xs">
+                   <span className="text-secondary text-[11px]">উইন রেট প্রয়োজন</span>
+                   <span className="text-slate-800 dark:text-white font-semibold font-mono text-[11px]">
+                     {((winsNeeded / (events || 1)) * 100).toFixed(1)}% ({winsNeeded}/{events})
+                   </span>
                  </div>
               </div>
 
               <button 
                 id="save-masaniello-settings-btn"
                 onClick={startNew} 
-                className="bg-[#059669] hover:bg-[#059669]/90 text-white rounded-xl py-3.5 font-bold text-sm flex items-center justify-center gap-2 mt-2 shadow-[0_0_15px_rgba(16,185,129,0.3)] transition-all active:scale-95"
+                className="bg-[#059669] hover:bg-[#059669]/90 text-white rounded-xl py-3 font-bold text-xs sm:text-sm flex items-center justify-center gap-2 mt-1 shadow-md transition-all active:scale-95"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"><polygon points="6 3 20 12 6 21 6 3"/></svg>
                 সেটিংস সংরক্ষণ করুন ও নতুন সেশন শুরু করুন
               </button>
             </div>
@@ -889,18 +889,18 @@ export function MasanielloTab() {
       {/* Global Daily Target Modal */}
       {showGlobalTargetReached && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-slate-900 rounded-[1.5rem] p-6 w-full max-w-sm shadow-2xl animate-in zoom-in-95 duration-300">
-            <h3 className="text-xl font-bold text-center text-slate-900 dark:text-white mb-4">অভিনন্দন! 🎉</h3>
-            <p className="text-[13px] text-center text-slate-700 dark:text-slate-300 mb-6 leading-relaxed">
+          <div className="bg-white dark:bg-slate-900 rounded-[1.5rem] p-5 w-full max-w-xs shadow-2xl animate-in zoom-in-95 duration-300">
+            <h3 className="text-lg font-bold text-center text-slate-900 dark:text-white mb-2">অভিনন্দন! 🎉</h3>
+            <p className="text-xs text-center text-slate-700 dark:text-slate-300 mb-4 leading-relaxed">
               {useStore.getState().profile.gender?.toLowerCase() === 'female' ? 'আপু' : 'ভাইয়া'}, আজকের টার্গেট পূরণ হয়ে গেলো, আর ট্রেড না করায় ভালো। অল্প অল্প করে অনেক দূরে যেতে হবে।
             </p>
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-2">
               <button
                 onClick={() => {
                   setShowGlobalTargetReached(false);
                   updateMasaniello({ isFinished: true });
                 }}
-                className="w-full py-3 rounded-full bg-[#059669] text-white font-bold text-sm"
+                className="w-full py-2.5 rounded-full bg-[#059669] text-white font-bold text-xs"
               >
                 আচ্ছা ঠিক আছে
               </button>
@@ -909,7 +909,7 @@ export function MasanielloTab() {
                   setShowGlobalTargetReached(false);
                   setHasDismissedGlobalTarget(true);
                 }}
-                className="w-full py-3 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold text-sm"
+                className="w-full py-2.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold text-xs"
               >
                 চালিয়ে যেতে চাই
               </button>
