@@ -168,7 +168,7 @@ export function Balance() {
               fillOpacity={1} 
               fill={rangeProfit >= 0 ? "url(#colorValueGood)" : "url(#colorValueBad)"} 
               style={{ outline: 'none' }}
-              activeDot={{ outline: 'none', stroke: 'none', fill: rangeProfit >= 0 ? "#059669" : "#ef4444" }}
+              activeDot={{ stroke: 'none', fill: rangeProfit >= 0 ? "#059669" : "#ef4444" }}
             />
           </AreaChart>
         </ResponsiveContainer>

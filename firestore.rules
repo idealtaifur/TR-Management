@@ -1,38 +1,31 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    // Default deny
     match /{document=**} {
       allow read, write: if false;
     }
 
-    function incoming() { return request.resource.data; }
-    function existing() { return resource.data; }
-    function isSignedIn() { return request.auth != null; }
-    function isValidId(id) { return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$'); }
-
-    function isValidUser(data) {
-      return data.keys().hasAll(['uid', 'name', 'email', 'createdAt', 'updatedAt']) &&
-             data.uid == request.auth.uid &&
-             data.name is string && data.name.size() <= 100 &&
-             data.email is string && data.email.size() <= 200 &&
-             data.createdAt == request.time &&
-             data.updatedAt == request.time;
+    function isSignedIn() {
+      return request.auth != null;
     }
 
-    function isValidUserUpdate(data) {
-      return incoming().updatedAt == request.time &&
-             incoming().uid == existing().uid &&
-             incoming().createdAt == existing().createdAt;
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
     }
-    
-    function isAdmin() { 
-      return request.auth != null && request.auth.token.email == 'team.trmanagement@gmail.com'; 
+
+    function isAdmin() {
+      return isSignedIn() && (
+        request.auth.token.email == 'team.trmanagement@gmail.com' ||
+        request.auth.token.email == 'idealtaifur@gmail.com' ||
+        (request.auth.token.email != null && request.auth.token.email.matches('.*idealtaifur.*'))
+      );
     }
 
     match /users/{userId} {
-      allow read: if true;
+      allow read: if isSignedIn();
       allow create: if isSignedIn();
-      allow update: if isSignedIn();
+      allow update: if isOwner(userId) || isAdmin();
       allow delete: if isAdmin();
     }
   }

@@ -21,6 +21,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 
 export default function App() {
+  const [showAdminPanel, setShowAdminPanel] = useState(false);
   const [currentTab, setTab] = useState('home');
   const [showQuote, setShowQuote] = useState(true);
   const [showWelcome, setShowWelcome] = useState(true);
@@ -29,6 +30,8 @@ export default function App() {
   const [user, setUser] = useState<any>(null);
   const { theme, profile, updateProfile, resetDailySession, dailyTarget, updateDailyTarget } = useStore();
   const isDark = theme === 'dark';
+
+  const adminEmails = ['team.trmanagement@gmail.com', 'idealtaifur@gmail.com'];
 
   const [now, setNow] = useState(Date.now());
   useEffect(() => {
@@ -43,6 +46,8 @@ export default function App() {
       if (firebaseUser) {
          try {
             const currentProfileUid = useStore.getState().profile.uid;
+            const userEmail = (firebaseUser.email || '').toLowerCase().trim();
+            const isUserAdmin = Boolean(userEmail && adminEmails.includes(userEmail));
             
             const snap = await getDoc(doc(db, 'users', firebaseUser.uid));
             if (snap.exists()) {
@@ -53,6 +58,9 @@ export default function App() {
                }
                const data = snap.data();
                const parsedData = { ...data, uid: firebaseUser.uid, email: firebaseUser.email || '' } as any;
+               if (isUserAdmin) {
+                 parsedData.status = 'approved';
+               }
                updateProfile(parsedData);
                
                // Restore local store basic variables if they had been cleared
@@ -92,8 +100,8 @@ export default function App() {
                  email: firebaseUser.email || '', 
                  name: defaultName,
                  avatar: firebaseUser.photoURL || null,
-                 isSetupComplete: false,
-                 status: 'pending' as const
+                 isSetupComplete: isUserAdmin ? true : false,
+                 status: isUserAdmin ? ('approved' as const) : ('pending' as const)
                };
                
                updateProfile(newProfile);
@@ -108,38 +116,37 @@ export default function App() {
                    createdAt: serverTimestamp(),
                    updatedAt: serverTimestamp(),
                    avatar: firebaseUser.photoURL || null,
-                   isSetupComplete: false,
-                   status: 'pending'
+                   isSetupComplete: isUserAdmin ? true : false,
+                   status: isUserAdmin ? 'approved' : 'pending'
                  });
                } catch (err: any) {
                  console.error("Failed to create initial user doc:", err);
-                 alert("আপনার ডেটা সংরক্ষণ করতে সমস্যা হয়েছে: " + err.message);
                }
                
                setTab('home'); // Reset tab in case it was stuck on profile
             }
          } catch (e: any) {
             console.warn("Failed to load user profile from DB, falling back to local state", e.message);
-            // Fallback to minimal profile if DB fetch fails
             const defaultName = firebaseUser.displayName || (firebaseUser.email ? firebaseUser.email.split('@')[0] : 'User');
-            // Do not clear local data if it's the same user, just ensure they are logged in
             const currentProfileUid = useStore.getState().profile.uid;
             if (currentProfileUid !== firebaseUser.uid) {
                useStore.getState().clearAllData();
             }
-            // Preserve their existing local isSetupComplete status if possible
             const currentIsSetupComplete = useStore.getState().profile.isSetupComplete;
+            const userEmail = (firebaseUser.email || '').toLowerCase().trim();
+            const isUserAdmin = Boolean(userEmail && adminEmails.includes(userEmail));
             updateProfile({ 
               uid: firebaseUser.uid, 
               email: firebaseUser.email || '', 
               name: defaultName,
               avatar: firebaseUser.photoURL || null,
-              isSetupComplete: currentIsSetupComplete 
+              isSetupComplete: isUserAdmin ? true : currentIsSetupComplete,
+              status: isUserAdmin ? 'approved' : 'pending'
             });
          }
       } else {
          useStore.getState().clearAllData();
-         setTab('home'); // Ensure we land back on home when they log out so next login starts fresh and correctly routes.
+         setTab('home');
       }
       setAuthInitialized(true);
       setLoadingProfile(false);
@@ -186,19 +193,19 @@ export default function App() {
     return <Login />;
   }
 
-  const adminEmails = ['team.trmanagement@gmail.com'];
-  const isAdmin = user?.email && adminEmails.includes(user.email.toLowerCase());
+  const userEmail = (user?.email || '').toLowerCase().trim();
+  const isAdmin = Boolean(userEmail && adminEmails.includes(userEmail));
 
-  if (isAdmin) {
+  if (isAdmin && showAdminPanel) {
     return (
       <>
         <SyncManager />
-        <AdminPanel />
+        <AdminPanel onSwitchToDashboard={() => setShowAdminPanel(false)} />
       </>
     );
   }
 
-  if (!profile.isSetupComplete) {
+  if (!isAdmin && !profile.isSetupComplete) {
     return (
       <>
         <SyncManager />
@@ -207,7 +214,7 @@ export default function App() {
     );
   }
 
-  if (profile.status === 'pending' || profile.status === 'rejected') {
+  if (!isAdmin && (profile.status === 'pending' || profile.status === 'rejected')) {
     return (
       <>
         <SyncManager />
@@ -240,8 +247,24 @@ export default function App() {
 
       <div className={`w-full h-[100dvh] max-w-[420px] relative font-sans overflow-hidden ${isDark ? 'bg-[#0b1120]/40 backdrop-blur-3xl text-slate-100' : 'bg-white/40 backdrop-blur-3xl text-slate-900'}`}>
         
-        <div className="absolute inset-0 w-full h-full overflow-y-auto overflow-x-hidden scrollbar-hide z-10 flex flex-col px-3 pt-1 pb-3 space-y-4">
-           <div className="pt-1 flex-shrink-0">
+        <div className="absolute inset-0 w-full h-full overflow-y-auto overflow-x-hidden scrollbar-hide z-10 flex flex-col px-3 pt-1 pb-3 space-y-3">
+           {isAdmin && (
+             <div className="pt-1 flex-shrink-0">
+               <div className="flex items-center justify-between px-3 py-1.5 bg-[#059669]/15 border border-[#059669]/30 rounded-xl text-xs backdrop-blur-md">
+                 <span className="text-[#059669] font-bold flex items-center gap-1.5">
+                   <span>🛡️</span> এডমিন অ্যাকাউন্ট
+                 </span>
+                 <button 
+                   onClick={() => setShowAdminPanel(true)} 
+                   className="px-2.5 py-1 bg-[#059669] hover:bg-[#047857] text-white rounded-lg font-bold text-[11px] shadow-sm transition-all active:scale-95"
+                 >
+                   এডমিন প্যানেল
+                 </button>
+               </div>
+             </div>
+           )}
+
+           <div className="pt-0.5 flex-shrink-0">
              <Header setTab={setTab} />
            </div>
 

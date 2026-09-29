@@ -1,6 +1,6 @@
 {
-  "name": "Trading Dashboard",
-  "description": "A dark-themed, mobile-first trading dashboard UI.",
+  "name": "TR Management",
+  "description": "Professional Trading & Risk Management platform with Masaniello money management, daily profit target mode, trade journal, loss analysis, and trading calculators.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

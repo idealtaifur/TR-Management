@@ -67,6 +67,8 @@ export function SyncManager() {
           clientId: clientId.current
        };
        
+       if (!auth.currentUser) return;
+       
        updateDoc(doc(db, 'users', auth.currentUser.uid), {
           appState: JSON.stringify(stateToSave),
           currentBalance: storeState.balance,

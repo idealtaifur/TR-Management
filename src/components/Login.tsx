@@ -51,13 +51,18 @@ export function Login() {
       }
     } catch (err: any) {
       if (err.code === 'auth/email-already-in-use') {
-        setError('এই ইমেইল দিয়ে ইতমধ্যেই একটি একাউন্ট খোলা হয়েছে।');
+        setError('এই ইমেইল দিয়ে ইতিপূর্বেই একটি একাউন্ট খোলা হয়েছে। অনুগ্রহ করে লগইন করুন।');
+        setIsLogin(true);
       } else if (err.code === 'auth/wrong-password' || err.code === 'auth/user-not-found' || err.code === 'auth/invalid-credential') {
-        setError('ইমেইল অথবা পাসওয়ার্ড ভুল।');
+        setError(isLogin ? 'ইমেইল অথবা পাসওয়ার্ড ভুল। আপনার কোনো অ্যাকাউন্ট না থাকলে "নতুন একাউন্ট" ট্যাবে গিয়ে রেজিস্ট্রেশন করুন।' : 'ইমেইল অথবা পাসওয়ার্ড সঠিক নয়।');
       } else if (err.code === 'auth/weak-password') {
         setError('পাসওয়ার্ড অন্তত ৬ অক্ষরের হতে হবে।');
+      } else if (err.code === 'auth/popup-blocked') {
+        setError('ব্রাউজারের পপআপ ব্লক করা হয়েছে। দয়া করে পপআপ অনুমোদন করুন অথবা ইমেইল ও পাসওয়ার্ড ব্যবহার করুন।');
+      } else if (err.code === 'auth/popup-closed-by-user') {
+        setError('লগইন পপআপ উইন্ডোটি বন্ধ করা হয়েছে।');
       } else if (err.code === 'auth/operation-not-allowed') {
-        setError('ইমেইল/পাসওয়ার্ড লগইন চালু নেই। দয়া করে গুগল দিয়ে লগইন করুন।');
+        setError('ইমেইল/পাসওয়ার্ড অথেন্টিকেশন সক্রিয় নয়।');
       } else {
         console.error("Firebase Auth Error", err);
         setError(err.message || 'একটি সমস্যা হয়েছে, আবার চেষ্টা করুন।');
@@ -74,7 +79,13 @@ export function Login() {
       await signInWithPopup(auth, googleProvider);
     } catch (err: any) {
       console.error("Google Auth Error", err);
-      setError(err.message || 'গুগল লগইন ব্যর্থ হয়েছে।');
+      if (err.code === 'auth/popup-blocked') {
+        setError('ব্রাউজারের পপআপ ব্লক করা হয়েছে। দয়া করে পপআপ অনুমোদন করুন অথবা উপরে ইমেইল ও পাসওয়ার্ড দিয়ে সাইন ইন করুন।');
+      } else if (err.code === 'auth/popup-closed-by-user') {
+        setError('গুগল লগইন উইন্ডো বন্ধ করা হয়েছে।');
+      } else {
+        setError(err.message || 'গুগল লগইন ব্যর্থ হয়েছে।');
+      }
     } finally {
       setLoading(false);
     }
@@ -101,8 +112,8 @@ export function Login() {
            </div>
         </div>
 
-        <div className="text-center mb-6">
-           <h1 className={`text-2xl font-black tracking-tight mb-2 ${isDark ? 'text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]' : 'text-slate-800'}`}>
+        <div className="text-center mb-5">
+           <h1 className={`text-2xl font-black tracking-tight mb-1.5 ${isDark ? 'text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]' : 'text-slate-800'}`}>
              {isLogin ? 'স্বাগতম' : 'নতুন একাউন্ট'}
            </h1>
            <p className={`text-xs font-medium ${isDark ? 'text-white/50' : 'text-slate-500'}`}>
@@ -110,14 +121,40 @@ export function Login() {
            </p>
         </div>
 
+        {/* Tab Switcher */}
+        <div className={`flex p-1 rounded-xl mb-5 ${isDark ? 'bg-black/30 border border-white/5' : 'bg-slate-200/70 border border-slate-300/50'}`}>
+          <button
+            type="button"
+            onClick={() => { setIsLogin(true); setError(''); setMessage(''); }}
+            className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-all ${
+              isLogin 
+                ? 'bg-[#059669] text-white shadow-sm' 
+                : isDark ? 'text-white/50 hover:text-white' : 'text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            লগইন
+          </button>
+          <button
+            type="button"
+            onClick={() => { setIsLogin(false); setError(''); setMessage(''); }}
+            className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-all ${
+              !isLogin 
+                ? 'bg-[#059669] text-white shadow-sm' 
+                : isDark ? 'text-white/50 hover:text-white' : 'text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            নতুন একাউন্ট
+          </button>
+        </div>
+
         {error && (
-           <div className="mb-6 p-3 bg-red-500/10 border-t border-l border-red-400/30 border-b border-r border-red-900/50 rounded-xl text-red-400 text-xs font-semibold text-center animate-in fade-in slide-in-from-top-2 shadow-[inset_0_2px_10px_rgba(255,0,0,0.1)] backdrop-blur-md">
+           <div className="mb-5 p-3 bg-red-500/10 border-t border-l border-red-400/30 border-b border-r border-red-900/50 rounded-xl text-red-400 text-xs font-semibold text-center animate-in fade-in slide-in-from-top-2 shadow-[inset_0_2px_10px_rgba(255,0,0,0.1)] backdrop-blur-md leading-relaxed">
              {error}
            </div>
         )}
 
         {message && (
-           <div className="mb-6 p-3 bg-[#059669]/10 border-t border-l border-[#059669]/30 border-b border-r border-[#059669]/50 rounded-xl text-[#059669] text-xs font-semibold text-center animate-in fade-in slide-in-from-top-2 shadow-[inset_0_2px_10px_rgba(16,185,129,0.1)] backdrop-blur-md">
+           <div className="mb-5 p-3 bg-[#059669]/10 border-t border-l border-[#059669]/30 border-b border-r border-[#059669]/50 rounded-xl text-[#059669] text-xs font-semibold text-center animate-in fade-in slide-in-from-top-2 shadow-[inset_0_2px_10px_rgba(16,185,129,0.1)] backdrop-blur-md">
              {message}
            </div>
         )}

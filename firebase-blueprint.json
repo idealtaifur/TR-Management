@@ -2,36 +2,29 @@
   "entities": {
     "User": {
       "title": "User",
-      "description": "A user of the application",
+      "description": "User trading profile, settings, balance, and synchronized app state",
       "type": "object",
       "properties": {
         "uid": { "type": "string" },
         "name": { "type": "string" },
         "email": { "type": "string" },
-        "phone": { "type": "string" },
-        "avatar": { "type": ["string", "null"] },
-        "gender": { "type": "string" },
-        "age": { "type": "string" },
-        "address": { "type": "string" },
-        "experienceMonths": { "type": "string" },
-        "experienceYears": { "type": "string" },
-        "timezone": { "type": "string" },
+        "avatar": { "type": "string" },
+        "status": { "type": "string", "enum": ["pending", "approved", "rejected"] },
         "startingBalance": { "type": "number" },
+        "currentBalance": { "type": "number" },
         "dailyProfitTarget": { "type": "number" },
         "targetDays": { "type": "number" },
-        "preferredStrategy": { "type": "string" },
         "isSetupComplete": { "type": "boolean" },
-        "balance": { "type": "number" },
-        "createdAt": { "type": "string" },
-        "updatedAt": { "type": "string" }
+        "appState": { "type": "string" },
+        "createdAt": { "type": "string" }
       },
-      "required": ["uid", "name", "email", "createdAt", "updatedAt"]
+      "required": ["uid", "email"]
     }
   },
   "firestore": {
-    "users/{userId}": {
-      "schema": { "$ref": "#/entities/User" },
-      "description": "Stores user profiles"
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "Individual user document containing trader credentials, balance and journal sync"
     }
   }
 }
