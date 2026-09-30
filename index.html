@@ -12,6 +12,44 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+    <style>
+      /* Hide Netlify injected badges, toolbars and iframes */
+      iframe[src*="netlify"],
+      iframe[title*="netlify" i],
+      iframe[id*="netlify" i],
+      div[id*="netlify" i],
+      div[class*="netlify-badge" i],
+      [data-netlify-badge],
+      #netlify-badge,
+      .netlify-badge {
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+        width: 0 !important;
+        height: 0 !important;
+        z-index: -9999 !important;
+      }
+    </style>
+    <script>
+      (function() {
+        function removeNetlifyBadge() {
+          var badges = document.querySelectorAll('iframe[src*="netlify"], iframe[title*="netlify" i], #netlify-badge, .netlify-badge, [data-netlify-badge]');
+          badges.forEach(function(el) {
+            el.remove();
+          });
+        }
+        if (typeof window !== 'undefined') {
+          if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', removeNetlifyBadge);
+          } else {
+            removeNetlifyBadge();
+          }
+          var observer = new MutationObserver(removeNetlifyBadge);
+          observer.observe(document.documentElement, { childList: true, subtree: true });
+        }
+      })();
+    </script>
   </head>
   <body class="bg-slate-50 text-slate-900 antialiased font-sans">
     <div id="root"></div>
