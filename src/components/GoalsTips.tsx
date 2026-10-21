@@ -3,7 +3,7 @@ import { eliteTips } from '../data/tips';
 import { motion, AnimatePresence } from 'motion/react';
 import { useStore } from '../store/useStore';
 import { enToBn } from '../utils';
-import { ChartPatternModal } from './ChartPatternModal';
+import { CandlestickPatternModal } from './CandlestickPatternModal';
 
 const ICONS = [
   <svg key="1" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>,
@@ -16,7 +16,7 @@ export function GoalsTips() {
   const [currentTipIdx, setCurrentTipIdx] = useState(0);
   const [showAllTips, setShowAllTips] = useState(false);
   const [selectedTip, setSelectedTip] = useState<string | null>(null);
-  const [showChartPatterns, setShowChartPatterns] = useState(false);
+  const [showCandlestickPatterns, setShowCandlestickPatterns] = useState(false);
   const { balance, profile, dailyTarget } = useStore();
 
   const startBal = profile.startingBalance || 215;
@@ -159,16 +159,22 @@ export function GoalsTips() {
               </AnimatePresence>
            </div>
 
-           {/* Bottom Action: চার্ট প্যাটার্ন বাটন */}
+           {/* Bottom Action: ক্যান্ডেলস্টিক প্যাটার্ন বাটন */}
            <div className="relative z-10 mt-auto pt-1">
              <button
                type="button"
-               onClick={() => setShowChartPatterns(true)}
-               className="w-full py-2 px-2 rounded-xl bg-gradient-to-r from-amber-500/15 via-yellow-500/15 to-emerald-500/15 hover:from-amber-500/25 hover:to-emerald-500/25 text-amber-800 dark:text-yellow-300 border border-amber-500/30 flex items-center justify-center gap-1.5 text-[11px] font-bold transition-all shadow-sm active:scale-95 cursor-pointer"
+               onClick={() => setShowCandlestickPatterns(true)}
+               className="w-full py-2 px-2 rounded-xl bg-gradient-to-r from-emerald-500/15 via-teal-500/15 to-amber-500/15 hover:from-emerald-500/25 hover:to-amber-500/25 text-emerald-800 dark:text-emerald-300 border border-emerald-500/30 flex items-center justify-center gap-1.5 text-[11px] font-bold transition-all shadow-sm active:scale-95 cursor-pointer"
              >
-               <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
-               <span>চার্ট প্যাটার্ন</span>
-               <span className="text-[8.5px] bg-amber-500/20 text-amber-700 dark:text-yellow-200 px-1.5 py-0.2 rounded-full font-bold">গাইড</span>
+               {/* Candlestick Icon */}
+               <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                 <line x1="7" y1="2" x2="7" y2="22" stroke="currentColor" strokeWidth="1.5" />
+                 <rect x="4.5" y="6" width="5" height="10" rx="0.5" fill="currentColor" opacity="0.9" />
+                 <line x1="17" y1="2" x2="17" y2="22" stroke="currentColor" strokeWidth="1.5" />
+                 <rect x="14.5" y="8" width="5" height="8" rx="0.5" fill="none" stroke="currentColor" strokeWidth="1.5" />
+               </svg>
+               <span>ক্যান্ডেলস্টিক প্যাটার্ন</span>
+               <span className="text-[8.5px] bg-emerald-500/20 text-emerald-700 dark:text-emerald-200 px-1.5 py-0.2 rounded-full font-bold">গাইড</span>
              </button>
            </div>
         </div>
@@ -182,7 +188,7 @@ export function GoalsTips() {
              className="bg-white dark:bg-[#15202b] rounded-2xl p-5 w-full max-w-sm shadow-2xl relative border border-slate-200 dark:border-white/10"
              onClick={e => e.stopPropagation()}
            >
-             <button onClick={() => setSelectedTip(null)} className="absolute top-3 right-3 w-8 h-8 bg-slate-100 dark:bg-white/10 rounded-full flex items-center justify-center text-slate-500 hover:text-slate-800 dark:hover:text-white transition-colors">
+             <button onClick={() => setSelectedTip(null)} className="absolute top-3 right-3 w-8 h-8 bg-slate-100 dark:bg-white/10 rounded-full flex items-center justify-center text-slate-500 hover:text-slate-800 dark:hover:text-white transition-colors cursor-pointer">
                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
              </button>
              <h3 className="text-[#facc15] font-bold text-lg mb-3 flex items-center gap-2">
@@ -196,10 +202,10 @@ export function GoalsTips() {
         </div>
       )}
 
-      {/* Chart Pattern Guide Modal */}
-      <ChartPatternModal
-        isOpen={showChartPatterns}
-        onClose={() => setShowChartPatterns(false)}
+      {/* Candlestick Pattern Guide Modal */}
+      <CandlestickPatternModal
+        isOpen={showCandlestickPatterns}
+        onClose={() => setShowCandlestickPatterns(false)}
       />
     </>
   );
